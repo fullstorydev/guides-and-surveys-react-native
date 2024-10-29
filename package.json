@@ -1,6 +1,6 @@
 {
   "name": "usetiful-react-native",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "description": "Usetiful react native support app",
   "source": "./src/index.tsx",
   "main": "./lib/commonjs/index.js",
