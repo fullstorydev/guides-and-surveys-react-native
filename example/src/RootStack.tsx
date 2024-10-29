@@ -7,7 +7,72 @@ import { useRefRegister } from 'usetiful-react-native';
 type RootStackParamList = {
   Detail: undefined;
   Home: undefined;
+  About: undefined;
+  Help: undefined;
 };
+
+export const HomeScreen = () => {
+  const navitaion = useNavigation<NavigationProp<RootStackParamList>>();
+
+  return (
+    <View style={styles.home}>
+      <View style={styles.navContainer}>
+        <View style={styles.navBtn}>
+          <Button title="Detail" onPress={() => navitaion.navigate('Detail')} />
+        </View>
+        <View style={styles.navBtn}>
+          <Button title="About" onPress={() => navitaion.navigate('About')} />
+        </View>
+        <View style={styles.navBtn}>
+          <Button title="Help" onPress={() => navitaion.navigate('Help')} />
+        </View>
+      </View>
+    </View>
+  );
+};
+
+const Stack = createNativeStackNavigator<RootStackParamList>();
+
+export const RootStack = () => {
+  return (
+    <Stack.Navigator initialRouteName="Home">
+      <Stack.Screen name="Home" component={HomeScreen} />
+      <Stack.Screen name="Detail" component={DetailsScreen} />
+      <Stack.Screen name="About" component={AboutScreen} />
+      <Stack.Screen name="Help" component={HelpScreen} />
+    </Stack.Navigator>
+  );
+};
+
+const styles = StyleSheet.create({
+  home: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'red',
+    width: '100%',
+  },
+  detail: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'red',
+    width: '100%',
+  },
+  navContainer: {
+    flexDirection: 'row',
+    gap: 2,
+  },
+  navBtn: {
+    backgroundColor: '#fff',
+    borderRadius: 5,
+    borderWidth: 1,
+    borderColor: '#ccc',
+  },
+});
+
+// -------------------------------------------------------------------
+
 function DetailsScreen() {
   const navitaion = useNavigation<NavigationProp<RootStackParamList>>();
   const viewRef = useRef<View>(null);
@@ -20,7 +85,7 @@ function DetailsScreen() {
     { key: 'NextView', ref: nextViewRef }
   );
   return (
-    <View style={styles.home}>
+    <View style={{ ...styles.home, backgroundColor: 'green' }}>
       <Text>Details Screen</Text>
       <Text>About</Text>
       <Text>Number One</Text>
@@ -42,44 +107,28 @@ function DetailsScreen() {
     </View>
   );
 }
-export const HomeScreen = () => {
+function AboutScreen() {
   const navitaion = useNavigation<NavigationProp<RootStackParamList>>();
-
   return (
-    <View style={styles.home}>
-      <Text>Home Screen</Text>
+    <View style={{ ...styles.home, backgroundColor: 'lightblue' }}>
+      <Text>About Screen</Text>
       <Button
-        title="Go to DetailsScreen"
-        onPress={() => navitaion.navigate('Detail')}
+        title="Go to HomeScreen"
+        onPress={() => navitaion.navigate('Home')}
       />
     </View>
   );
-};
+}
 
-const Stack = createNativeStackNavigator<RootStackParamList>();
-
-export const RootStack = () => {
+function HelpScreen() {
+  const navitaion = useNavigation<NavigationProp<RootStackParamList>>();
   return (
-    <Stack.Navigator initialRouteName="Home">
-      <Stack.Screen name="Home" component={HomeScreen} />
-      <Stack.Screen name="Detail" component={DetailsScreen} />
-    </Stack.Navigator>
+    <View style={{ ...styles.home, backgroundColor: 'darkblue' }}>
+      <Text>Help Screen</Text>
+      <Button
+        title="Go to HomeScreen"
+        onPress={() => navitaion.navigate('Home')}
+      />
+    </View>
   );
-};
-
-const styles = StyleSheet.create({
-  home: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: 'red',
-    width: '100%',
-  },
-  detail: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: 'red',
-    width: '100%',
-  },
-});
+}

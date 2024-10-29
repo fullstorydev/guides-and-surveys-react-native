@@ -95,11 +95,14 @@ export const Usetiful = ({ children, token }: Props) => {
     setTourStepIndex(0);
     if (tours && tours.length) {
       setAvailableTour(
-        tours.find((tour) =>
-          tour.targets.find(
-            (target) => !!target.url && currentRouteName.includes(target.url)
-          )
-        )
+        tours.find((tour) => {
+          if (tour.targets) {
+            return tour.targets.find(
+              (target) => !!target.url && currentRouteName.includes(target.url)
+            );
+          }
+          return undefined;
+        })
       );
     } else {
       setAvailableTour(undefined);

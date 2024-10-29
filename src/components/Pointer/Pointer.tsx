@@ -20,7 +20,6 @@ export const Pointer = ({ step, onColse, layoutMeasure }: Props) => {
 
   const refs = useStore((s) => s.elementRefs);
   const ref = refs[element];
-  const [result, setResult] = useState<string>();
 
   const [measure, setMeasure] = useState<Measure>();
 
@@ -28,10 +27,9 @@ export const Pointer = ({ step, onColse, layoutMeasure }: Props) => {
     if (ref && ref.current) {
       //@ts-ignore
       ref?.current.measure((x, y, width, height, pageX, pageY) => {
-        const msg = `Element position new:x:${x}, y:${y} pageX: ${pageX}, pageY: ${pageY}, Width: ${width}, Height: ${height}`;
-        setMeasure({ x, y, width, height, pageX, pageY });
-        //pageY + height + 20);
-        setResult(msg);
+        if (![x, y, width, height, pageX, pageY].some((i) => i === undefined)) {
+          setMeasure({ x, y, width, height, pageX, pageY });
+        }
       });
     }
   }, [ref]);
@@ -106,9 +104,6 @@ export const Pointer = ({ step, onColse, layoutMeasure }: Props) => {
               <TouchableOpacity style={styles.crossBtn} onPress={onColse}>
                 <Text>X</Text>
               </TouchableOpacity>
-            </View>
-            <View style={styles.pointerBody}>
-              <Text>PP: {result}</Text>
             </View>
             <View style={styles.pointerBody}>
               {!!content && <Body content={content} />}
