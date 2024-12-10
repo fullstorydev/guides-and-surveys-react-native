@@ -1,5 +1,5 @@
 import { type PropsWithChildren } from 'react';
-export { useRefRegister } from './hooks/useRefRegister';
+export { setPointer } from './utils/setPointer';
 type Props = {
     token: string;
 } & PropsWithChildren;

@@ -1,26 +1,29 @@
 import { create } from 'zustand';
-import type { ElementRefType, Tour } from '../types';
+import type { Measure, Tour } from '../types';
+import { type LayoutChangeEvent } from 'react-native';
 
 interface StoreState {
-  elementRefs: { [key: string]: React.RefObject<any> | null };
-  setElementRef: (...refs: ElementRefType[]) => void;
   tourStepIndex: number;
   setTourStepIndex: (tourStepIndex: number) => void;
   tours: Tour[];
   setTours: (tours: Tour[]) => void;
   availableTour: Tour | undefined;
   setAvailableTour: (availableTour: Tour | undefined) => void;
+  pointers: { [key: string]: Measure };
+  setPointer: (id: string, pointer: LayoutChangeEvent) => void;
 }
-
 export const useStore = create<StoreState>((set) => ({
-  elementRefs: {},
-  setElementRef: (...refs) => {
-    set((state) => {
-      const updateRefs = { ...state.elementRefs };
-      refs.forEach(({ key, ref }) => {
-        updateRefs[key] = ref;
-      });
-      return { ...state, elementRefs: updateRefs };
+  pointers: {},
+  setPointer: (id: string, pointer: LayoutChangeEvent) => {
+    pointer.target.measure((x, y, width, height, pageX, pageY) => {
+      if (![x, y, width, height, pageX, pageY].some((i) => i === undefined)) {
+        set((state) => ({
+          pointers: {
+            ...state.pointers,
+            [id]: { x, y, width, height, pageX, pageY } as Measure,
+          },
+        }));
+      }
     });
   },
   tourStepIndex: 0,

@@ -1,4 +1,10 @@
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+  type ViewStyle,
+} from 'react-native';
 import { Body } from '../Body';
 import { Action } from '../Action';
 import type { Measure, TourStep } from '../../types';
@@ -18,79 +24,74 @@ export const Pointer = ({ step, onColse, layoutMeasure }: Props) => {
   const [uiMode, SetUiMode] = useState<'Bottom' | 'Top'>('Bottom');
   const [pointerTopMargin, setPointerMargin] = useState<number>(0);
 
-  const refs = useStore((s) => s.elementRefs);
+  const refs = useStore((s) => s.pointers);
   const ref = refs[element];
-
-  const [measure, setMeasure] = useState<Measure>();
-
   useEffect(() => {
-    if (ref && ref.current) {
-      //@ts-ignore
-      ref?.current.measure((x, y, width, height, pageX, pageY) => {
-        if (![x, y, width, height, pageX, pageY].some((i) => i === undefined)) {
-          setMeasure({ x, y, width, height, pageX, pageY });
-        }
-      });
-    }
-  }, [ref]);
-  useEffect(() => {
-    if (measure && layoutMeasure) {
-      if (measure.y > layoutMeasure.height / 2) {
+    if (ref && layoutMeasure) {
+      if (ref.y > layoutMeasure.height / 2) {
         SetUiMode('Top');
       } else {
         SetUiMode('Bottom');
       }
     }
-  }, [layoutMeasure, layoutMeasure?.height, measure, measure?.y]);
+  }, [layoutMeasure, layoutMeasure?.height, ref]);
   useEffect(() => {
-    if (measure) {
+    if (ref) {
       if (uiMode === 'Bottom') {
-        setPointerMargin(measure.pageY + measure.height + 10);
+        setPointerMargin(ref.pageY + ref.height + 10);
       } else {
         pointerRef?.current?.measure((_x, _y, _width, height) => {
-          setPointerMargin(measure.pageY - height - 10);
+          setPointerMargin(ref.pageY - height - 10);
         });
       }
     }
-  }, [measure, pointerRef, uiMode]);
+  }, [pointerRef, ref, uiMode]);
 
   return (
     <>
-      {measure && (
+      {ref && (
         <>
           <View
-            style={{
-              ...styles.dimmer,
-              left: 0,
-              width: measure.pageX,
-              height: '100%',
-            }}
+            style={
+              {
+                ...styles.dimmer,
+                left: 0,
+                width: ref.pageX,
+                height: '100%',
+              } as ViewStyle
+            }
           />
           <View
-            style={{
-              ...styles.dimmer,
-              left: measure.pageX,
-              width: '100%',
-              height: measure.pageY,
-            }}
+            style={
+              {
+                ...styles.dimmer,
+                left: ref.pageX,
+                width: '100%',
+                height: ref?.pageY,
+              } as ViewStyle
+            }
           />
           <View
-            style={{
-              ...styles.dimmer,
-              top: measure.pageY + measure?.height,
-              left: measure.pageX,
-              width: '100%',
-              height: '100%',
-            }}
+            style={
+              {
+                ...styles.dimmer,
+                top: ref.pageY + ref.height,
+                left: ref?.pageX,
+                width: '100%',
+                height: '100%',
+              } as ViewStyle
+            }
           />
           <View
-            style={{
-              ...styles.dimmer,
-              top: measure.pageY,
-              left: measure.pageX + measure.width,
-              width: '100%',
-              height: measure.height,
-            }}
+            style={
+              {
+                ...styles.dimmer,
+                top: ref.pageY,
+                left: ref.pageX + ref.width,
+                width: '100%',
+                height: ref?.height,
+              } as ViewStyle
+            }
           />
           <View
             style={{

@@ -1,8 +1,7 @@
 import { View, Text, StyleSheet, Button } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useNavigation, type NavigationProp } from '@react-navigation/native';
-import { useRef } from 'react';
-import { useRefRegister } from 'usetiful-react-native';
+import { setPointer } from 'usetiful-react-native';
 
 type RootStackParamList = {
   Detail: undefined;
@@ -71,33 +70,29 @@ const styles = StyleSheet.create({
   },
 });
 
-// -------------------------------------------------------------------
-
 function DetailsScreen() {
   const navitaion = useNavigation<NavigationProp<RootStackParamList>>();
-  const viewRef = useRef<View>(null);
-  const secondViewRef = useRef<View>(null);
-  const nextViewRef = useRef<View>(null);
 
-  useRefRegister(
-    { key: 'Test1', ref: viewRef },
-    { key: 'SecondView', ref: secondViewRef },
-    { key: 'NextView', ref: nextViewRef }
-  );
   return (
     <View style={{ ...styles.home, backgroundColor: 'green' }}>
       <Text>Details Screen</Text>
       <Text>About</Text>
       <Text>Number One</Text>
       <Text>Number Two</Text>
-      <View ref={viewRef}>
+      <View onLayout={(e) => setPointer('Test1', e)}>
         <Text>First Pointer</Text>
       </View>
       <Text>Number four</Text>
-      <View style={{ marginTop: 100 }} ref={secondViewRef}>
+      <View
+        style={{ marginTop: 100 }}
+        onLayout={(e) => setPointer('SecondView', e)}
+      >
         <Text>Second Pointer</Text>
       </View>
-      <View style={{ marginTop: 200 }} ref={nextViewRef}>
+      <View
+        style={{ marginTop: 200 }}
+        onLayout={(e) => setPointer('NextView', e)}
+      >
         <Text>Third Pointer</Text>
       </View>
       <Button

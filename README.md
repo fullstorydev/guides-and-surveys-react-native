@@ -51,37 +51,25 @@ Slide-outs and modals are entirely codeless. Simply define them in the Usetiful 
 
 ## Pointers
 
-To use pointers, you need to register your element with our custom hook. You can choose any key for your Ref and register it using useRefRegister. Then, use your key as a selector in the Usetiful admin.
+To use pointers, you need to add follwoing code to your target elemet. You can choose any key for your element and add it to setPointer function. Then, use your key as a selector in the Usetiful admin.
 
 ```js
-useRefRegister(
-  { key: 'Test1', ref: viewRef },
-  { key: 'SecondView', ref: secondViewRef },
-  { key: 'NextView', ref: nextViewRef }
-);
+onLayout={(e) => setPointer('YOUR_KEY', e)}
 ```
 
 Example:
 ```js
-const viewRef = useRef < View > null;
-const secondViewRef = useRef < View > null;
-const nextViewRef = useRef < View > null;
-
-useRefRegister(
-  { key: 'Test1', ref: viewRef },
-  { key: 'SecondView', ref: secondViewRef },
-  { key: 'NextView', ref: nextViewRef }
-);
+import { setPointer } from 'usetiful-react-native';
 
 return (
   <View>
-    <View ref={viewRef}>
+    <View onLayout={(e) => setPointer('YourFirstKey', e)}>
       <Text>First Pointer</Text>
     </View>
-    <View ref={secondViewRef}>
+    <View onLayout={(e) => setPointer('YourSecondKey', e)}>
       <Text>Second Pointer</Text>
     </View>
-    <View ref={nextViewRef}>
+    <View onLayout={(e) => setPointer('AnotherKey', e)}>
       <Text>Third Pointer</Text>
     </View>
   </View>

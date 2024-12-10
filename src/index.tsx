@@ -1,10 +1,4 @@
-import {
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-  type PropsWithChildren,
-} from 'react';
+import { useEffect, useMemo, useState, type PropsWithChildren } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { useNavigationState } from '@react-navigation/native';
 import type { Measure, UsetifulResponse } from './types';
@@ -12,7 +6,7 @@ import { Modal } from './components/Modal';
 import { useStore } from './stores/useStore';
 import { Pointer } from './components/Pointer';
 import { Slideout } from './components/Slideout';
-export { useRefRegister } from './hooks/useRefRegister';
+export { setPointer } from './utils/setPointer';
 
 const useCurrentRouteName = () => {
   const [currentRouteName, setCurrentRouteName] = useState('');
@@ -47,8 +41,6 @@ type Props = {
 
 export const Usetiful = ({ children, token }: Props) => {
   const currentRouteName = useCurrentRouteName();
-
-  const layoutRef = useRef<View>(null);
 
   const tours = useStore((s) => s.tours);
   const setTours = useStore((s) => s.setTours);
@@ -119,7 +111,7 @@ export const Usetiful = ({ children, token }: Props) => {
       ? availableTour.steps[tourStepIndex]
       : undefined;
 
-  const refs = useStore((s) => s.elementRefs);
+  const refs = useStore((s) => s.pointers);
 
   const stepType = useMemo(() => {
     if (step && step.type !== 'pointer') return step.type;
@@ -128,18 +120,19 @@ export const Usetiful = ({ children, token }: Props) => {
     else return undefined;
   }, [refs, step]);
 
-  useEffect(() => {
-    if (layoutRef && layoutRef.current) {
-      //@ts-ignore
-      layoutRef?.current.measure((x, y, width, height, pageX, pageY) => {
-        setLayoutMeasure({ x, y, width, height, pageX, pageY });
-      });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [layoutRef.current]);
-
   return (
-    <View style={styles.UsetifulContainer} ref={layoutRef}>
+    <View
+      style={styles.UsetifulContainer}
+      onLayout={(e) => {
+        e.target.measure((x, y, width, height, pageX, pageY) => {
+          if (
+            ![x, y, width, height, pageX, pageY].some((i) => i === undefined)
+          ) {
+            setLayoutMeasure({ x, y, width, height, pageX, pageY } as Measure);
+          }
+        });
+      }}
+    >
       {children}
       {step && (
         <View

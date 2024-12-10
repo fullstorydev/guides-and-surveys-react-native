@@ -26,10 +26,6 @@ export type Target = {
   url?: string;
 };
 
-export type ElementRefType = {
-  key: string;
-  ref: React.RefObject<any>;
-};
 export type Measure = {
   x: number;
   y: number;
