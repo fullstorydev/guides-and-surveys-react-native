@@ -55,7 +55,7 @@ export const Usetiful = ({ children, token }: Props) => {
       fetch('https://www.usetiful.com/api-space/data.json?lang=en', {
         method: 'GET',
         headers: {
-          'X-Auth-Token': '34ae1d22e7615d614bd3a17920a907c0',
+          'X-Auth-Token': token,
           'X-Requested-With': 'XMLHttpRequest',
           'Content-Type': 'application/json; charset=utf-8',
         },
