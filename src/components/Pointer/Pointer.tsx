@@ -1,15 +1,10 @@
-import {
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-  type ViewStyle,
-} from 'react-native';
+import { StyleSheet, Text, View, type ViewStyle } from 'react-native';
 import { Body } from '../Body';
 import { Action } from '../Action';
 import type { Measure, TourStep } from '../../types';
 import { useStore } from '../../stores/useStore';
 import { useEffect, useRef, useState } from 'react';
+import { CrossBtn } from '../Cross';
 
 type Props = {
   step: TourStep;
@@ -102,9 +97,7 @@ export const Pointer = ({ step, onColse, layoutMeasure }: Props) => {
           >
             <View style={styles.pointerHeader}>
               <Text style={styles.pointerText}>{title}</Text>
-              <TouchableOpacity style={styles.crossBtn} onPress={onColse}>
-                <Text>X</Text>
-              </TouchableOpacity>
+              <CrossBtn onColse={onColse} />
             </View>
             <View style={styles.pointerBody}>
               {!!content && <Body content={content} />}

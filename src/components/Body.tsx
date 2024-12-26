@@ -39,5 +39,6 @@ export const Body = ({ content }: BodyProps) => {
 const bodyCss = `<style>
 p{
 font-size:36px;
+font-family: sans-serif;
 }
 </style>`;

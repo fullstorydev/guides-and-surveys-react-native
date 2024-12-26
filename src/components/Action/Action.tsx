@@ -24,25 +24,36 @@ export const USAction = ({ action, onColse }: ActionProps) => {
     }
   }, [onColse, setTourStepIndex, tourStepIndex, type]);
 
-  const style = useMemo(() => {
+  const btnStyle = useMemo(() => {
     switch (styleType) {
       case 'Primary':
-        return { ...styles.footerBtn, ...styles.primaryBtn };
+        return { ...btnStyles.footerBtn, ...btnStyles.primaryBtn };
       case 'Secondary':
-        return { ...styles.footerBtn, ...styles.secondaryBrn };
+        return { ...btnStyles.footerBtn, ...btnStyles.secondaryBtn };
       default:
-        return { ...styles.footerBtn };
+        return { ...btnStyles.footerBtn };
+    }
+  }, [styleType]);
+
+  const textStyle = useMemo(() => {
+    switch (styleType) {
+      case 'Primary':
+        return { ...textStyles.footerBtn, ...textStyles.primaryBtn };
+      case 'Secondary':
+        return { ...textStyles.footerBtn, ...textStyles.secondaryBtn };
+      default:
+        return { ...textStyles.footerBtn };
     }
   }, [styleType]);
 
   return (
-    <TouchableOpacity style={style} onPress={onPress}>
-      <Text>{value}</Text>
+    <TouchableOpacity style={btnStyle} onPress={onPress}>
+      <Text style={textStyle}>{value}</Text>
     </TouchableOpacity>
   );
 };
 
-const styles = StyleSheet.create({
+const btnStyles = StyleSheet.create({
   footerBtn: {
     marginRight: 10,
     padding: 8,
@@ -50,9 +61,23 @@ const styles = StyleSheet.create({
   },
   primaryBtn: {
     backgroundColor: '#387DFF',
+    color: '#fff',
+    borderWidth: 0,
   },
-  secondaryBrn: {
-    borderColor: '#464646',
+  secondaryBtn: {
+    borderColor: '#ddd',
     borderWidth: 1,
+  },
+});
+
+const textStyles = StyleSheet.create({
+  footerBtn: {
+    fontWeight: '500',
+  },
+  primaryBtn: {
+    color: '#fff',
+  },
+  secondaryBtn: {
+    color: '#212121',
   },
 });

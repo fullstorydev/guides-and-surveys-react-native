@@ -1,7 +1,8 @@
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import { Body } from '../Body';
 import { Action } from '../Action';
 import type { TourStep } from '../../types';
+import { CrossBtn } from '../Cross';
 
 type ModalProps = {
   step: TourStep;
@@ -14,9 +15,7 @@ export const Modal = ({ step, onColse }: ModalProps) => {
     <View style={styles.modal}>
       <View style={styles.modalHeader}>
         <Text style={styles.modalText}>{title}</Text>
-        <TouchableOpacity style={styles.crossBtn} onPress={onColse}>
-          <Text>X</Text>
-        </TouchableOpacity>
+        <CrossBtn onColse={onColse} />
       </View>
       <View style={styles.modalBody}>
         {!!content && <Body content={content} />}
