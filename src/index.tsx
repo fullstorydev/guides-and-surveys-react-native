@@ -8,6 +8,11 @@ import { Pointer } from './components/Pointer';
 import { Slideout } from './components/Slideout';
 export { setPointer } from './utils/setPointer';
 
+const BaseURl = 'https://www.usetiful.com';
+// const BaseURl = 'https://admin:admin123@dev.usetiful.com';
+
+const END_POINT = '/api-space/data.json?lang=en&app=mobile';
+
 const useCurrentRouteName = () => {
   const [currentRouteName, setCurrentRouteName] = useState('');
   const state = useNavigationState((s) => s);
@@ -48,11 +53,13 @@ export const Usetiful = ({ children, token }: Props) => {
   const tourStepIndex = useStore((s) => s.tourStepIndex);
   const availableTour = useStore((s) => s.availableTour);
   const setAvailableTour = useStore((s) => s.setAvailableTour);
+  const setTheme = useStore((s) => s.setTheme);
   const [layoutMeasure, setLayoutMeasure] = useState<Measure>();
 
   useEffect(() => {
     const fetchData = () => {
-      fetch('https://www.usetiful.com/api-space/data.json?lang=en', {
+      const reqUrl = `${BaseURl}${END_POINT}`;
+      fetch(reqUrl, {
         method: 'GET',
         headers: {
           'X-Auth-Token': token,
@@ -81,7 +88,7 @@ export const Usetiful = ({ children, token }: Props) => {
         });
     };
     if (fetchData) fetchData();
-  }, [setTours, token]);
+  }, [setTheme, setTours, token]);
 
   useEffect(() => {
     setTourStepIndex(0);

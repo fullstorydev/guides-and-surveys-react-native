@@ -6,6 +6,7 @@ export type Tour = {
     name: 'Vahid test';
     steps: TourStep[];
     targets: Target[];
+    themeObject: Theme;
 };
 export type ActionType = {
     id: string;
@@ -32,5 +33,23 @@ export type Measure = {
     height: number;
     pageX: number;
     pageY: number;
+};
+export type Theme = {
+    primaryColor: string;
+    progressBarColor: string;
+    buttonPositionBottom: number;
+    buttonPositionRight: number;
+    fontFamily: string;
+    customFontFamily: string;
+    fontTitleFamily: string;
+    customFontTitleFamily: string;
+    fontButtonFamily: string;
+    customFontButtonFamily: string;
+    fontColor: string;
+    bgColor: string;
+    secondaryButtonColor: string;
+    fontSize: number;
+    fontTitleSize: number;
+    fontButtonSize: number;
 };
 //# sourceMappingURL=index.d.ts.map

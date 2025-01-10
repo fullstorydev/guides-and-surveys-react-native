@@ -3,7 +3,7 @@ import { Body } from '../Body';
 import { Action } from '../Action';
 import type { Measure, TourStep } from '../../types';
 import { useStore } from '../../stores/useStore';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { CrossBtn } from '../Cross';
 
 type Props = {
@@ -13,6 +13,7 @@ type Props = {
 };
 export const Pointer = ({ step, onColse, layoutMeasure }: Props) => {
   const { title, actions, content, element } = step;
+  const theme = useStore((s) => s.theme);
 
   const pointerRef = useRef<View>(null);
 
@@ -41,6 +42,51 @@ export const Pointer = ({ step, onColse, layoutMeasure }: Props) => {
       }
     }
   }, [pointerRef, ref, uiMode]);
+
+  const styles = useMemo(
+    () =>
+      StyleSheet.create({
+        pointer: {
+          backgroundColor: theme.bgColor,
+          marginHorizontal: '5%',
+          shadowColor: '#000000',
+          shadowOpacity: 0.5,
+          borderRadius: 5,
+          paddingHorizontal: 10,
+          paddingVertical: 8,
+        },
+        pointerHeader: {
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          alignItems: 'flex-start',
+        },
+        pointerFooter: {
+          flexDirection: 'row',
+          justifyContent: 'flex-end',
+          alignItems: 'flex-start',
+          marginTop: 10,
+        },
+        pointerText: {
+          textAlign: 'center',
+          fontSize: theme.fontSize,
+          color: theme.fontColor,
+        },
+        pointerBody: {
+          paddingVertical: 8,
+        },
+        crossBtn: {
+          fontSize: 16,
+          width: 20,
+          height: 20,
+          alignItems: 'flex-end',
+        },
+        dimmer: {
+          position: 'absolute',
+          backgroundColor: '#000000cc',
+        },
+      }),
+    [theme]
+  );
 
   return (
     <>
@@ -113,42 +159,3 @@ export const Pointer = ({ step, onColse, layoutMeasure }: Props) => {
     </>
   );
 };
-
-const styles = StyleSheet.create({
-  pointer: {
-    backgroundColor: '#fff',
-    marginHorizontal: '5%',
-    shadowColor: '#000000',
-    shadowOpacity: 0.5,
-    borderRadius: 5,
-    paddingHorizontal: 10,
-    paddingVertical: 8,
-  },
-  pointerHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
-  },
-  pointerFooter: {
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
-    alignItems: 'flex-start',
-    marginTop: 10,
-  },
-  pointerText: {
-    textAlign: 'center',
-  },
-  pointerBody: {
-    paddingVertical: 8,
-  },
-  crossBtn: {
-    fontSize: 16,
-    width: 20,
-    height: 20,
-    alignItems: 'flex-end',
-  },
-  dimmer: {
-    position: 'absolute',
-    backgroundColor: '#000000cc',
-  },
-});

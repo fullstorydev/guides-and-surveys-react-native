@@ -9,31 +9,62 @@ type ActionProps = {
 };
 export const USAction = ({ action, onColse }: ActionProps) => {
   const { styleType, type, value } = action;
+  const theme = useStore((s) => s.theme);
 
   const setTourStepIndex = useStore((s) => s.setTourStepIndex);
   const tourStepIndex = useStore((s) => s.tourStepIndex);
+  const tourStepLength = useStore((s) => s.tourStepLength);
 
   const onPress = useMemo(() => {
     switch (type) {
       case 'next':
-        return () => setTourStepIndex(tourStepIndex + 1);
+        if (tourStepIndex < tourStepLength - 1)
+          return () => setTourStepIndex(tourStepIndex + 1);
+        else return onColse;
       case 'previous':
         return () => setTourStepIndex(tourStepIndex - 1);
       default:
         return onColse;
     }
-  }, [onColse, setTourStepIndex, tourStepIndex, type]);
+  }, [onColse, setTourStepIndex, tourStepIndex, tourStepLength, type]);
 
-  const btnStyle = useMemo(() => {
-    switch (styleType) {
-      case 'Primary':
-        return { ...btnStyles.footerBtn, ...btnStyles.primaryBtn };
-      case 'Secondary':
-        return { ...btnStyles.footerBtn, ...btnStyles.secondaryBtn };
-      default:
-        return { ...btnStyles.footerBtn };
-    }
-  }, [styleType]);
+  const btnStyles = useMemo(
+    () =>
+      StyleSheet.create({
+        footerBtn: {
+          marginRight: 10,
+          padding: 8,
+          borderRadius: 6,
+        },
+        primaryBtn: {
+          backgroundColor: theme.primaryColor,
+          color: '#fff',
+          borderWidth: 0,
+        },
+        secondaryBtn: {
+          borderColor: theme.secondaryButtonColor,
+          borderWidth: 1,
+        },
+      }),
+    [theme]
+  );
+
+  const textStyles = useMemo(
+    () =>
+      StyleSheet.create({
+        footerBtn: {
+          fontWeight: '500',
+          fontSize: theme.fontButtonSize,
+        },
+        primaryBtn: {
+          color: '#fff',
+        },
+        secondaryBtn: {
+          color: theme.secondaryButtonColor,
+        },
+      }),
+    [theme]
+  );
 
   const textStyle = useMemo(() => {
     switch (styleType) {
@@ -44,7 +75,27 @@ export const USAction = ({ action, onColse }: ActionProps) => {
       default:
         return { ...textStyles.footerBtn };
     }
-  }, [styleType]);
+  }, [
+    styleType,
+    textStyles.footerBtn,
+    textStyles.primaryBtn,
+    textStyles.secondaryBtn,
+  ]);
+  const btnStyle = useMemo(() => {
+    switch (styleType) {
+      case 'Primary':
+        return { ...btnStyles.footerBtn, ...btnStyles.primaryBtn };
+      case 'Secondary':
+        return { ...btnStyles.footerBtn, ...btnStyles.secondaryBtn };
+      default:
+        return { ...btnStyles.footerBtn };
+    }
+  }, [
+    btnStyles.footerBtn,
+    btnStyles.primaryBtn,
+    btnStyles.secondaryBtn,
+    styleType,
+  ]);
 
   return (
     <TouchableOpacity style={btnStyle} onPress={onPress}>
@@ -52,32 +103,3 @@ export const USAction = ({ action, onColse }: ActionProps) => {
     </TouchableOpacity>
   );
 };
-
-const btnStyles = StyleSheet.create({
-  footerBtn: {
-    marginRight: 10,
-    padding: 8,
-    borderRadius: 6,
-  },
-  primaryBtn: {
-    backgroundColor: '#387DFF',
-    color: '#fff',
-    borderWidth: 0,
-  },
-  secondaryBtn: {
-    borderColor: '#ddd',
-    borderWidth: 1,
-  },
-});
-
-const textStyles = StyleSheet.create({
-  footerBtn: {
-    fontWeight: '500',
-  },
-  primaryBtn: {
-    color: '#fff',
-  },
-  secondaryBtn: {
-    color: '#212121',
-  },
-});

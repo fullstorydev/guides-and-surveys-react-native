@@ -1,8 +1,9 @@
-import type { Measure, Tour } from '../types';
+import type { Measure, Theme, Tour } from '../types';
 import { type LayoutChangeEvent } from 'react-native';
 interface StoreState {
     tourStepIndex: number;
     setTourStepIndex: (tourStepIndex: number) => void;
+    tourStepLength: number;
     tours: Tour[];
     setTours: (tours: Tour[]) => void;
     availableTour: Tour | undefined;
@@ -11,6 +12,8 @@ interface StoreState {
         [key: string]: Measure;
     };
     setPointer: (id: string, pointer: LayoutChangeEvent) => void;
+    theme: Theme;
+    setTheme: (theme: Theme) => void;
 }
 export declare const useStore: import("zustand").UseBoundStore<import("zustand").StoreApi<StoreState>>;
 export {};
