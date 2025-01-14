@@ -7,6 +7,8 @@ export type Tour = {
     steps: TourStep[];
     targets: Target[];
     themeObject: Theme;
+    progress: boolean;
+    progressType: number;
 };
 export type ActionType = {
     id: string;

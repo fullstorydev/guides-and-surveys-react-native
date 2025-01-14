@@ -151,17 +151,17 @@ export const Usetiful = ({ children, token }: Props) => {
           }}
         >
           {stepType === 'modal' && (
-            <Modal step={step} onColse={() => setSelfClosed(true)} />
+            <Modal step={step} onClose={() => setSelfClosed(true)} />
           )}
           {stepType === 'pointer' && (
             <Pointer
               step={step}
-              onColse={() => setSelfClosed(true)}
+              onClose={() => setSelfClosed(true)}
               layoutMeasure={layoutMeasure}
             />
           )}
           {stepType === 'slideout' && (
-            <Slideout step={step} onColse={() => setSelfClosed(true)} />
+            <Slideout step={step} onClose={() => setSelfClosed(true)} />
           )}
         </View>
       )}

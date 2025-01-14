@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { StyleSheet, Text, TouchableOpacity } from 'react-native';
 import { useStore } from '../stores/useStore';
 
-export const CrossBtn = ({ onColse }: { onColse: () => void }) => {
+export const CrossBtn = ({ onClose }: { onClose: () => void }) => {
   const theme = useStore((s) => s.theme);
   const styles = useMemo(
     () =>
@@ -20,7 +20,7 @@ export const CrossBtn = ({ onColse }: { onColse: () => void }) => {
     [theme]
   );
   return (
-    <TouchableOpacity style={styles.crossBtn} onPress={onColse}>
+    <TouchableOpacity style={styles.crossBtn} onPress={onClose}>
       <Text style={styles.crossBtnIcon}>X</Text>
     </TouchableOpacity>
   );

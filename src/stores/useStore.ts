@@ -14,6 +14,7 @@ interface StoreState {
   setPointer: (id: string, pointer: LayoutChangeEvent) => void;
   theme: Theme;
   setTheme: (theme: Theme) => void;
+  progress: { state: boolean; type: number };
 }
 export const useStore = create<StoreState>((set) => ({
   pointers: {},
@@ -56,15 +57,20 @@ export const useStore = create<StoreState>((set) => ({
       availableTour,
       theme,
       tourStepLength: availableTour?.steps?.length ?? 0,
+      progress: {
+        state: availableTour?.progress ?? false,
+        type: availableTour?.progressType ?? 1,
+      },
     });
   },
   theme: THEME_DEFAULT,
   setTheme: (theme) => set({ theme }),
+  progress: { state: false, type: 1 },
 }));
 
 const THEME_DEFAULT = {
   primaryColor: '#387DFF',
-  progressBarColor: '',
+  progressBarColor: '#387DFF',
   buttonPositionBottom: 0,
   buttonPositionRight: 0,
   fontFamily: '',

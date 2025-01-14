@@ -5,9 +5,9 @@ import { useStore } from '../../stores/useStore';
 
 type ActionProps = {
   action: ActionType;
-  onColse: () => void;
+  onClose: () => void;
 };
-export const USAction = ({ action, onColse }: ActionProps) => {
+export const USAction = ({ action, onClose }: ActionProps) => {
   const { styleType, type, value } = action;
   const theme = useStore((s) => s.theme);
 
@@ -20,13 +20,13 @@ export const USAction = ({ action, onColse }: ActionProps) => {
       case 'next':
         if (tourStepIndex < tourStepLength - 1)
           return () => setTourStepIndex(tourStepIndex + 1);
-        else return onColse;
+        else return onClose;
       case 'previous':
         return () => setTourStepIndex(tourStepIndex - 1);
       default:
-        return onColse;
+        return onClose;
     }
-  }, [onColse, setTourStepIndex, tourStepIndex, tourStepLength, type]);
+  }, [onClose, setTourStepIndex, tourStepIndex, tourStepLength, type]);
 
   const btnStyles = useMemo(
     () =>

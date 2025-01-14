@@ -1,17 +1,17 @@
-import { StyleSheet, Text, View, type ViewStyle } from 'react-native';
+import { StyleSheet, View, type ViewStyle } from 'react-native';
 import { Body } from '../Body';
 import { Action } from '../Action';
 import type { Measure, TourStep } from '../../types';
 import { useStore } from '../../stores/useStore';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { CrossBtn } from '../Cross';
+import { StepHeader } from '../StepHeader/StepHeader';
 
 type Props = {
   step: TourStep;
-  onColse: () => void;
+  onClose: () => void;
   layoutMeasure?: Measure;
 };
-export const Pointer = ({ step, onColse, layoutMeasure }: Props) => {
+export const Pointer = ({ step, onClose, layoutMeasure }: Props) => {
   const { title, actions, content, element } = step;
   const theme = useStore((s) => s.theme);
 
@@ -54,11 +54,6 @@ export const Pointer = ({ step, onColse, layoutMeasure }: Props) => {
           borderRadius: 5,
           paddingHorizontal: 10,
           paddingVertical: 8,
-        },
-        pointerHeader: {
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-          alignItems: 'flex-start',
         },
         pointerFooter: {
           flexDirection: 'row',
@@ -141,16 +136,13 @@ export const Pointer = ({ step, onColse, layoutMeasure }: Props) => {
             }}
             ref={pointerRef}
           >
-            <View style={styles.pointerHeader}>
-              <Text style={styles.pointerText}>{title}</Text>
-              <CrossBtn onColse={onColse} />
-            </View>
+            <StepHeader {...{ title, onClose }} />
             <View style={styles.pointerBody}>
               {!!content && <Body content={content} />}
             </View>
             <View style={styles.pointerFooter}>
               {actions.map((action) => {
-                return <Action key={action.id} {...{ action, onColse }} />;
+                return <Action key={action.id} {...{ action, onClose }} />;
               })}
             </View>
           </View>

@@ -14,6 +14,10 @@ interface StoreState {
     setPointer: (id: string, pointer: LayoutChangeEvent) => void;
     theme: Theme;
     setTheme: (theme: Theme) => void;
+    progress: {
+        state: boolean;
+        type: number;
+    };
 }
 export declare const useStore: import("zustand").UseBoundStore<import("zustand").StoreApi<StoreState>>;
 export {};
