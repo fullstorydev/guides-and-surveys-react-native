@@ -3,8 +3,9 @@ export type UsetifulResponse = {
 };
 export type Tour = {
     id: string;
-    name: 'Vahid test';
+    name: string;
     steps: TourStep[];
+    targetOperator: number;
     targets: Target[];
     themeObject: Theme;
     progress: boolean;
@@ -25,8 +26,10 @@ export type TourStep = {
     element: string;
 };
 export type Target = {
-    type: 'address-simple' | string;
+    type: 'address-simple' | 'user-segment' | string;
     url?: string;
+    formattedName?: string;
+    name?: string;
 };
 export type Measure = {
     x: number;
@@ -53,5 +56,31 @@ export type Theme = {
     fontSize: number;
     fontTitleSize: number;
     fontButtonSize: number;
+};
+export type UsetigulTag = {
+    [key: string]: string;
+};
+export type ProgressorData = {
+    uf_completed: [];
+    tours: {
+        id: number;
+        state: string;
+        name: string;
+        currentStep: number;
+        updatedAt: string;
+    }[];
+    checklistsRedirects: [];
+    checklistsDismiss: [];
+    uf_tags: UsetigulTag;
+    uf_banners: [];
+    uf_smartTips: [];
+    autoSegment: string;
+    customSegments: string[];
+    report_tags: {
+        firstName: 'vahid';
+        lastName: 'alam';
+    };
+    storedAt: string;
+    abExperiments: [];
 };
 //# sourceMappingURL=index.d.ts.map

@@ -1,6 +1,9 @@
-import type { Measure, Theme, Tour } from '../types';
+import type { Measure, ProgressorData, Theme, Tour, UsetigulTag } from '../types';
 import { type LayoutChangeEvent } from 'react-native';
 interface StoreState {
+    token: string | undefined;
+    tags: UsetigulTag | undefined;
+    setToken: (token: string, tags?: UsetigulTag) => void;
     tourStepIndex: number;
     setTourStepIndex: (tourStepIndex: number) => void;
     tourStepLength: number;
@@ -18,6 +21,7 @@ interface StoreState {
         state: boolean;
         type: number;
     };
+    progressorData: ProgressorData | null;
 }
 export declare const useStore: import("zustand").UseBoundStore<import("zustand").StoreApi<StoreState>>;
 export {};

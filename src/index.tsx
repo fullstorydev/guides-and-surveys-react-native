@@ -1,112 +1,33 @@
 import { useEffect, useMemo, useState, type PropsWithChildren } from 'react';
 import { StyleSheet, View } from 'react-native';
-import { useNavigationState } from '@react-navigation/native';
-import type { Measure, UsetifulResponse } from './types';
+import type { Measure, UsetigulTag } from './types';
 import { Modal } from './components/Modal';
 import { useStore } from './stores/useStore';
 import { Pointer } from './components/Pointer';
 import { Slideout } from './components/Slideout';
+import { useCurrentRouteName } from './hooks/useCurrentRouteName';
+import { useTargetting } from './hooks/useTargetting';
 export { setPointer } from './utils/setPointer';
-
-const BaseURl = 'https://www.usetiful.com';
-// const BaseURl = 'https://admin:admin123@dev.usetiful.com';
-
-const END_POINT = '/api-space/data.json?lang=en&app=mobile';
-
-const useCurrentRouteName = () => {
-  const [currentRouteName, setCurrentRouteName] = useState('');
-  const state = useNavigationState((s) => s);
-
-  useEffect(() => {
-    if (state) {
-      let route = state.routes[state.index];
-      const pathResult: string[] = [];
-      if (route) {
-        pathResult.push(route.name);
-        let subState = route.state;
-        while (subState) {
-          route = subState.routes[subState.index ?? 0] as any;
-          if (route) {
-            pathResult.push(route.name);
-            subState = route.state;
-          } else {
-            subState = undefined;
-          }
-        }
-      }
-      setCurrentRouteName(pathResult.join('/'));
-    }
-  }, [state]);
-  return currentRouteName;
-};
 
 type Props = {
   token: string;
+  tags?: UsetigulTag;
 } & PropsWithChildren;
 
-export const Usetiful = ({ children, token }: Props) => {
+export const Usetiful = ({ children, token, tags }: Props) => {
   const currentRouteName = useCurrentRouteName();
 
-  const tours = useStore((s) => s.tours);
-  const setTours = useStore((s) => s.setTours);
-  const setTourStepIndex = useStore((s) => s.setTourStepIndex);
   const tourStepIndex = useStore((s) => s.tourStepIndex);
+
+  const setToken = useStore((s) => s.setToken);
   const availableTour = useStore((s) => s.availableTour);
-  const setAvailableTour = useStore((s) => s.setAvailableTour);
-  const setTheme = useStore((s) => s.setTheme);
   const [layoutMeasure, setLayoutMeasure] = useState<Measure>();
 
   useEffect(() => {
-    const fetchData = () => {
-      const reqUrl = `${BaseURl}${END_POINT}`;
-      fetch(reqUrl, {
-        method: 'GET',
-        headers: {
-          'X-Auth-Token': token,
-          'X-Requested-With': 'XMLHttpRequest',
-          'Content-Type': 'application/json; charset=utf-8',
-        },
-      })
-        .then((response) => {
-          if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-          }
-          response.json().then((res: UsetifulResponse) => {
-            setTours(res.tours);
-            console.log(`
-              =============================================
-              =============================================
-              ============== USETIFUL =====================
-              ================= IS ========================
-              ============== LOADED =======================
-              =============================================
-              =============================================`);
-          });
-        })
-        .catch((error) => {
-          console.log('=====error====>', error.message);
-        });
-    };
-    if (fetchData) fetchData();
-  }, [setTheme, setTours, token]);
+    setToken(token, tags);
+  }, [setToken, tags, token]);
 
-  useEffect(() => {
-    setTourStepIndex(0);
-    if (tours && tours.length) {
-      setAvailableTour(
-        tours.find((tour) => {
-          if (tour.targets) {
-            return tour.targets.find(
-              (target) => !!target.url && currentRouteName.includes(target.url)
-            );
-          }
-          return undefined;
-        })
-      );
-    } else {
-      setAvailableTour(undefined);
-    }
-  }, [currentRouteName, setAvailableTour, setTourStepIndex, tours]);
+  useTargetting();
 
   useEffect(() => {
     setSelfClosed(false);
