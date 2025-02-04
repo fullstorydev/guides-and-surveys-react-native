@@ -22,6 +22,9 @@ export const Pointer = ({ step, onClose, layoutMeasure }: Props) => {
 
   const refs = useStore((s) => s.pointers);
   const ref = refs[element];
+
+  console.log('====top=======>', ref, layoutMeasure?.height);
+
   useEffect(() => {
     if (ref && layoutMeasure) {
       if (ref.y > layoutMeasure.height / 2) {
@@ -31,6 +34,7 @@ export const Pointer = ({ step, onClose, layoutMeasure }: Props) => {
       }
     }
   }, [layoutMeasure, layoutMeasure?.height, ref]);
+
   useEffect(() => {
     if (ref) {
       if (uiMode === 'Bottom') {
@@ -43,45 +47,76 @@ export const Pointer = ({ step, onClose, layoutMeasure }: Props) => {
     }
   }, [pointerRef, ref, uiMode]);
 
-  const styles = useMemo(
-    () =>
-      StyleSheet.create({
-        pointer: {
-          backgroundColor: theme.bgColor,
-          marginHorizontal: '5%',
-          shadowColor: '#000000',
-          shadowOpacity: 0.5,
-          borderRadius: 5,
-          paddingHorizontal: 10,
-          paddingVertical: 8,
-        },
-        pointerFooter: {
-          flexDirection: 'row',
-          justifyContent: 'flex-end',
-          alignItems: 'flex-start',
-          marginTop: 10,
-        },
-        pointerText: {
-          textAlign: 'center',
-          fontSize: theme.fontSize,
-          color: theme.fontColor,
-        },
-        pointerBody: {
-          paddingVertical: 8,
-        },
-        crossBtn: {
-          fontSize: 16,
-          width: 20,
-          height: 20,
-          alignItems: 'flex-end',
-        },
-        dimmer: {
-          position: 'absolute',
-          backgroundColor: '#000000cc',
-        },
-      }),
-    [theme]
-  );
+  const styles = useMemo(() => {
+    const MARGIN_HORIZONTAL = 15;
+    const PADDING_HIRIZONTAL = 10;
+
+    const centerOfElementOnScreen =
+      (ref?.pageX ?? 0) -
+      (PADDING_HIRIZONTAL + MARGIN_HORIZONTAL) +
+      (ref?.width ?? 0) / 2;
+
+    return StyleSheet.create({
+      pointer: {
+        backgroundColor: theme.bgColor,
+        marginHorizontal: MARGIN_HORIZONTAL,
+        shadowColor: '#000000',
+        shadowOpacity: 0.5,
+        borderRadius: 5,
+        paddingHorizontal: PADDING_HIRIZONTAL,
+        paddingVertical: 8,
+      },
+      pointerFooter: {
+        flexDirection: 'row',
+        justifyContent: 'flex-end',
+        alignItems: 'flex-start',
+        marginTop: 10,
+      },
+      pointerText: {
+        textAlign: 'center',
+        fontSize: theme.fontSize,
+        color: theme.fontColor,
+      },
+      pointerBody: {
+        paddingVertical: 8,
+      },
+      tip: {
+        width: 10,
+        height: 10,
+        position: 'absolute',
+        ...(uiMode === 'Bottom' ? { top: -5 } : { bottom: -5 }),
+        left: centerOfElementOnScreen,
+        backgroundColor: theme.bgColor,
+        transform: 'rotate(45deg)',
+      },
+      dimmer: {
+        position: 'absolute',
+        backgroundColor: '#000000cc',
+      },
+      dimmer1: {
+        left: 0,
+        width: ref?.pageX,
+        height: '100%',
+      },
+      dimmer2: {
+        left: ref?.pageX,
+        width: '100%',
+        height: ref?.pageY,
+      },
+      dimmer3: {
+        top: (ref?.pageY ?? 0) + (ref?.height ?? 0),
+        left: ref?.pageX,
+        width: '100%',
+        height: '100%',
+      },
+      dimmer4: {
+        top: ref?.pageY,
+        left: (ref?.pageX ?? 0) + (ref?.width ?? 0),
+        width: '100%',
+        height: ref?.height,
+      },
+    });
+  }, [ref, theme, uiMode]);
 
   return (
     <>
@@ -91,9 +126,7 @@ export const Pointer = ({ step, onClose, layoutMeasure }: Props) => {
             style={
               {
                 ...styles.dimmer,
-                left: 0,
-                width: ref.pageX,
-                height: '100%',
+                ...styles.dimmer1,
               } as ViewStyle
             }
           />
@@ -101,9 +134,7 @@ export const Pointer = ({ step, onClose, layoutMeasure }: Props) => {
             style={
               {
                 ...styles.dimmer,
-                left: ref.pageX,
-                width: '100%',
-                height: ref?.pageY,
+                ...styles.dimmer2,
               } as ViewStyle
             }
           />
@@ -111,10 +142,7 @@ export const Pointer = ({ step, onClose, layoutMeasure }: Props) => {
             style={
               {
                 ...styles.dimmer,
-                top: ref.pageY + ref.height,
-                left: ref?.pageX,
-                width: '100%',
-                height: '100%',
+                ...styles.dimmer3,
               } as ViewStyle
             }
           />
@@ -122,10 +150,7 @@ export const Pointer = ({ step, onClose, layoutMeasure }: Props) => {
             style={
               {
                 ...styles.dimmer,
-                top: ref.pageY,
-                left: ref.pageX + ref.width,
-                width: '100%',
-                height: ref?.height,
+                ...styles.dimmer4,
               } as ViewStyle
             }
           />
@@ -136,6 +161,7 @@ export const Pointer = ({ step, onClose, layoutMeasure }: Props) => {
             }}
             ref={pointerRef}
           >
+            <View style={styles.tip} />
             <StepHeader {...{ title, onClose }} />
             <View style={styles.pointerBody}>
               {!!content && <Body content={content} />}

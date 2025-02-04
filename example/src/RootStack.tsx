@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, Button } from 'react-native';
+import { View, Text, StyleSheet, Button, type ViewStyle } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useNavigation, type NavigationProp } from '@react-navigation/native';
 import { setPointer } from 'usetiful-react-native';
@@ -84,13 +84,13 @@ function DetailsScreen() {
       </View>
       <Text>Number four</Text>
       <View
-        style={{ marginTop: 100 }}
+        style={{ marginTop: 100, marginLeft: 200 } as ViewStyle}
         onLayout={(e) => setPointer('SecondView', e)}
       >
         <Text>Second Pointer</Text>
       </View>
       <View
-        style={{ marginTop: 200 }}
+        style={{ marginTop: 300 }}
         onLayout={(e) => setPointer('NextView', e)}
       >
         <Text>Third Pointer</Text>

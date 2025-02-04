@@ -26,6 +26,7 @@ export const Body = ({ content }: BodyProps) => {
     }
     p{
     font-size:${theme.fontSize + 16}px;
+    line-height:1.4;
     font-family: sans-serif;
     }
     </style>`;
