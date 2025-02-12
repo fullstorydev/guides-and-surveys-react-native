@@ -13,7 +13,6 @@ type ModalProps = {
 export const Modal = ({ step, onClose }: ModalProps) => {
   const { title, actions, content } = step;
   const theme = useStore((s) => s.theme);
-
   const styles = useMemo(
     () =>
       StyleSheet.create({
