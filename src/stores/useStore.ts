@@ -31,6 +31,7 @@ interface StoreState {
   setTheme: (theme: Theme) => void;
   progress: { state: boolean; type: number };
   progressorData: ProgressorData | null;
+  gotoTour: (tourId: string) => void;
 }
 export const useStore = create<StoreState>((set) => ({
   token: undefined,
@@ -87,6 +88,26 @@ export const useStore = create<StoreState>((set) => ({
         state: availableTour?.progress ?? false,
         type: availableTour?.progressType ?? 1,
       },
+    });
+  },
+  gotoTour: (tourId: string) => {
+    set((state) => {
+      const selectedTour = state.tours.find((tour) => tour.id === tourId);
+      if (selectedTour) {
+        return {
+          availableTour: selectedTour,
+          tourStepIndex: 0,
+          tourStepLength: selectedTour.steps.length ?? 0,
+          progress: {
+            state: selectedTour.progress ?? false,
+            type: selectedTour.progressType ?? 1,
+          },
+          theme: selectedTour.themeObject ?? THEME_DEFAULT,
+        };
+      } else {
+        console.error(`Tour with ID ${tourId} not found.`);
+        return {};
+      }
     });
   },
 
