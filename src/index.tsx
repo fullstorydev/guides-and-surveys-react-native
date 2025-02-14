@@ -40,7 +40,6 @@ export const Usetiful = ({ children, token, tags }: Props) => {
       : undefined;
 
   const refs = useStore((s) => s.pointers);
-
   const stepType = useMemo(() => {
     if (step && step.type !== 'pointer') return step.type;
     else if (step?.type === 'pointer')

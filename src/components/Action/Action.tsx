@@ -8,12 +8,13 @@ type ActionProps = {
   onClose: () => void;
 };
 export const USAction = ({ action, onClose }: ActionProps) => {
-  const { styleType, type, value } = action;
+  const { styleType, type, value, tourId } = action;
   const theme = useStore((s) => s.theme);
 
   const setTourStepIndex = useStore((s) => s.setTourStepIndex);
   const tourStepIndex = useStore((s) => s.tourStepIndex);
   const tourStepLength = useStore((s) => s.tourStepLength);
+  const gotoTour = useStore((s) => s.gotoTour);
 
   const onPress = useMemo(() => {
     switch (type) {
@@ -23,10 +24,21 @@ export const USAction = ({ action, onClose }: ActionProps) => {
         else return onClose;
       case 'previous':
         return () => setTourStepIndex(tourStepIndex - 1);
+      case 'gototour':
+        return () => gotoTour(tourId);
+
       default:
         return onClose;
     }
-  }, [onClose, setTourStepIndex, tourStepIndex, tourStepLength, type]);
+  }, [
+    onClose,
+    setTourStepIndex,
+    gotoTour,
+    tourStepIndex,
+    tourStepLength,
+    type,
+    tourId,
+  ]);
 
   const btnStyles = useMemo(
     () =>
