@@ -11,29 +11,31 @@ export const useTargetting = () => {
   const progressorData = useStore((s) => s.progressorData);
 
   useEffect(() => {
-    setTourStepIndex(0);
     if (tours && tours.length) {
-      setAvailableTour(
-        tours.find((tour) => {
-          if (tour.targets) {
-            const conditions = tour.targets.map((target) =>
-              checkByTargets({
-                target,
-                path: currentRouteName,
-                autoSegment: progressorData?.autoSegment,
-                customSegments: progressorData?.customSegments,
-              })
-            );
+      const avTour = tours.find((tour) => {
+        if (tour.targets) {
+          const conditions = tour.targets.map((target) =>
+            checkByTargets({
+              target,
+              path: currentRouteName,
+              autoSegment: progressorData?.autoSegment,
+              customSegments: progressorData?.customSegments,
+            })
+          );
 
-            if (tour.targetOperator === 0) {
-              return conditions.every((c) => c);
-            } else {
-              return conditions.some((c) => c);
-            }
+          if (tour.targetOperator === 0) {
+            return conditions.every((c) => c);
+          } else {
+            return conditions.some((c) => c);
           }
-          return undefined;
-        })
-      );
+        }
+        return undefined;
+      });
+      const currentStep =
+        progressorData?.tours?.find(
+          (t) => t.id.toString() === avTour?.id.toString()
+        )?.currentStep ?? 0;
+      setAvailableTour(avTour, currentStep);
     } else {
       setAvailableTour(undefined);
     }
