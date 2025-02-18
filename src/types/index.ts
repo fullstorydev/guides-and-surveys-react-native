@@ -14,10 +14,11 @@ export type Tour = {
 export type ActionType = {
   id: string;
   styleType: 'Primary' | 'Secondary' | string;
-  type: 'next' | 'close' | 'previous' | 'gototour' | 'goto';
+  type: 'next' | 'close' | 'previous' | 'gototour' | 'goto' | 'jump';
   value: string;
   tourId: string;
   url?: string;
+  to: string;
 };
 export type TourStep = {
   actions: ActionType[];

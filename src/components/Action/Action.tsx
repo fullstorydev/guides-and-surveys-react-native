@@ -8,13 +8,14 @@ type ActionProps = {
   onClose: () => void;
 };
 export const USAction = ({ action, onClose }: ActionProps) => {
-  const { styleType, type, value, tourId, url } = action;
+  const { styleType, type, value, tourId, url, to } = action;
   const theme = useStore((s) => s.theme);
 
   const setTourStepIndex = useStore((s) => s.setTourStepIndex);
   const tourStepIndex = useStore((s) => s.tourStepIndex);
   const tourStepLength = useStore((s) => s.tourStepLength);
   const gotoTour = useStore((s) => s.gotoTour);
+  const availableTour = useStore((s) => s.availableTour);
 
   const onPress = useMemo(() => {
     switch (type) {
@@ -34,7 +35,16 @@ export const USAction = ({ action, onClose }: ActionProps) => {
             );
           }
         };
-
+      case 'jump':
+        return () => {
+          if (!availableTour || !availableTour.steps) return;
+          const stepIndex = availableTour.steps.findIndex(
+            (step) => parseInt(step.id, 10) === parseInt(to, 10)
+          );
+          if (stepIndex !== -1) {
+            setTourStepIndex(stepIndex);
+          }
+        };
       default:
         return onClose;
     }
@@ -47,6 +57,8 @@ export const USAction = ({ action, onClose }: ActionProps) => {
     gotoTour,
     tourId,
     url,
+    availableTour,
+    to,
   ]);
 
   const btnStyles = useMemo(
