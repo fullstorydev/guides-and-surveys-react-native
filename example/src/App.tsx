@@ -8,7 +8,7 @@ export default function App() {
     <NavigationContainer>
       <Usetiful
         token="7618802c6fed361935f6fba6b2222fcb"
-        tags={{ userId: '1111' }}
+        tags={{ userId: '2222' }}
       >
         <RootStack />
       </Usetiful>

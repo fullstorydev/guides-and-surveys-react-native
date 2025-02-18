@@ -7,6 +7,7 @@ import { Pointer } from './components/Pointer';
 import { Slideout } from './components/Slideout';
 import { useCurrentRouteName } from './hooks/useCurrentRouteName';
 import { useTargetting } from './hooks/useTargetting';
+import { useProgressorUpdate } from './hooks/useProgressorUpdate';
 export { setPointer } from './utils/setPointer';
 
 type Props = {
@@ -28,6 +29,7 @@ export const Usetiful = ({ children, token, tags }: Props) => {
   }, [setToken, tags, token]);
 
   useTargetting();
+  useProgressorUpdate();
 
   useEffect(() => {
     setSelfClosed(false);

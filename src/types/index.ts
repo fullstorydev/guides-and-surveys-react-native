@@ -65,23 +65,17 @@ export type UsetigulTag = {
   [key: string]: string;
 };
 
+export type progressorTour = {
+  id: string;
+  state: string;
+  name: string;
+  currentStep: number;
+  updatedAt: string;
+};
+
 export type ProgressorData = {
-  uf_completed: [];
-  tours: {
-    id: number;
-    state: string;
-    name: string;
-    currentStep: number;
-    updatedAt: string;
-  }[];
-  checklistsRedirects: [];
-  checklistsDismiss: [];
-  uf_tags: UsetigulTag;
-  uf_banners: [];
-  uf_smartTips: [];
+  tours: progressorTour[];
   autoSegment: string;
   customSegments: string[];
-  report_tags: { firstName: 'vahid'; lastName: 'alam' };
   storedAt: string;
-  abExperiments: [];
 };
