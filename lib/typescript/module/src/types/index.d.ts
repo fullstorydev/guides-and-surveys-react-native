@@ -14,8 +14,9 @@ export type Tour = {
 export type ActionType = {
     id: string;
     styleType: 'Primary' | 'Secondary' | string;
-    type: 'next' | 'close' | 'previous';
+    type: 'next' | 'close' | 'previous' | 'gototour';
     value: string;
+    tourId: string;
 };
 export type TourStep = {
     actions: ActionType[];
@@ -60,27 +61,17 @@ export type Theme = {
 export type UsetigulTag = {
     [key: string]: string;
 };
+export type progressorTour = {
+    id: string;
+    state: string;
+    name: string;
+    currentStep: number;
+    updatedAt: string;
+};
 export type ProgressorData = {
-    uf_completed: [];
-    tours: {
-        id: number;
-        state: string;
-        name: string;
-        currentStep: number;
-        updatedAt: string;
-    }[];
-    checklistsRedirects: [];
-    checklistsDismiss: [];
-    uf_tags: UsetigulTag;
-    uf_banners: [];
-    uf_smartTips: [];
+    tours: progressorTour[];
     autoSegment: string;
     customSegments: string[];
-    report_tags: {
-        firstName: 'vahid';
-        lastName: 'alam';
-    };
     storedAt: string;
-    abExperiments: [];
 };
 //# sourceMappingURL=index.d.ts.map

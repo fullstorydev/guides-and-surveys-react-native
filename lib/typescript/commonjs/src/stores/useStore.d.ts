@@ -10,7 +10,7 @@ interface StoreState {
     tours: Tour[];
     setTours: (tours: Tour[]) => void;
     availableTour: Tour | undefined;
-    setAvailableTour: (availableTour: Tour | undefined) => void;
+    setAvailableTour: (availableTour: Tour | undefined, tourStepIndex?: number) => void;
     pointers: {
         [key: string]: Measure;
     };
@@ -21,8 +21,23 @@ interface StoreState {
         state: boolean;
         type: number;
     };
-    progressorData: ProgressorData | null;
+    progressorHasChanged: boolean;
+    setProgressorHasChanged: (progressorHasChanged: boolean) => void;
+    progressorData: ProgressorData;
+    setProgressorData: (progressorData: ProgressorData) => void;
+    gotoTour: (tourId: string) => void;
 }
-export declare const useStore: import("zustand").UseBoundStore<import("zustand").StoreApi<StoreState>>;
+type StorePersistedState = Pick<StoreState, 'progressorData'>;
+export declare const useStore: import("zustand").UseBoundStore<Omit<import("zustand").StoreApi<StoreState>, "persist"> & {
+    persist: {
+        setOptions: (options: Partial<import("zustand/middleware").PersistOptions<StoreState, StorePersistedState>>) => void;
+        clearStorage: () => void;
+        rehydrate: () => Promise<void> | void;
+        hasHydrated: () => boolean;
+        onHydrate: (fn: (state: StoreState) => void) => () => void;
+        onFinishHydration: (fn: (state: StoreState) => void) => () => void;
+        getOptions: () => Partial<import("zustand/middleware").PersistOptions<StoreState, StorePersistedState>>;
+    };
+}>;
 export {};
 //# sourceMappingURL=useStore.d.ts.map

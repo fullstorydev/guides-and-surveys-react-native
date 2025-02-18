@@ -39,6 +39,7 @@ interface StoreState {
   setProgressorHasChanged: (progressorHasChanged: boolean) => void;
   progressorData: ProgressorData;
   setProgressorData: (progressorData: ProgressorData) => void;
+  gotoTour: (tourId: string) => void;
 }
 type StorePersistedState = Pick<StoreState, 'progressorData'>;
 
@@ -136,7 +137,7 @@ export const useStore = create(
           tourStepIndex,
         });
       },
-      gotoTour: (tourId: string) => {
+      gotoTour: (tourId) => {
         set((state) => {
           const selectedTour = state.tours.find((tour) => tour.id === tourId);
           if (selectedTour) {
