@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { StyleSheet, Text, TouchableOpacity } from 'react-native';
+import { Linking, StyleSheet, Text, TouchableOpacity } from 'react-native';
 import type { ActionType } from '../../types';
 import { useStore } from '../../stores/useStore';
 
@@ -8,7 +8,7 @@ type ActionProps = {
   onClose: () => void;
 };
 export const USAction = ({ action, onClose }: ActionProps) => {
-  const { styleType, type, value, tourId } = action;
+  const { styleType, type, value, tourId, url } = action;
   const theme = useStore((s) => s.theme);
 
   const setTourStepIndex = useStore((s) => s.setTourStepIndex);
@@ -26,18 +26,27 @@ export const USAction = ({ action, onClose }: ActionProps) => {
         return () => setTourStepIndex(tourStepIndex - 1);
       case 'gototour':
         return () => gotoTour(tourId);
+      case 'goto':
+        return () => {
+          if (typeof url === 'string' && url.startsWith('http')) {
+            Linking.openURL(url).catch((err) =>
+              console.error('Failed to open URL:', err)
+            );
+          }
+        };
 
       default:
         return onClose;
     }
   }, [
+    type,
+    tourStepIndex,
+    tourStepLength,
     onClose,
     setTourStepIndex,
     gotoTour,
-    tourStepIndex,
-    tourStepLength,
-    type,
     tourId,
+    url,
   ]);
 
   const btnStyles = useMemo(
