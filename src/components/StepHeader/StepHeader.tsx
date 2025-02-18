@@ -2,7 +2,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import { CrossBtn } from '../Cross';
 import { useMemo } from 'react';
 import { useStore } from '../../stores/useStore';
-import { ProgressBarHorizontal } from '../ProgressBar/Horizontal';
+import { RenderProgressBar } from '../ProgressBar';
 
 type Props = {
   title: string;
@@ -35,7 +35,7 @@ export const StepHeader = ({ title, onClose }: Props) => {
         <Text style={styles.text}>{title}</Text>
         <CrossBtn onClose={onClose} />
       </View>
-      {progress.state && <ProgressBarHorizontal />}
+      <RenderProgressBar progress={progress} />
     </>
   );
 };
