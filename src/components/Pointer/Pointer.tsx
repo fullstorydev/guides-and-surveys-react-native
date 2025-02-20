@@ -23,8 +23,6 @@ export const Pointer = ({ step, onClose, layoutMeasure }: Props) => {
   const refs = useStore((s) => s.pointers);
   const ref = refs[element];
 
-  console.log('====top=======>', ref, layoutMeasure?.height);
-
   useEffect(() => {
     if (ref && layoutMeasure) {
       if (ref.y > layoutMeasure.height / 2) {
