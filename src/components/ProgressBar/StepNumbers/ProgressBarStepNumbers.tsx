@@ -17,19 +17,17 @@ export const ProgressBarStepNumbers = () => {
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
-    justifyContent: 'center',
+    justifyContent: 'flex-end',
     alignItems: 'center',
     marginTop: 10,
+    right: 5,
   },
   text: {
     fontSize: 16,
-    fontWeight: 'bold',
-    color: '#000',
+    color: '#999',
   },
   divider: {
     fontSize: 16,
-    fontWeight: 'bold',
-    color: '#666',
-    marginHorizontal: 4,
+    color: '#999',
   },
 });

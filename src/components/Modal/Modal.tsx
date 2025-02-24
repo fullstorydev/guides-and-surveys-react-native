@@ -5,6 +5,7 @@ import type { TourStep } from '../../types';
 import { useMemo } from 'react';
 import { useStore } from '../../stores/useStore';
 import { StepHeader } from '../StepHeader/StepHeader';
+import { StepFooter } from '../StepFooter/StepFooter';
 
 type ModalProps = {
   step: TourStep;
@@ -50,6 +51,7 @@ export const Modal = ({ step, onClose }: ModalProps) => {
           return <Action key={action.id} {...{ action, onClose }} />;
         })}
       </View>
+      <StepFooter {...{ title, onClose }} />
     </View>
   );
 };
