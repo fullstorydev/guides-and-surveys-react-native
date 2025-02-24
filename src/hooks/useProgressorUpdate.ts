@@ -24,7 +24,7 @@ export const useProgressorUpdate = () => {
           setProgressorHasChanged(false);
         }
       }
-    }, 10000);
+    }, 2000);
 
     return () => {
       if (intervalRef.current) clearInterval(intervalRef.current);

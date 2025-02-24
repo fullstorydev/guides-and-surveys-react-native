@@ -89,7 +89,7 @@ export const useStore = create(
           ) {
             const newState = { ...state, tourStepIndex };
 
-            // Set the profressorData
+            // Set the progressorData
             const newPD = {
               ...state.progressorData,
             };

@@ -10,6 +10,7 @@ export type Tour = {
   themeObject: Theme;
   progress: boolean;
   progressType: number;
+  rememberLastStep: boolean;
 };
 export type ActionType = {
   id: string;
