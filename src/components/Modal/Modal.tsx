@@ -51,7 +51,7 @@ export const Modal = ({ step, onClose }: ModalProps) => {
           return <Action key={action.id} {...{ action, onClose }} />;
         })}
       </View>
-      <StepFooter {...{ title, onClose }} />
+      <StepFooter />
     </View>
   );
 };
