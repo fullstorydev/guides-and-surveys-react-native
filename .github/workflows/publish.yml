@@ -28,6 +28,11 @@ jobs:
       - name: Install dependencies
         run: yarn install --immutable
 
+      - name: Set up Git user
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions@users.noreply.github.com"
+          
       - name: Bump version
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}  # Auth for npm
