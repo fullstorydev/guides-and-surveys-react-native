@@ -11,6 +11,7 @@ export type Tour = {
   progress: boolean;
   progressType: number;
   rememberLastStep: boolean;
+  objectPriority: number;
 };
 export type ActionType = {
   id: string;

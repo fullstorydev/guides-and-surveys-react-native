@@ -23,7 +23,6 @@ export const Usetiful = ({ children, token, tags }: Props) => {
   const setToken = useStore((s) => s.setToken);
   const availableTour = useStore((s) => s.availableTour);
   const [layoutMeasure, setLayoutMeasure] = useState<Measure>();
-
   useEffect(() => {
     setToken(token, tags);
   }, [setToken, tags, token]);

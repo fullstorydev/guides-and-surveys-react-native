@@ -11,33 +11,33 @@ export const useTargetting = () => {
 
   useEffect(() => {
     if (tours && tours.length) {
-      const avTour = tours.find((tour) => {
-        if (tour.targets) {
-          const conditions = tour.targets.map((target) =>
-            checkByTargets({
-              target,
-              path: currentRouteName,
-              autoSegment: progressorData?.autoSegment,
-              customSegments: progressorData?.customSegments,
-            })
-          );
+      const validTours = tours
+        .filter((tour) => {
+          if (tour.targets) {
+            const conditions = tour.targets.map((target) =>
+              checkByTargets({
+                target,
+                path: currentRouteName,
+                autoSegment: progressorData?.autoSegment,
+                customSegments: progressorData?.customSegments,
+              })
+            );
 
-          if (tour.targetOperator === 0) {
-            return conditions.every((c) => c);
-          } else {
-            return conditions.some((c) => c);
+            return tour.targetOperator === 0
+              ? conditions.every((c) => c)
+              : conditions.some((c) => c);
           }
-        }
-        return undefined;
-      });
+          return false;
+        })
+        .sort((a, b) => a.objectPriority - b.objectPriority); // Sort by objectPriority (ascending)
 
-      let currentStep: number = 0;
-      if (avTour?.rememberLastStep) {
-        currentStep =
-          progressorData?.tours?.find(
-            (t) => t.id.toString() === avTour?.id.toString()
-          )?.currentStep ?? 0;
-      }
+      const avTour = validTours.length ? validTours[0] : undefined; // We choose tour with smallest (means highest) objectPriority
+
+      const currentStep =
+        progressorData?.tours?.find(
+          (t) => t.id.toString() === avTour?.id.toString()
+        )?.currentStep ?? 0;
+
       setAvailableTour(avTour, currentStep);
     } else {
       setAvailableTour(undefined);
