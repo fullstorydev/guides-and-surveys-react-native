@@ -261,7 +261,16 @@ const fetchProgressor = async (token: string, userId: string) => {
     }
     const result = JSON.parse(await response.json());
 
-    const tours = JSON.parse(result.tours);
+    let tours = [];
+    if (result.tours) {
+      try {
+        tours = JSON.parse(result.tours);
+      } catch (error) {
+        console.warn("Warning: 'tours' key is not a valid JSON string.");
+      }
+    } else {
+      console.warn("Warning: 'tours' key not found in response.");
+    }
 
     const autoSegment = result.autoSegment;
     const storedAt = result.storedAt;
