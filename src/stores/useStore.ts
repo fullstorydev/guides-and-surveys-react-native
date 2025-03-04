@@ -20,6 +20,8 @@ interface StoreState {
   token: string | undefined;
   tags: UsetigulTag | undefined;
   setToken: (token: string, tags?: UsetigulTag) => void;
+  selfClosed: boolean;
+  setSelfClosed: (selfClosed: boolean) => void;
   tourStepIndex: number;
   setTourStepIndex: (tourStepIndex: number) => void;
   tourStepLength: number;
@@ -63,6 +65,8 @@ export const useStore = create(
           set({ tours, token, tags });
         }
       },
+      selfClosed: false,
+      setSelfClosed: (selfClosed) => set({ selfClosed }),
       pointers: {},
       tourStepLength: 0,
       setPointer: (id: string, pointer: LayoutChangeEvent) => {
@@ -164,6 +168,7 @@ export const useStore = create(
       setProgressorHasChanged: (progressorHasChanged) =>
         set({ progressorHasChanged }),
       progressorData: {
+        uf_completed: [],
         tours: [],
         autoSegment: '',
         customSegments: [],
@@ -275,8 +280,15 @@ const fetchProgressor = async (token: string, userId: string) => {
     const autoSegment = result.autoSegment;
     const storedAt = result.storedAt;
     const customSegments = result.customSegments;
+    const uf_completed = result.uf_completed;
 
-    return { tours, autoSegment, customSegments, storedAt } as ProgressorData;
+    return {
+      tours,
+      autoSegment,
+      customSegments,
+      storedAt,
+      uf_completed,
+    } as ProgressorData;
   } catch (error: any) {
     console.error('=======Error=====>', error.message);
     return null;

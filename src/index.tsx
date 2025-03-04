@@ -22,6 +22,8 @@ export const Usetiful = ({ children, token, tags }: Props) => {
 
   const setToken = useStore((s) => s.setToken);
   const availableTour = useStore((s) => s.availableTour);
+  const selfClosed = useStore((s) => s.selfClosed);
+  const setSelfClosed = useStore((s) => s.setSelfClosed);
   const [layoutMeasure, setLayoutMeasure] = useState<Measure>();
   useEffect(() => {
     setToken(token, tags);
@@ -32,8 +34,7 @@ export const Usetiful = ({ children, token, tags }: Props) => {
 
   useEffect(() => {
     setSelfClosed(false);
-  }, [currentRouteName]);
-  const [selfClosed, setSelfClosed] = useState(false);
+  }, [currentRouteName, setSelfClosed]);
 
   const step =
     !!availableTour && !selfClosed && availableTour.steps[tourStepIndex]
@@ -71,19 +72,11 @@ export const Usetiful = ({ children, token, tags }: Props) => {
             justifyContent: stepType === 'slideout' ? 'flex-end' : 'flex-start',
           }}
         >
-          {stepType === 'modal' && (
-            <Modal step={step} onClose={() => setSelfClosed(true)} />
-          )}
+          {stepType === 'modal' && <Modal step={step} />}
           {stepType === 'pointer' && (
-            <Pointer
-              step={step}
-              onClose={() => setSelfClosed(true)}
-              layoutMeasure={layoutMeasure}
-            />
+            <Pointer step={step} layoutMeasure={layoutMeasure} />
           )}
-          {stepType === 'slideout' && (
-            <Slideout step={step} onClose={() => setSelfClosed(true)} />
-          )}
+          {stepType === 'slideout' && <Slideout step={step} />}
         </View>
       )}
     </View>
