@@ -11,34 +11,43 @@ type ModalProps = {
   step: TourStep;
   onClose: () => void;
 };
+
 export const Modal = ({ step, onClose }: ModalProps) => {
-  const { title, actions, content } = step;
+  const { title, actions, content, alignment } = step;
   const theme = useStore((s) => s.theme);
-  const styles = useMemo(
-    () =>
-      StyleSheet.create({
-        modal: {
-          backgroundColor: theme.bgColor,
-          marginTop: '50%',
-          marginHorizontal: '5%',
-          shadowColor: '#000000',
-          shadowOpacity: 0.5,
-          borderRadius: 5,
-          paddingHorizontal: 10,
-          paddingVertical: 8,
-        },
-        modalFooter: {
-          flexDirection: 'row',
-          justifyContent: 'flex-start',
-          alignItems: 'flex-start',
-          marginTop: 10,
-        },
-        modalBody: {
-          paddingVertical: 8,
-        },
-      }),
-    [theme]
-  );
+
+  const styles = useMemo(() => {
+    const justifyContent =
+      alignment === 'left'
+        ? 'flex-start'
+        : alignment === 'center'
+          ? 'center'
+          : alignment === 'right'
+            ? 'flex-end'
+            : 'flex-start';
+
+    return StyleSheet.create({
+      modal: {
+        backgroundColor: theme.bgColor,
+        marginTop: '50%',
+        marginHorizontal: '5%',
+        shadowColor: '#000000',
+        shadowOpacity: 0.5,
+        borderRadius: 5,
+        paddingHorizontal: 10,
+        paddingVertical: 8,
+      },
+      modalFooter: {
+        flexDirection: 'row',
+        justifyContent: justifyContent,
+        alignItems: 'flex-start',
+        marginTop: 10,
+      },
+      modalBody: {
+        paddingVertical: 8,
+      },
+    });
+  }, [theme, alignment]);
 
   return (
     <View style={styles.modal}>
