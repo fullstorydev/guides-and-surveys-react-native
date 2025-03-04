@@ -28,11 +28,24 @@ jobs:
       - name: Install dependencies
         run: yarn install --immutable
 
-      - name: Run `release-it` to bump version and publish
+      - name: Set up Git user
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions@users.noreply.github.com"
+          
+      - name: Bump version
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}  # Auth for npm
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Default GitHub token
-        run: npx release-it patch --ci --no-git.requireCleanWorkingDir
+        run: |
+          npm version patch -m "chore(): bump version to %s"
+
+      - name: Prepare package
+        run: npm run prepare
+
+      - name: Publish package to NPM
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: npm publish --access public
 
       - name: Commit and push version bump
         run: |
