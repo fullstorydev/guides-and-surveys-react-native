@@ -29,6 +29,7 @@ export type TourStep = {
   title: string;
   type: 'modal' | 'pointer' | 'slideout';
   element: string;
+  alignment: 'left' | 'right' | 'center';
 };
 export type Target = {
   type: 'address-simple' | 'user-segment' | string;
