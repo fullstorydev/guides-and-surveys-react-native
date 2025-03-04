@@ -1,14 +1,9 @@
-import { StyleSheet, Text, View } from 'react-native';
-import { CrossBtn } from '../Cross';
+import { StyleSheet, View } from 'react-native';
 import { useMemo } from 'react';
 import { useStore } from '../../stores/useStore';
 import { RenderProgressBar } from '../ProgressBar';
 
-type Props = {
-  title: string;
-  onClose: () => void;
-};
-export const StepHeader = ({ title, onClose }: Props) => {
+export const StepFooter = () => {
   const theme = useStore((s) => s.theme);
   const progress = useStore((s) => s.progress);
 
@@ -31,11 +26,8 @@ export const StepHeader = ({ title, onClose }: Props) => {
 
   return (
     <>
-      <View style={styles.header}>
-        <Text style={styles.text}>{title}</Text>
-        <CrossBtn onClose={onClose} />
-      </View>
-      {progress.type === 1 && <RenderProgressBar progress={progress} />}
+      <View style={styles.header} />
+      {progress.type > 1 && <RenderProgressBar progress={progress} />}
     </>
   );
 };
