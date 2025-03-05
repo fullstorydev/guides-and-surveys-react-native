@@ -5,7 +5,7 @@ import type { TourStep } from '../../types';
 import { useMemo } from 'react';
 import { useStore } from '../../stores/useStore';
 import { StepHeader } from '../StepHeader/StepHeader';
-import { StepFooter } from '../StepFooter/StepFooter';
+import { RenderProgressBar } from '../ProgressBar';
 
 type ModalProps = {
   step: TourStep;
@@ -37,8 +37,9 @@ export const Modal = ({ step, onClose }: ModalProps) => {
         paddingHorizontal: 10,
         paddingVertical: 8,
       },
-      modalFooter: {
+      modalActions: {
         flexDirection: 'row',
+        flexWrap: 'wrap',
         justifyContent: justifyContent,
         alignItems: 'flex-start',
         marginTop: 10,
@@ -55,12 +56,12 @@ export const Modal = ({ step, onClose }: ModalProps) => {
       <View style={styles.modalBody}>
         {!!content && <Body content={content} />}
       </View>
-      <View style={styles.modalFooter}>
+      <View style={styles.modalActions}>
         {actions.map((action) => {
           return <Action key={action.id} {...{ action, onClose }} />;
         })}
       </View>
-      <StepFooter />
+      <RenderProgressBar />
     </View>
   );
 };
