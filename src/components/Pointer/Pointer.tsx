@@ -8,10 +8,9 @@ import { StepHeader } from '../StepHeader/StepHeader';
 
 type Props = {
   step: TourStep;
-  onClose: () => void;
   layoutMeasure?: Measure;
 };
-export const Pointer = ({ step, onClose, layoutMeasure }: Props) => {
+export const Pointer = ({ step, layoutMeasure }: Props) => {
   const { title, actions, content, element } = step;
   const theme = useStore((s) => s.theme);
 
@@ -160,13 +159,13 @@ export const Pointer = ({ step, onClose, layoutMeasure }: Props) => {
             ref={pointerRef}
           >
             <View style={styles.tip} />
-            <StepHeader {...{ title, onClose }} />
+            <StepHeader {...{ title }} />
             <View style={styles.pointerBody}>
               {!!content && <Body content={content} />}
             </View>
             <View style={styles.pointerFooter}>
               {actions.map((action) => {
-                return <Action key={action.id} {...{ action, onClose }} />;
+                return <Action key={action.id} {...{ action }} />;
               })}
             </View>
           </View>

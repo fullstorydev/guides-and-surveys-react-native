@@ -6,9 +6,8 @@ import { RenderProgressBar } from '../ProgressBar';
 
 type Props = {
   title: string;
-  onClose: () => void;
 };
-export const StepHeader = ({ title, onClose }: Props) => {
+export const StepHeader = ({ title }: Props) => {
   const theme = useStore((s) => s.theme);
   const progress = useStore((s) => s.progress);
 
@@ -33,7 +32,7 @@ export const StepHeader = ({ title, onClose }: Props) => {
     <>
       <View style={styles.header}>
         <Text style={styles.text}>{title}</Text>
-        <CrossBtn onClose={onClose} />
+        <CrossBtn />
       </View>
       {progress.type === 1 && <RenderProgressBar progress={progress} />}
     </>

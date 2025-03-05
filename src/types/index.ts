@@ -70,7 +70,7 @@ export type UsetigulTag = {
   [key: string]: string;
 };
 
-export type progressorTour = {
+export type ProgressorTour = {
   id: string;
   state: string;
   name: string;
@@ -78,8 +78,15 @@ export type progressorTour = {
   updatedAt: string;
 };
 
+export type UFCompleted = {
+  type: string;
+  id: number;
+  updatedAt: string;
+};
+
 export type ProgressorData = {
-  tours: progressorTour[];
+  uf_completed: UFCompleted[];
+  tours: ProgressorTour[];
   autoSegment: string;
   customSegments: string[];
   storedAt: string;

@@ -1,34 +1,10 @@
 import { useMemo } from 'react';
 import { StyleSheet, Text, TouchableOpacity } from 'react-native';
 import { useStore } from '../stores/useStore';
-import type { ProgressorData } from '../types';
+import { useOnClose } from '../hooks/useOnClose';
 
-export const CrossBtn = ({ onClose }: { onClose: () => void }) => {
-  const progressorData = useStore((s) => s.progressorData);
-  const setProgressorData = useStore((s) => s.setProgressorData);
-  const availableTour = useStore((s) => s.availableTour);
-
-  const onPressClose = () => {
-    const newPD: ProgressorData = { ...progressorData };
-
-    const tour = newPD.tours?.find(
-      (t) => t.id.toString() === availableTour?.id.toString()
-    );
-    if (tour) {
-      tour.currentStep = 0;
-      tour.state = 'closed';
-    } else {
-      newPD.tours.push({
-        id: availableTour?.id ?? '',
-        state: 'closed',
-        name: availableTour?.name ?? '',
-        currentStep: 0,
-        updatedAt: '',
-      });
-    }
-    setProgressorData(newPD);
-    onClose();
-  };
+export const CrossBtn = () => {
+  const { onCloseHandler } = useOnClose();
 
   const theme = useStore((s) => s.theme);
   const styles = useMemo(
@@ -47,7 +23,7 @@ export const CrossBtn = ({ onClose }: { onClose: () => void }) => {
     [theme]
   );
   return (
-    <TouchableOpacity style={styles.crossBtn} onPress={onPressClose}>
+    <TouchableOpacity style={styles.crossBtn} onPress={onCloseHandler}>
       <Text style={styles.crossBtnIcon}>X</Text>
     </TouchableOpacity>
   );

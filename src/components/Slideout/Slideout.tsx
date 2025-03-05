@@ -8,9 +8,8 @@ import { StepHeader } from '../StepHeader/StepHeader';
 
 type Props = {
   step: TourStep;
-  onClose: () => void;
 };
-export const Slideout = ({ step, onClose }: Props) => {
+export const Slideout = ({ step }: Props) => {
   const { title, actions, content } = step;
   const theme = useStore((s) => s.theme);
 
@@ -42,13 +41,13 @@ export const Slideout = ({ step, onClose }: Props) => {
 
   return (
     <View style={styles.slidout}>
-      <StepHeader {...{ title, onClose }} />
+      <StepHeader {...{ title }} />
       <View style={styles.slidoutBody}>
         {!!content && <Body content={content} />}
       </View>
       <View style={styles.slidoutFooter}>
         {actions.map((action) => {
-          return <Action key={action.id} {...{ action, onClose }} />;
+          return <Action key={action.id} {...{ action }} />;
         })}
       </View>
     </View>

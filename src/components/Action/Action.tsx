@@ -2,12 +2,12 @@ import { useMemo } from 'react';
 import { Linking, StyleSheet, Text, TouchableOpacity } from 'react-native';
 import type { ActionType } from '../../types';
 import { useStore } from '../../stores/useStore';
+import { useOnClose } from '../../hooks/useOnClose';
 
 type ActionProps = {
   action: ActionType;
-  onClose: () => void;
 };
-export const USAction = ({ action, onClose }: ActionProps) => {
+export const USAction = ({ action }: ActionProps) => {
   const { styleType, type, value, tourId, url, to } = action;
   const theme = useStore((s) => s.theme);
 
@@ -16,13 +16,14 @@ export const USAction = ({ action, onClose }: ActionProps) => {
   const tourStepLength = useStore((s) => s.tourStepLength);
   const gotoTour = useStore((s) => s.gotoTour);
   const availableTour = useStore((s) => s.availableTour);
+  const { onCloseHandler } = useOnClose();
 
   const onPress = useMemo(() => {
     switch (type) {
       case 'next':
         if (tourStepIndex < tourStepLength - 1)
           return () => setTourStepIndex(tourStepIndex + 1);
-        else return onClose;
+        else return onCloseHandler;
       case 'previous':
         return () => setTourStepIndex(tourStepIndex - 1);
       case 'gototour':
@@ -46,19 +47,19 @@ export const USAction = ({ action, onClose }: ActionProps) => {
           }
         };
       default:
-        return onClose;
+        return onCloseHandler;
     }
   }, [
     type,
     tourStepIndex,
     tourStepLength,
-    onClose,
     setTourStepIndex,
     gotoTour,
     tourId,
     url,
     availableTour,
     to,
+    onCloseHandler,
   ]);
 
   const btnStyles = useMemo(

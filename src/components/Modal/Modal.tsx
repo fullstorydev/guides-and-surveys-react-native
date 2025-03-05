@@ -9,10 +9,9 @@ import { StepFooter } from '../StepFooter/StepFooter';
 
 type ModalProps = {
   step: TourStep;
-  onClose: () => void;
 };
 
-export const Modal = ({ step, onClose }: ModalProps) => {
+export const Modal = ({ step }: ModalProps) => {
   const { title, actions, content, alignment } = step;
   const theme = useStore((s) => s.theme);
 
@@ -51,13 +50,13 @@ export const Modal = ({ step, onClose }: ModalProps) => {
 
   return (
     <View style={styles.modal}>
-      <StepHeader {...{ title, onClose }} />
+      <StepHeader {...{ title }} />
       <View style={styles.modalBody}>
         {!!content && <Body content={content} />}
       </View>
       <View style={styles.modalFooter}>
         {actions.map((action) => {
-          return <Action key={action.id} {...{ action, onClose }} />;
+          return <Action key={action.id} {...{ action }} />;
         })}
       </View>
       <StepFooter />
