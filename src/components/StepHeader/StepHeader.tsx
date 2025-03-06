@@ -35,7 +35,7 @@ export const StepHeader = ({ title, onClose }: Props) => {
         <Text style={styles.text}>{title}</Text>
         <CrossBtn onClose={onClose} />
       </View>
-      {progress.type === 1 && <RenderProgressBar progress={progress} />}
+      {progress.type === 1 && <RenderProgressBar />}
     </>
   );
 };
