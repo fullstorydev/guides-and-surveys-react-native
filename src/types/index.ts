@@ -12,6 +12,7 @@ export type Tour = {
   progressType: number;
   rememberLastStep: boolean;
   objectPriority: number;
+  trigger: TourTrigger;
 };
 export type ActionType = {
   id: string;
@@ -30,6 +31,9 @@ export type TourStep = {
   type: 'modal' | 'pointer' | 'slideout';
   element: string;
   alignment: 'left' | 'right' | 'center';
+};
+export type TourTrigger = {
+  type: string;
 };
 export type Target = {
   type: 'address-simple' | 'user-segment' | string;

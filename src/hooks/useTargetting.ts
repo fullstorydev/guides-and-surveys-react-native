@@ -14,6 +14,17 @@ export const useTargetting = () => {
       const validTours = tours
         .filter((tour) => {
           if (tour.targets) {
+            // Check if tour was displayed before and has status "closed"
+            const isJustOnceAndClosed =
+              tour.targets.some((target) => target.type === 'justonce') &&
+              progressorData?.tours?.some(
+                (t) =>
+                  t.id.toString() === tour.id.toString() && t.state === 'closed'
+              );
+
+            if (isJustOnceAndClosed) {
+              return false;
+            }
             const conditions = tour.targets.map((target) =>
               checkByTargets({
                 target,
