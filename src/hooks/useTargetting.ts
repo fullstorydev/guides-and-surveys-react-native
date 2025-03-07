@@ -16,7 +16,7 @@ export const useTargetting = () => {
           if (tour.targets) {
             // Check if tour was displayed before and has status "closed"
             const isJustOnceAndClosed =
-              tour.targets.some((target) => target.type === 'justonce') &&
+              tour.trigger.type === 'once' &&
               progressorData?.tours?.some(
                 (t) =>
                   t.id.toString() === tour.id.toString() && t.state === 'closed'
