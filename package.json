@@ -82,7 +82,9 @@
     "zustand": "^4.5.5"
   },
   "resolutions": {
-    "@types/react": "^18.2.44"
+    "@types/react": "^18.2.44",
+    "function-bind": "npm:@socketregistry/function-bind@1.0.6",
+    "ip": "^2.0.2"
   },
   "peerDependencies": {
     "@react-native-async-storage/async-storage": "*",
