@@ -4,6 +4,7 @@ import type {
   ProgressorData,
   Theme,
   Tour,
+  TourStep,
   UsetifulResponse,
   UsetigulTag,
 } from '../types';
@@ -27,6 +28,8 @@ interface StoreState {
   tourStepLength: number;
   tours: Tour[];
   setTours: (tours: Tour[]) => void;
+  step: TourStep | undefined;
+  setStep: (step: TourStep | undefined) => void;
   availableTour: Tour | undefined;
   setAvailableTour: (
     availableTour: Tour | undefined,
@@ -124,6 +127,8 @@ export const useStore = create(
       },
       tours: [],
       setTours: (tours) => set({ tours }),
+      step: undefined,
+      setStep: (step) => set({ step }),
       availableTour: undefined,
       setAvailableTour: (availableTour, tourStepIndex = 0) => {
         let theme = THEME_DEFAULT;

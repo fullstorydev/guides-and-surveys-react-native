@@ -8,6 +8,7 @@ import { Slideout } from './components/Slideout';
 import { useCurrentRouteName } from './hooks/useCurrentRouteName';
 import { useTargetting } from './hooks/useTargetting';
 import { useProgressorUpdate } from './hooks/useProgressorUpdate';
+import { useGestureHandler } from './hooks/useGestureHandler';
 export { setPointer } from './utils/setPointer';
 
 type Props = {
@@ -20,6 +21,8 @@ export const Usetiful = ({ children, token, tags }: Props) => {
 
   const tourStepIndex = useStore((s) => s.tourStepIndex);
 
+  const step = useStore((s) => s.step);
+  const setStep = useStore((s) => s.setStep);
   const setToken = useStore((s) => s.setToken);
   const availableTour = useStore((s) => s.availableTour);
   const selfClosed = useStore((s) => s.selfClosed);
@@ -36,10 +39,17 @@ export const Usetiful = ({ children, token, tags }: Props) => {
     setSelfClosed(false);
   }, [currentRouteName, setSelfClosed]);
 
-  const step =
-    !!availableTour && !selfClosed && availableTour.steps[tourStepIndex]
-      ? availableTour.steps[tourStepIndex]
-      : undefined;
+  useEffect(
+    () =>
+      setStep(
+        !!availableTour && !selfClosed && availableTour.steps[tourStepIndex]
+          ? availableTour.steps[tourStepIndex]
+          : undefined
+      ),
+    [availableTour, selfClosed, setStep, tourStepIndex]
+  );
+
+  const panHandlers = useGestureHandler();
 
   const refs = useStore((s) => s.pointers);
   const stepType = useMemo(() => {
@@ -71,6 +81,7 @@ export const Usetiful = ({ children, token, tags }: Props) => {
             backgroundColor: stepType === 'modal' ? '#000000cc' : 'transparent',
             justifyContent: stepType === 'slideout' ? 'flex-end' : 'flex-start',
           }}
+          {...panHandlers}
         >
           {stepType === 'modal' && <Modal step={step} />}
           {stepType === 'pointer' && (
