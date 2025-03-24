@@ -3,6 +3,8 @@ import { PanResponder } from 'react-native';
 import { useStore } from '../stores/useStore';
 import { useOnClose } from './useOnClose';
 
+const gestureWidth = 50;
+
 export const useGestureHandler = () => {
   const step = useStore((s) => s.step);
 
@@ -20,14 +22,14 @@ export const useGestureHandler = () => {
         onPanResponderRelease: (_evt, gestureState) => {
           const { dx } = gestureState;
 
-          if (dx > 50) {
+          if (dx > gestureWidth) {
             if (
               step?.actions &&
               step.actions.find((a) => a.type === 'previous')
             ) {
               setTourStepIndex(tourStepIndex - 1);
             }
-          } else if (dx < -50) {
+          } else if (dx < -gestureWidth) {
             if (step?.actions && step.actions.find((a) => a.type === 'next')) {
               if (tourStepIndex < tourStepLength - 1)
                 setTourStepIndex(tourStepIndex + 1);
