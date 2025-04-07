@@ -11,6 +11,7 @@ import type {
 import { type LayoutChangeEvent } from 'react-native';
 import { createJSONStorage, persist } from 'zustand/middleware';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { THEME_DEFAULT } from '../constants';
 
 const BaseURl = 'https://www.usetiful.com';
 // const BaseURl = 'https://admin:admin123@dev.usetiful.com';
@@ -133,7 +134,7 @@ export const useStore = create(
       setAvailableTour: (availableTour, tourStepIndex = 0) => {
         let theme = THEME_DEFAULT;
         if (availableTour?.themeObject) {
-          theme = availableTour?.themeObject;
+          theme = availableTour.themeObject;
         }
         return set({
           availableTour,
@@ -189,25 +190,6 @@ export const useStore = create(
     }
   )
 );
-
-const THEME_DEFAULT = {
-  primaryColor: '#387DFF',
-  progressBarColor: '#387DFF',
-  buttonPositionBottom: 0,
-  buttonPositionRight: 0,
-  fontFamily: '',
-  customFontFamily: '',
-  fontTitleFamily: '',
-  customFontTitleFamily: '',
-  fontButtonFamily: '',
-  customFontButtonFamily: '',
-  fontColor: '#000',
-  bgColor: '#fff',
-  secondaryButtonColor: '',
-  fontSize: 14,
-  fontTitleSize: 14,
-  fontButtonSize: 14,
-};
 
 const fetchDataJson = async (token: string): Promise<Tour[]> => {
   const reqUrl = `${BaseURl}${END_POINT}`;
