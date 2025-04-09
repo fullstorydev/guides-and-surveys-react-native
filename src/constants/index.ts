@@ -28,13 +28,18 @@ export const THEME_DEFAULT = {
   fontButtonSize: 14,
 };
 
+const PIXEL_DENSITY_MEDIUM = 2;
+const PIXEL_DENSITY_HIGH = 3;
+const FONT_SIZE_MEDIUM = 3;
+const FONT_SIZE_LARGE = 8;
+const FONT_SIZE_DEFAULT = 1;
 export const webViewFontHandler = () => {
   switch (pixelDensity) {
-    case 2:
-      return 3;
-    case 3:
-      return 8;
+    case PIXEL_DENSITY_MEDIUM:
+      return FONT_SIZE_MEDIUM;
+    case PIXEL_DENSITY_HIGH:
+      return FONT_SIZE_LARGE;
     default:
-      return 1;
+      return FONT_SIZE_DEFAULT;
   }
 };
