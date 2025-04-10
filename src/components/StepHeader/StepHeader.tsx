@@ -21,7 +21,8 @@ export const StepHeader = ({ title }: Props) => {
         },
         text: {
           textAlign: 'center',
-          fontSize: theme.fontSize,
+          fontSize: theme.fontSize * 1.5,
+          fontWeight: '600',
           color: theme.fontColor,
         },
       }),

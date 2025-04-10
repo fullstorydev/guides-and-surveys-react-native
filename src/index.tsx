@@ -83,11 +83,19 @@ export const Usetiful = ({ children, token, tags }: Props) => {
           }}
           {...panHandlers}
         >
-          {stepType === 'modal' && <Modal step={step} />}
-          {stepType === 'pointer' && (
-            <Pointer step={step} layoutMeasure={layoutMeasure} />
+          {stepType === 'modal' && (
+            <Modal step={step} key={`${stepType}-${step.id}`} />
           )}
-          {stepType === 'slideout' && <Slideout step={step} />}
+          {stepType === 'pointer' && (
+            <Pointer
+              step={step}
+              layoutMeasure={layoutMeasure}
+              key={`${stepType}-${step.id}`}
+            />
+          )}
+          {stepType === 'slideout' && (
+            <Slideout step={step} key={`${stepType}-${step.id}`} />
+          )}
         </View>
       )}
     </View>
