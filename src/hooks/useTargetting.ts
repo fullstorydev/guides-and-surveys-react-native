@@ -40,7 +40,7 @@ export const useTargetting = () => {
           }
           return false;
         })
-        .sort((a, b) => a.objectPriority - b.objectPriority); // Sort by objectPriority (ascending)
+        .sort((a, b) => b.objectPriority - a.objectPriority); // Sort by objectPriority (descending)
 
       const avTour = validTours.length ? validTours[0] : undefined; // We choose tour with smallest (means highest) objectPriority
 
