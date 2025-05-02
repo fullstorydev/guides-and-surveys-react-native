@@ -1,12 +1,10 @@
 import { useMemo } from 'react';
-import { StyleSheet, Text, TouchableOpacity } from 'react-native';
-import { useStore } from '../stores/useStore';
+import { Image, StyleSheet, TouchableOpacity } from 'react-native';
 import { useOnClose } from '../hooks/useOnClose';
 
 export const CrossBtn = () => {
   const { onCloseHandler } = useOnClose();
 
-  const theme = useStore((s) => s.theme);
   const styles = useMemo(
     () =>
       StyleSheet.create({
@@ -16,15 +14,18 @@ export const CrossBtn = () => {
           alignItems: 'flex-end',
         },
         crossBtnIcon: {
-          fontSize: 16,
-          color: theme.secondaryButtonColor,
+          width: 12,
+          height: 12,
         },
       }),
-    [theme]
+    []
   );
   return (
     <TouchableOpacity style={styles.crossBtn} onPress={onCloseHandler}>
-      <Text style={styles.crossBtnIcon}>X</Text>
+      <Image
+        style={styles.crossBtnIcon}
+        source={require('../assets/images/cross.png')}
+      />
     </TouchableOpacity>
   );
 };
