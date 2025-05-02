@@ -1,4 +1,4 @@
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, useWindowDimensions, View } from 'react-native';
 import { Body } from '../Body';
 import { Action } from '../Action';
 import type { TourStep } from '../../types';
@@ -12,6 +12,8 @@ type ModalProps = {
 };
 
 export const Modal = ({ step }: ModalProps) => {
+  const { width, height } = useWindowDimensions();
+  const isLandscape = height < width;
   const { title, actions, content, alignment } = step;
   const theme = useStore((s) => s.theme);
 
@@ -28,7 +30,7 @@ export const Modal = ({ step }: ModalProps) => {
     return StyleSheet.create({
       modal: {
         backgroundColor: theme.bgColor,
-        marginTop: '50%',
+        marginTop: isLandscape ? '20%' : '50%',
         marginHorizontal: '5%',
         shadowColor: '#000000',
         shadowOpacity: 0.5,
@@ -47,7 +49,7 @@ export const Modal = ({ step }: ModalProps) => {
         paddingVertical: 8,
       },
     });
-  }, [theme, alignment]);
+  }, [alignment, theme.bgColor, isLandscape]);
 
   return (
     <View style={styles.modal}>
