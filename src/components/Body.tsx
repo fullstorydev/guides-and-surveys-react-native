@@ -26,17 +26,20 @@ export const Body = ({ content }: BodyProps) => {
 
   const theme = useStore((s) => s.theme);
 
+  const fontSize = (theme.fontSize / 3) * webViewFontHandler();
+
   const bodyCss = `<style>
     body{
     margin:3px 0;
     padding:0;
+    font-size:${fontSize}px;
     }
     *{
     background-color: ${theme.bgColor};
     color: ${theme.fontColor};
     }
     p{
-    font-size:${(theme.fontSize / 3) * webViewFontHandler()}px;
+    font-size:${fontSize}px;
     line-height:1.4;
     font-family: sans-serif;
     }
