@@ -3,6 +3,9 @@ import { View } from 'react-native';
 import WebView from 'react-native-webview';
 import { useStore } from '../stores/useStore';
 import { diagonalScale, webViewFontHandler } from '../constants';
+import { Dimensions } from 'react-native';
+
+const { height } = Dimensions.get('window');
 
 type BodyProps = {
   content: string;
@@ -50,7 +53,9 @@ export const Body = ({ content }: BodyProps) => {
   }, [bodyCss, content]);
 
   return (
-    <View style={{ height: Math.min(webViewHeight * diagonalScale, 200) }}>
+    <View
+      style={{ minHeight: Math.min(webViewHeight * diagonalScale, height / 4) }}
+    >
       <WebView
         ref={webviewRef}
         originWhitelist={['*']}
