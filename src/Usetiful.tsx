@@ -9,7 +9,6 @@ import { useCurrentRouteName } from './hooks/useCurrentRouteName';
 import { useTargetting } from './hooks/useTargetting';
 import { useProgressorUpdate } from './hooks/useProgressorUpdate';
 import { useGestureHandler } from './hooks/useGestureHandler';
-export { setPointer } from './utils/setPointer';
 
 type Props = {
   token: string;
@@ -111,23 +110,5 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
     backgroundColor: '#000000cc',
-  },
-  crossBtn: {
-    fontSize: 16,
-    width: 20,
-    height: 20,
-    alignItems: 'flex-end',
-  },
-  footerBtn: {
-    marginRight: 10,
-    padding: 8,
-    borderRadius: 6,
-  },
-  primaryBtn: {
-    backgroundColor: '#387DFF',
-  },
-  secondaryBrn: {
-    borderColor: '#464646',
-    borderWidth: 1,
   },
 });
