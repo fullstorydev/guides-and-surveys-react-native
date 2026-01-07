@@ -54,7 +54,7 @@ export const useStore = create(
       initialize: async (token, tags) => {
         set({ token, tags });
 
-        let response = await fetchDataJson(token);
+        const response = await fetchDataJson(token);
 
         if (response) {
           if (response.tours) {
