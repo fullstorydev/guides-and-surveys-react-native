@@ -4,7 +4,7 @@ import { useNavigation, type NavigationProp } from '@react-navigation/native';
 import { setPointer } from 'usetiful-react-native';
 import KitchenSinkScreen from './screens/KitchenSink';
 
-export type RootStackParamList = {
+type RootStackParamList = {
   Detail: undefined;
   Home: undefined;
   About: undefined;
