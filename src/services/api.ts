@@ -1,4 +1,4 @@
-import type { Tour, UsetifulResponse, ProgressorData } from '../types';
+import type { UsetifulResponse, ProgressorData } from '../types';
 import { API_CONFIG } from '../constants/api';
 
 /**
@@ -6,7 +6,9 @@ import { API_CONFIG } from '../constants/api';
  * @param token - Authentication token
  * @returns Array of tours or empty array on error
  */
-export const fetchDataJson = async (token: string): Promise<Tour[]> => {
+export const fetchDataJson = async (
+  token: string
+): Promise<UsetifulResponse | null> => {
   const reqUrl = `${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.DATA}?lang=${API_CONFIG.DEFAULT_PARAMS.lang}&app=${API_CONFIG.DEFAULT_PARAMS.app}`;
   try {
     const response = await fetch(reqUrl, {
@@ -20,7 +22,7 @@ export const fetchDataJson = async (token: string): Promise<Tour[]> => {
 
     if (!response.ok) {
       console.error(`USETIFUL HTTP ERROR - status: ${response.status}`);
-      return [];
+      return null;
     }
 
     const res: UsetifulResponse = await response.json();
@@ -34,10 +36,10 @@ export const fetchDataJson = async (token: string): Promise<Tour[]> => {
       =============================================
       =============================================`);
 
-    return res.tours;
+    return res;
   } catch (error: any) {
     console.error('=====error====>', error.message);
-    return [];
+    return null;
   }
 };
 

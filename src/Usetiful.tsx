@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState, type PropsWithChildren } from 'react';
 import { StyleSheet, View } from 'react-native';
-import type { Measure, UsetigulTag } from './types';
+import type { Measure, UsetifulTag } from './types';
 import { Modal } from './components/Modal';
 import { useStore } from './stores/useStore';
 import { Pointer } from './components/Pointer';
@@ -12,7 +12,7 @@ import { useGestureHandler } from './hooks/useGestureHandler';
 
 type Props = {
   token: string;
-  tags?: UsetigulTag;
+  tags?: UsetifulTag;
 } & PropsWithChildren;
 
 export const Usetiful = ({ children, token, tags }: Props) => {
@@ -22,14 +22,14 @@ export const Usetiful = ({ children, token, tags }: Props) => {
 
   const step = useStore((s) => s.step);
   const setStep = useStore((s) => s.setStep);
-  const setToken = useStore((s) => s.setToken);
+  const initialize = useStore((s) => s.initialize);
   const availableTour = useStore((s) => s.availableTour);
   const selfClosed = useStore((s) => s.selfClosed);
   const setSelfClosed = useStore((s) => s.setSelfClosed);
   const [layoutMeasure, setLayoutMeasure] = useState<Measure>();
   useEffect(() => {
-    setToken(token, tags);
-  }, [setToken, tags, token]);
+    initialize(token, tags);
+  }, [initialize, tags, token]);
 
   useTargetting();
   useProgressorUpdate();

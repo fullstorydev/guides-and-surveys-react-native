@@ -5,7 +5,7 @@ import type {
   Theme,
   Tour,
   TourStep,
-  UsetigulTag,
+  UsetifulTag,
 } from '../types';
 import { type LayoutChangeEvent } from 'react-native';
 import { createJSONStorage, persist } from 'zustand/middleware';
@@ -15,10 +15,12 @@ import { fetchDataJson, fetchProgressor } from '../services/api';
 
 interface StoreState {
   token: string | undefined;
-  tags: UsetigulTag | undefined;
-  setToken: (token: string, tags?: UsetigulTag) => void;
+  tags: UsetifulTag | undefined;
+  initialize: (token: string, tags?: UsetifulTag) => void;
   selfClosed: boolean;
   setSelfClosed: (selfClosed: boolean) => void;
+  surveys: Array<any>;
+  setSurveys: (surveys: Array<any>) => void;
   tourStepIndex: number;
   setTourStepIndex: (tourStepIndex: number) => void;
   tourStepLength: number;
@@ -46,11 +48,22 @@ type StorePersistedState = Pick<StoreState, 'progressorData'>;
 
 export const useStore = create(
   persist<StoreState, [], [], StorePersistedState>(
-    (set) => ({
+    (set, get) => ({
       token: undefined,
       tags: undefined,
-      setToken: async (token, tags) => {
-        let tours: Tour[] = await fetchDataJson(token);
+      initialize: async (token, tags) => {
+        set({ token, tags });
+
+        let response = await fetchDataJson(token);
+
+        if (response) {
+          if (response.tours) {
+            get().setTours(response.tours);
+          }
+          if (response.surveys) {
+            get().setSurveys(response.surveys);
+          }
+        }
 
         if (tags && tags.userId) {
           const progressorData = await fetchProgressor(
@@ -58,12 +71,11 @@ export const useStore = create(
             tags.userId ?? ''
           );
           if (progressorData) {
-            set({ tours, progressorData, token, tags });
+            get().setProgressorData(progressorData);
           }
-        } else {
-          set({ tours, token, tags });
         }
       },
+      setSurveys: (surveys) => set({ surveys }),
       selfClosed: false,
       setSelfClosed: (selfClosed) => set({ selfClosed }),
       pointers: {},
@@ -121,6 +133,7 @@ export const useStore = create(
           }
         });
       },
+      surveys: [],
       tours: [],
       setTours: (tours) => set({ tours }),
       step: undefined,

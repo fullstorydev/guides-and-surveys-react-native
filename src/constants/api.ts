@@ -11,6 +11,7 @@ export const API_CONFIG = {
   },
   DEFAULT_PARAMS: {
     lang: 'en',
-    app: 'mobile',
+    // TODO: Change to 'mobile' when API is ready
+    app: 'web',
   },
 } as const;
