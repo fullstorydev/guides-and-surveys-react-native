@@ -77,8 +77,8 @@ export const fetchProgressor = async (
       );
       return null;
     }
-    // Bug fix: response.json() already parses JSON, no need for JSON.parse()
-    const result = await response.json();
+
+    const result = JSON.parse(await response.json());
 
     let tours = [];
     if (result.tours) {
