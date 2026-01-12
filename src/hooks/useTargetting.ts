@@ -1,13 +1,44 @@
 import { useEffect } from 'react';
 import { useStore } from '../stores/useStore';
 import { useCurrentRouteName } from './useCurrentRouteName';
-import type { Target } from '../types';
+import type { Survey, Target } from '../types';
+import { useActiveExperienceStore } from '../stores/useActiveExperienceStore';
+import { useDataStore } from '../stores/useDataStore';
 
 export const useTargetting = () => {
   const currentRouteName = useCurrentRouteName();
-  const tours = useStore((s) => s.tours);
+  const tours = useDataStore((s) => s.tours);
+  const surveys = useDataStore((s) => s.surveys);
+  const setActiveExperience = useActiveExperienceStore(
+    (s) => s.setActiveExperience
+  );
   const setAvailableTour = useStore((s) => s.setAvailableTour);
   const progressorData = useStore((s) => s.progressorData);
+
+  /**
+   * Targetting for current experience. Deterimines the current active experience. Only surveys for now.
+   */
+  useEffect(() => {
+    if (surveys && surveys.length) {
+      // TODO, all surveys are valid for now.
+      // TODO check if survey is incomplete - no progressor data
+
+      const activeSurveys = surveys.filter((survey) => {
+        if (survey.targets.length === 0) {
+          return true;
+        }
+        return survey.targets.some((target: Target) => {
+          return checkByTargets({ target, path: currentRouteName });
+        });
+      });
+
+      setActiveExperience({
+        type: 'survey',
+        experience: activeSurveys[0] as Survey,
+        currentPageIndex: 0,
+      });
+    }
+  }, [surveys, currentRouteName, setActiveExperience]);
 
   useEffect(() => {
     if (tours && tours.length) {
