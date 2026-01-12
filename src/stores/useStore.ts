@@ -5,25 +5,22 @@ import type {
   Theme,
   Tour,
   TourStep,
-  UsetifulResponse,
-  UsetigulTag,
+  UsetifulTag,
 } from '../types';
 import { type LayoutChangeEvent } from 'react-native';
 import { createJSONStorage, persist } from 'zustand/middleware';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { THEME_DEFAULT } from '../constants';
-
-const BaseURl = 'https://www.usetiful.com';
-// const BaseURl = 'https://admin:admin123@dev.usetiful.com';
-
-const END_POINT = '/api-space/data.json?lang=en&app=mobile';
+import { fetchDataJson, fetchProgressor } from '../services/api';
 
 interface StoreState {
   token: string | undefined;
-  tags: UsetigulTag | undefined;
-  setToken: (token: string, tags?: UsetigulTag) => void;
+  tags: UsetifulTag | undefined;
+  initialize: (token: string, tags?: UsetifulTag) => void;
   selfClosed: boolean;
   setSelfClosed: (selfClosed: boolean) => void;
+  surveys: Array<any>;
+  setSurveys: (surveys: Array<any>) => void;
   tourStepIndex: number;
   setTourStepIndex: (tourStepIndex: number) => void;
   tourStepLength: number;
@@ -51,11 +48,22 @@ type StorePersistedState = Pick<StoreState, 'progressorData'>;
 
 export const useStore = create(
   persist<StoreState, [], [], StorePersistedState>(
-    (set) => ({
+    (set, get) => ({
       token: undefined,
       tags: undefined,
-      setToken: async (token, tags) => {
-        let tours: Tour[] = await fetchDataJson(token);
+      initialize: async (token, tags) => {
+        set({ token, tags });
+
+        const response = await fetchDataJson(token);
+
+        if (response) {
+          if (response.tours) {
+            get().setTours(response.tours);
+          }
+          if (response.surveys) {
+            get().setSurveys(response.surveys);
+          }
+        }
 
         if (tags && tags.userId) {
           const progressorData = await fetchProgressor(
@@ -63,12 +71,11 @@ export const useStore = create(
             tags.userId ?? ''
           );
           if (progressorData) {
-            set({ tours, progressorData, token, tags });
+            get().setProgressorData(progressorData);
           }
-        } else {
-          set({ tours, token, tags });
         }
       },
+      setSurveys: (surveys) => set({ surveys }),
       selfClosed: false,
       setSelfClosed: (selfClosed) => set({ selfClosed }),
       pointers: {},
@@ -126,6 +133,7 @@ export const useStore = create(
           }
         });
       },
+      surveys: [],
       tours: [],
       setTours: (tours) => set({ tours }),
       step: undefined,
@@ -190,94 +198,3 @@ export const useStore = create(
     }
   )
 );
-
-const fetchDataJson = async (token: string): Promise<Tour[]> => {
-  const reqUrl = `${BaseURl}${END_POINT}`;
-  try {
-    const response = await fetch(reqUrl, {
-      method: 'GET',
-      headers: {
-        'X-Auth-Token': token,
-        'X-Requested-With': 'XMLHttpRequest',
-        'Content-Type': 'application/json; charset=utf-8',
-      },
-    });
-
-    if (!response.ok) {
-      console.error(`USETIFUL HTTP ERROR - status: ${response.status}`);
-      return [];
-    }
-
-    const res: UsetifulResponse = await response.json();
-
-    console.log(`
-      =============================================
-      =============================================
-      ============== USETIFUL =====================
-      ================= IS ========================
-      ============== LOADED =======================
-      =============================================
-      =============================================`);
-
-    return res.tours;
-  } catch (error: any) {
-    console.error('=====error====>', error.message);
-    return [];
-  }
-};
-
-const fetchProgressor = async (token: string, userId: string) => {
-  const url = 'https://progressor.usetiful.com/api/get';
-  const headers = {
-    'Content-Type': 'application/json',
-    'X-Requested-With': 'XMLHttpRequest',
-  };
-  const body = JSON.stringify({
-    userId,
-    accountToken: token,
-  });
-
-  try {
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: headers,
-      body: body,
-    });
-
-    if (!response.ok) {
-      console.error(
-        '=======Error=====>',
-        new Error(`Usetiful: connection error ${response.status}`)
-      );
-      return null;
-    }
-    const result = JSON.parse(await response.json());
-
-    let tours = [];
-    if (result.tours) {
-      try {
-        tours = JSON.parse(result.tours);
-      } catch (error) {
-        console.warn("Warning: 'tours' key is not a valid JSON string.");
-      }
-    } else {
-      console.warn("Warning: 'tours' key not found in response.");
-    }
-
-    const autoSegment = result.autoSegment;
-    const storedAt = result.storedAt;
-    const customSegments = result.customSegments;
-    const uf_completed = result.uf_completed;
-
-    return {
-      tours,
-      autoSegment,
-      customSegments,
-      storedAt,
-      uf_completed,
-    } as ProgressorData;
-  } catch (error: any) {
-    console.error('=======Error=====>', error.message);
-    return null;
-  }
-};

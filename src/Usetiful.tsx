@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState, type PropsWithChildren } from 'react';
 import { StyleSheet, View } from 'react-native';
-import type { Measure, UsetigulTag } from './types';
+import type { Measure, UsetifulTag } from './types';
 import { Modal } from './components/Modal';
 import { useStore } from './stores/useStore';
 import { Pointer } from './components/Pointer';
@@ -9,11 +9,10 @@ import { useCurrentRouteName } from './hooks/useCurrentRouteName';
 import { useTargetting } from './hooks/useTargetting';
 import { useProgressorUpdate } from './hooks/useProgressorUpdate';
 import { useGestureHandler } from './hooks/useGestureHandler';
-export { setPointer } from './utils/setPointer';
 
 type Props = {
   token: string;
-  tags?: UsetigulTag;
+  tags?: UsetifulTag;
 } & PropsWithChildren;
 
 export const Usetiful = ({ children, token, tags }: Props) => {
@@ -23,14 +22,14 @@ export const Usetiful = ({ children, token, tags }: Props) => {
 
   const step = useStore((s) => s.step);
   const setStep = useStore((s) => s.setStep);
-  const setToken = useStore((s) => s.setToken);
+  const initialize = useStore((s) => s.initialize);
   const availableTour = useStore((s) => s.availableTour);
   const selfClosed = useStore((s) => s.selfClosed);
   const setSelfClosed = useStore((s) => s.setSelfClosed);
   const [layoutMeasure, setLayoutMeasure] = useState<Measure>();
   useEffect(() => {
-    setToken(token, tags);
-  }, [setToken, tags, token]);
+    initialize(token, tags);
+  }, [initialize, tags, token]);
 
   useTargetting();
   useProgressorUpdate();
@@ -111,23 +110,5 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
     backgroundColor: '#000000cc',
-  },
-  crossBtn: {
-    fontSize: 16,
-    width: 20,
-    height: 20,
-    alignItems: 'flex-end',
-  },
-  footerBtn: {
-    marginRight: 10,
-    padding: 8,
-    borderRadius: 6,
-  },
-  primaryBtn: {
-    backgroundColor: '#387DFF',
-  },
-  secondaryBrn: {
-    borderColor: '#464646',
-    borderWidth: 1,
   },
 });

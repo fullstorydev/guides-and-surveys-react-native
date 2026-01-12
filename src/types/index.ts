@@ -1,5 +1,10 @@
 export type UsetifulResponse = {
-  tours: Tour[];
+  tours?: Tour[];
+  surveys?: Survey[];
+};
+export type Survey = {
+  // TODO placeholder for now
+  keys: string;
 };
 export type Tour = {
   id: string;
@@ -70,7 +75,7 @@ export type Theme = {
   fontButtonSize: number;
 };
 
-export type UsetigulTag = {
+export type UsetifulTag = {
   [key: string]: string;
 };
 

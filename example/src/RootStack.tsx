@@ -2,12 +2,14 @@ import { View, Text, StyleSheet, Button, type ViewStyle } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useNavigation, type NavigationProp } from '@react-navigation/native';
 import { setPointer } from 'usetiful-react-native';
+import KitchenSinkScreen from './screens/KitchenSink';
 
 type RootStackParamList = {
   Detail: undefined;
   Home: undefined;
   About: undefined;
   Help: undefined;
+  KitchenSink: undefined;
 };
 
 export const HomeScreen = () => {
@@ -25,6 +27,12 @@ export const HomeScreen = () => {
         <View style={styles.navBtn}>
           <Button title="Help" onPress={() => navitaion.navigate('Help')} />
         </View>
+        <View style={styles.navBtn}>
+          <Button
+            title="Kitchen Sink"
+            onPress={() => navitaion.navigate('KitchenSink')}
+          />
+        </View>
       </View>
     </View>
   );
@@ -39,6 +47,7 @@ export const RootStack = () => {
       <Stack.Screen name="Detail" component={DetailsScreen} />
       <Stack.Screen name="About" component={AboutScreen} />
       <Stack.Screen name="Help" component={HelpScreen} />
+      <Stack.Screen name="KitchenSink" component={KitchenSinkScreen} />
     </Stack.Navigator>
   );
 };
