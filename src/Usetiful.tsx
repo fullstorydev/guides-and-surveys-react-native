@@ -1,14 +1,15 @@
-import { useEffect, useMemo, useState, type PropsWithChildren } from 'react';
+import { useEffect, useState, type PropsWithChildren } from 'react';
 import { StyleSheet, View } from 'react-native';
-import type { Measure, UsetifulTag } from './types';
-import { Modal } from './components/Modal';
-import { useStore } from './stores/useStore';
-import { Pointer } from './components/Pointer';
-import { Slideout } from './components/Slideout';
-import { useCurrentRouteName } from './hooks/useCurrentRouteName';
+import type { UsetifulTag, Measure } from './types';
 import { useTargetting } from './hooks/useTargetting';
 import { useProgressorUpdate } from './hooks/useProgressorUpdate';
-import { useGestureHandler } from './hooks/useGestureHandler';
+import { useActiveExperienceStore } from './stores/useActiveExperienceStore';
+import Survey from './Survey';
+import { useDataStore } from './stores/useDataStore';
+import type { Survey as SurveyType } from './types';
+import { Tour } from './Tour';
+// TODO remove this once we combine stores
+import { useStore } from './stores/useStore';
 
 type Props = {
   token: string;
@@ -16,51 +17,38 @@ type Props = {
 } & PropsWithChildren;
 
 export const Usetiful = ({ children, token, tags }: Props) => {
-  const currentRouteName = useCurrentRouteName();
+  // TODO remove this once we combine stores
+  const initializeOldStore = useStore((s) => s.initialize);
+  const initialize = useDataStore((s) => s.initialize);
 
-  const tourStepIndex = useStore((s) => s.tourStepIndex);
-
-  const step = useStore((s) => s.step);
-  const setStep = useStore((s) => s.setStep);
-  const initialize = useStore((s) => s.initialize);
-  const availableTour = useStore((s) => s.availableTour);
-  const selfClosed = useStore((s) => s.selfClosed);
-  const setSelfClosed = useStore((s) => s.setSelfClosed);
-  const [layoutMeasure, setLayoutMeasure] = useState<Measure>();
   useEffect(() => {
     initialize(token, tags);
-  }, [initialize, tags, token]);
+    initializeOldStore(token, tags);
+  }, [initialize, initializeOldStore, tags, token]);
 
   useTargetting();
   useProgressorUpdate();
+  const [layoutMeasure, setLayoutMeasure] = useState<Measure>();
+  const availableTour = useStore((s) => s.availableTour);
+  const activeExperience = useActiveExperienceStore((s) => s.activeExperience);
 
-  useEffect(() => {
-    setSelfClosed(false);
-  }, [currentRouteName, setSelfClosed]);
+  const renderContent = () => {
+    switch (activeExperience?.type) {
+      case 'survey':
+        return <Survey survey={activeExperience!.experience as SurveyType} />;
+    }
 
-  useEffect(
-    () =>
-      setStep(
-        !!availableTour && !selfClosed && availableTour.steps[tourStepIndex]
-          ? availableTour.steps[tourStepIndex]
-          : undefined
-      ),
-    [availableTour, selfClosed, setStep, tourStepIndex]
-  );
+    // TODO migrate to activeExperience
+    if (availableTour) {
+      return <Tour layoutMeasure={layoutMeasure as Measure} />;
+    }
 
-  const panHandlers = useGestureHandler();
-
-  const refs = useStore((s) => s.pointers);
-  const stepType = useMemo(() => {
-    if (step && step.type !== 'pointer') return step.type;
-    else if (step?.type === 'pointer')
-      return refs[step.element] ? 'pointer' : 'slideout';
-    else return undefined;
-  }, [refs, step]);
+    return null;
+  };
 
   return (
     <View
-      style={styles.UsetifulContainer}
+      style={styles.container}
       onLayout={(e) => {
         e.target.measure((x, y, width, height, pageX, pageY) => {
           if (
@@ -72,43 +60,17 @@ export const Usetiful = ({ children, token, tags }: Props) => {
       }}
     >
       {children}
-      {step && (
-        <View
-          // eslint-disable-next-line react-native/no-inline-styles
-          style={{
-            ...styles.usetifulLayer,
-            backgroundColor: stepType === 'modal' ? '#000000cc' : 'transparent',
-            justifyContent: stepType === 'slideout' ? 'flex-end' : 'flex-start',
-          }}
-          {...panHandlers}
-        >
-          {stepType === 'modal' && (
-            <Modal step={step} key={`${stepType}-${step.id}`} />
-          )}
-          {stepType === 'pointer' && (
-            <Pointer
-              step={step}
-              layoutMeasure={layoutMeasure}
-              key={`${stepType}-${step.id}`}
-            />
-          )}
-          {stepType === 'slideout' && (
-            <Slideout step={step} key={`${stepType}-${step.id}`} />
-          )}
-        </View>
-      )}
+      {renderContent()}
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  UsetifulContainer: {
+  container: {
     flex: 1,
   },
-  usetifulLayer: {
-    position: 'absolute',
-    width: '100%',
-    height: '100%',
+  surveyContainer: {
     backgroundColor: '#000000cc',
+    justifyContent: 'flex-start',
   },
 });
