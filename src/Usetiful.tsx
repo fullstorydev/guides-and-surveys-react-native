@@ -69,8 +69,4 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  surveyContainer: {
-    backgroundColor: '#000000cc',
-    justifyContent: 'flex-start',
-  },
 });
