@@ -7,7 +7,7 @@ import { useDataStore } from '../stores/useDataStore';
 
 export const useTargetting = () => {
   const currentRouteName = useCurrentRouteName();
-  const tours = useDataStore((s) => s.tours);
+  const tours = useStore((s) => s.tours);
   const surveys = useDataStore((s) => s.surveys);
   const setActiveExperience = useActiveExperienceStore(
     (s) => s.setActiveExperience
