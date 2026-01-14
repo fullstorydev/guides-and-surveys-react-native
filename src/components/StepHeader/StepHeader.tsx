@@ -3,6 +3,7 @@ import { CrossBtn } from '../Cross';
 import { useMemo } from 'react';
 import { useStore } from '../../stores/useStore';
 import { RenderProgressBar } from '../ProgressBar';
+import { useOnClose } from '../../hooks/useOnClose';
 
 type Props = {
   title: string;
@@ -10,6 +11,7 @@ type Props = {
 export const StepHeader = ({ title }: Props) => {
   const theme = useStore((s) => s.theme);
   const progress = useStore((s) => s.progress);
+  const { onCloseHandler } = useOnClose();
 
   const styles = useMemo(
     () =>
@@ -33,7 +35,7 @@ export const StepHeader = ({ title }: Props) => {
     <>
       <View style={styles.header}>
         <Text style={styles.text}>{title}</Text>
-        <CrossBtn />
+        <CrossBtn onClose={onCloseHandler} />
       </View>
       {progress.type === 1 && <RenderProgressBar />}
     </>

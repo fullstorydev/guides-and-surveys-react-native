@@ -2,49 +2,7 @@ export type UsetifulResponse = {
   tours?: Tour[];
   surveys?: Survey[];
 };
-export type SurveyPage = {
-  id: string;
-  name: string;
-  type: 'modal' | 'slideout';
-  content: any;
-  customStyle: any;
-  actions: SurveyAction;
-  questions: any[]; // Keep as any for now
-};
 
-export type SurveyAction = {
-  action: string;
-  close: boolean;
-  confirm: boolean;
-  label: string;
-};
-
-export type SurveyQuestion = {
-  alignment: 'left' | 'right' | 'center';
-  id: string;
-  type: 'nps' | 'open' | 'range';
-  maximalValueLabel: string;
-  minimalValueLabel: string;
-  options: any[] | null;
-  required: boolean;
-  question: 'string';
-};
-
-export type Survey = {
-  active: boolean;
-  id: string;
-  name: string;
-  objectPriority: number;
-  pages: SurveyPage[];
-  targets: Target[];
-  trigger: SurveyTrigger;
-};
-
-export type SurveyTrigger = {
-  autoplay: boolean;
-  showEveryTime: boolean;
-  type: string;
-};
 export type Tour = {
   id: string;
   name: string;
@@ -144,3 +102,73 @@ export type ActiveExperience =
   | { type: 'tour'; experience: Tour; currentPageIndex: number }
   | { type: 'survey'; experience: Survey; currentPageIndex: number }
   | null;
+
+/*
+  Survey types
+  */
+export type SurveyPage = {
+  id: string;
+  name: string;
+  type: 'modal' | 'slideout';
+  content: any;
+  customStyle: any;
+  actions: SurveyAction;
+  questions: SurveyQuestion[];
+};
+
+export type SurveyAction = {
+  action: string;
+  close: boolean;
+  confirm: boolean;
+  label: string;
+};
+
+export type SurveyQuestion = {
+  alignment: 'left' | 'right' | 'center';
+  id: string;
+  type: 'nps' | 'open';
+  maximalValueLabel: string;
+  minimalValueLabel: string;
+  options: any[] | null;
+  required: boolean;
+  question: string;
+};
+
+export type Survey = {
+  active: boolean;
+  id: string;
+  name: string;
+  objectPriority: number;
+  pages: SurveyPage[];
+  targets: Target[];
+  trigger: SurveyTrigger;
+};
+
+export type SurveyTrigger = AutomaticSurveyTrigger | ManualSurveyTrigger;
+
+type AutomaticSurveyTrigger = {
+  autoplay: true;
+  showEveryTime: true;
+  type: typeof TRIGGER_TYPE_EVERYTIME_TILL_COMPLETE;
+};
+
+type ManualSurveyTrigger = {
+  autoplay: false;
+  showEveryTime: true;
+  type: typeof TRIGGER_TYPE_EVERYTIME;
+  pageEvent?: PageEvent;
+};
+export const TRIGGER_TYPE_EVERYTIME_TILL_COMPLETE = 'everytime_till_complete';
+export const TRIGGER_TYPE_EVERYTIME = 'everytime';
+// TODO we do not support manual triggers
+type PageEvent = {
+  url: string;
+  type: string;
+  name: string;
+  element: string;
+  eventName: string;
+  loop?: string;
+  tag?: string;
+  operator?: string;
+  value?: string;
+};

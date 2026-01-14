@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { View, Text, Pressable, StyleSheet } from 'react-native';
 
 const NPS_SCALE = 10;
@@ -6,18 +5,16 @@ const NPS_SCALE = 10;
 type NPSProps = {
   leftLabel?: string;
   rightLabel?: string;
+  value: number | null;
+  onChange: (value: number) => void;
 };
 
 export const NPS = ({
   leftLabel = 'Not likely',
   rightLabel = 'Very likely',
+  value: rating,
+  onChange,
 }: NPSProps) => {
-  const [rating, setRating] = useState<number | null>(null);
-
-  const onPress = (value: number) => {
-    setRating(value);
-  };
-
   return (
     <View style={styles.container}>
       <View style={styles.scaleContainer}>
@@ -32,7 +29,7 @@ export const NPS = ({
                 styles.ratingButton,
                 isSelected && styles.ratingButtonSelected,
               ]}
-              onPress={() => onPress(value)}
+              onPress={() => onChange(value)}
             >
               <Text
                 style={[

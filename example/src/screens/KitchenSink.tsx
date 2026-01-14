@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { View, ScrollView, StyleSheet } from 'react-native';
 import { NPS } from '../../../src/components/NPS/NPS';
 
@@ -6,10 +7,12 @@ import { NPS } from '../../../src/components/NPS/NPS';
  */
 
 function KitchenSinkScreen() {
+  const [npsValue, setNpsValue] = useState<number | null>(null);
+
   return (
     <ScrollView style={styles.container}>
       <View style={styles.content}>
-        <NPS />
+        <NPS value={npsValue} onChange={setNpsValue} />
       </View>
     </ScrollView>
   );

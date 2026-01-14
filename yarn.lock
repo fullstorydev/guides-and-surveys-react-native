@@ -11757,6 +11757,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"react-hook-form@npm:^7.71.1":
+  version: 7.71.1
+  resolution: "react-hook-form@npm:7.71.1"
+  peerDependencies:
+    react: ^16.8.0 || ^17 || ^18 || ^19
+  checksum: 99f376548bed5d3f242f973095342c0a4fe0fab759e3c84913fa6a303d46c0bbf8afcf45a6dd196a51d8ea3c81e308288939ce7405032f483ab55a803177cf86
+  languageName: node
+  linkType: hard
+
 "react-is@npm:^16.13.0, react-is@npm:^16.13.1":
   version: 16.13.1
   resolution: "react-is@npm:16.13.1"
@@ -14073,6 +14082,7 @@ __metadata:
     jest: ^29.7.0
     prettier: ^3.0.3
     react: 18.2.0
+    react-hook-form: ^7.71.1
     react-native: 0.79.2
     react-native-builder-bob: ^0.29.0
     react-native-webview: ^13.0.0
