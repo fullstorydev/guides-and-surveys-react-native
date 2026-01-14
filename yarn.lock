@@ -14093,6 +14093,7 @@ __metadata:
     "@react-native-async-storage/async-storage": "*"
     "@react-navigation/native": ^6.0.0
     react: "*"
+    react-hook-form: ^7.0.0
     react-native: "*"
     react-native-webview: ^13.0.0
   languageName: unknown
