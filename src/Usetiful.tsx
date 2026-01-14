@@ -1,7 +1,7 @@
 import { useEffect, useState, type PropsWithChildren } from 'react';
 import { StyleSheet, View } from 'react-native';
 import type { UsetifulTag, Measure } from './types';
-import { useTargetting } from './hooks/useTargetting';
+import { useTargeting } from './hooks/useTargeting';
 import { useProgressorUpdate } from './hooks/useProgressorUpdate';
 import { useActiveExperienceStore } from './stores/useActiveExperienceStore';
 import Survey from './Survey';
@@ -26,7 +26,7 @@ export const Usetiful = ({ children, token, tags }: Props) => {
     initializeOldStore(token, tags);
   }, [initialize, initializeOldStore, tags, token]);
 
-  useTargetting();
+  useTargeting();
   useProgressorUpdate();
   const [layoutMeasure, setLayoutMeasure] = useState<Measure>();
   const availableTour = useStore((s) => s.availableTour);

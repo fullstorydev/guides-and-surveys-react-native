@@ -10,6 +10,7 @@ interface ActiveExperienceStoreState {
   activeExperience: ActiveExperience;
 
   // Shared UI state (applies to all types)
+  // TODO support dynamic themes
   theme: Theme;
   selfClosed: boolean;
 

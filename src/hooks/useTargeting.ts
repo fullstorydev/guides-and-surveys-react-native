@@ -5,7 +5,7 @@ import type { Survey, Target } from '../types';
 import { useActiveExperienceStore } from '../stores/useActiveExperienceStore';
 import { useDataStore } from '../stores/useDataStore';
 
-export const useTargetting = () => {
+export const useTargeting = () => {
   const currentRouteName = useCurrentRouteName();
   const tours = useStore((s) => s.tours);
   const surveys = useDataStore((s) => s.surveys);
