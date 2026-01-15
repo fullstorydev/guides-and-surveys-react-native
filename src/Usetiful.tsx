@@ -23,7 +23,8 @@ export const Usetiful = ({ children, token, tags }: Props) => {
 
   useEffect(() => {
     initialize(token, tags);
-    initializeOldStore(token, tags);
+    // TODO integrate Tour store
+    // initializeOldStore(token, tags);
   }, [initialize, initializeOldStore, tags, token]);
 
   useTargeting();
