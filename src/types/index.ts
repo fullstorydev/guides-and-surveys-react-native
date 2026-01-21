@@ -2,9 +2,48 @@ export type UsetifulResponse = {
   tours?: Tour[];
   surveys?: Survey[];
 };
+export type SurveyPage = {
+  id: string;
+  name: string;
+  type: 'modal' | 'slideout';
+  content: any;
+  customStyle: any;
+  actions: SurveyAction;
+  questions: any[]; // Keep as any for now
+};
+
+export type SurveyAction = {
+  action: string;
+  close: boolean;
+  confirm: boolean;
+  label: string;
+};
+
+export type SurveyQuestion = {
+  alignment: 'left' | 'right' | 'center';
+  id: string;
+  type: 'nps' | 'open' | 'range';
+  maximalValueLabel: string;
+  minimalValueLabel: string;
+  options: any[] | null;
+  required: boolean;
+  question: 'string';
+};
+
 export type Survey = {
-  // TODO placeholder for now
-  keys: string;
+  active: boolean;
+  id: string;
+  name: string;
+  objectPriority: number;
+  pages: SurveyPage[];
+  targets: Target[];
+  trigger: SurveyTrigger;
+};
+
+export type SurveyTrigger = {
+  autoplay: boolean;
+  showEveryTime: boolean;
+  type: string;
 };
 export type Tour = {
   id: string;
@@ -100,3 +139,8 @@ export type ProgressorData = {
   customSegments: string[];
   storedAt: string;
 };
+
+export type ActiveExperience =
+  | { type: 'tour'; experience: Tour; currentPageIndex: number }
+  | { type: 'survey'; experience: Survey; currentPageIndex: number }
+  | null;
