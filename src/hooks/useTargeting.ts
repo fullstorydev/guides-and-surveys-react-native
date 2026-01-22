@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useStore } from '../stores/useStore';
 import { useCurrentRouteName } from './useCurrentRouteName';
-import type { Survey, Target } from '../types';
+import type { Target } from '../types';
 import { useActiveExperienceStore } from '../stores/useActiveExperienceStore';
 import { useDataStore } from '../stores/useDataStore';
 
@@ -20,23 +20,26 @@ export const useTargeting = () => {
    */
   useEffect(() => {
     if (surveys && surveys.length) {
-      // TODO, all surveys are valid for now.
       // TODO check if survey is incomplete - no progressor data
 
-      const activeSurveys = surveys.filter((survey) => {
-        if (survey.targets.length === 0) {
-          return true;
-        }
-        return survey.targets.some((target: Target) => {
-          return checkByTargets({ target, path: currentRouteName });
-        });
-      });
+      const activeSurveys = surveys
+        .filter((survey) => {
+          if (survey.targets.length === 0) {
+            return true;
+          }
+          return survey.targets.some((target: Target) => {
+            return checkByTargets({ target, path: currentRouteName });
+          });
+        })
+        .sort((a, b) => b.objectPriority - a.objectPriority);
 
-      setActiveExperience({
-        type: 'survey',
-        experience: activeSurveys[0] as Survey,
-        currentPageIndex: 0,
-      });
+      if (activeSurveys[0]) {
+        setActiveExperience({
+          type: 'survey',
+          experience: activeSurveys[0],
+          currentPageIndex: 0,
+        });
+      }
     }
   }, [surveys, currentRouteName, setActiveExperience]);
 
