@@ -9,12 +9,7 @@ interface SurveyProgressStoreState {
   hasHydrated: boolean;
   isCompleted: boolean; // TODO: Refactor this once we implement uf_completed
 
-  // Read operations
   getSurveyProgress: (surveyId: string) => SurveyProgress | null;
-  shouldResumeSurvey: (surveyId: string) => boolean;
-  getResumePageId: (surveyId: string) => string | null;
-
-  // Write operations
   updateSurveyStarted: (
     surveyId: string,
     surveyName: string,
@@ -60,15 +55,6 @@ export const useSurveyProgressStore = create(
         const { surveyProgress } = get();
         return surveyProgress.find((s) => s.id === surveyId) || null;
       },
-      shouldResumeSurvey: (surveyId: string) => {
-        const progress = get().getSurveyProgress(surveyId);
-        return progress !== null;
-      },
-      getResumePageId: (surveyId: string) => {
-        const progress = get().getSurveyProgress(surveyId);
-        return progress ? progress.currentPageId : null;
-      },
-
       updateSurveyStarted: (
         surveyId: string,
         surveyName: string,
