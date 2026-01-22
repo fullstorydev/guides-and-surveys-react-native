@@ -6,6 +6,8 @@ import { SURVEY_STATE } from '../constants';
 
 interface SurveyProgressStoreState {
   surveyProgress: SurveyProgress[];
+  hasHydrated: boolean;
+  isCompleted: boolean; // TODO: Refactor this once we implement uf_completed
 
   // Read operations
   getSurveyProgress: (surveyId: string) => SurveyProgress | null;
@@ -20,6 +22,7 @@ interface SurveyProgressStoreState {
   ) => void;
   updateSurveyProgress: (surveyId: string, pageId: string) => void;
   updateSurveyClosed: (surveyId: string) => void;
+  updateSurveyCompleted: (surveyId: string) => void;
 }
 
 // Helper function to update existing survey progress
@@ -50,6 +53,8 @@ export const useSurveyProgressStore = create(
   persist<SurveyProgressStoreState>(
     (set, get) => ({
       surveyProgress: [],
+      hasHydrated: false,
+      isCompleted: false,
 
       getSurveyProgress: (surveyId: string) => {
         const { surveyProgress } = get();
@@ -110,10 +115,23 @@ export const useSurveyProgressStore = create(
           updateSurveyData(state, surveyId, { state: SURVEY_STATE.CLOSED })
         );
       },
+
+      updateSurveyCompleted: (surveyId: string) => {
+        // TODO: implement uf_completed
+        set((state) => ({
+          ...updateSurveyData(state, surveyId, { state: SURVEY_STATE.CLOSED }),
+          isCompleted: true,
+        }));
+      },
     }),
     {
       name: 'usetiful-survey-progress',
       storage: createJSONStorage(() => AsyncStorage),
+      onRehydrateStorage: () => (state) => {
+        if (state) {
+          state.hasHydrated = true;
+        }
+      },
     }
   )
 );

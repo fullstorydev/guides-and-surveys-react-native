@@ -1,50 +1,63 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo } from 'react';
 import { StyleSheet, Text, View, Pressable, TextInput } from 'react-native';
 import { useForm, Controller } from 'react-hook-form';
 import type { Survey as SurveyType } from './types';
 import { CrossBtn } from './components/Cross';
 import { NPS } from './components/NPS/NPS';
 import { useSurveyProgressStore } from './stores/useSurveyProgressStore';
+import { useActiveExperienceStore } from './stores/useActiveExperienceStore';
 
 const Survey = ({ survey }: { survey: SurveyType }) => {
   const {
+    hasHydrated,
+    isCompleted,
     updateSurveyStarted,
     updateSurveyProgress,
-    shouldResumeSurvey,
-    getResumePageId,
     updateSurveyClosed,
+    getSurveyProgress,
+    updateSurveyCompleted,
   } = useSurveyProgressStore();
 
-  const [closed, setClosed] = useState(false);
-  const [currentPageIndex, setCurrentPageIndex] = useState(0);
+  const selfClosed = useActiveExperienceStore((s) => s.selfClosed);
+  const setSelfClosed = useActiveExperienceStore((s) => s.setSelfClosed);
+
   const { control, handleSubmit } = useForm();
 
-  // On survey start - check if we should resume
+  const surveyProgress = getSurveyProgress(survey.id);
+  // TODO: Check if survey is in uf_completed and hide if so
+
+  const currentPageIndex = useMemo(
+    () =>
+      surveyProgress
+        ? survey.pages.findIndex((p) => p.id === surveyProgress.currentPageId)
+        : 0,
+    [survey.pages, surveyProgress]
+  );
+  const currentPage = useMemo(
+    () =>
+      currentPageIndex >= 0 ? survey.pages[currentPageIndex] : survey.pages[0],
+    [survey.pages, currentPageIndex]
+  );
+
+  // Initialize survey in store if it's new (only after hydration)
   useEffect(() => {
-    if (shouldResumeSurvey(survey.id)) {
-      const resumePageId = getResumePageId(survey.id);
-      // Find page index from pageId and resume
-      const pageIndex = survey.pages.findIndex((p) => p.id === resumePageId);
-      setCurrentPageIndex(pageIndex >= 0 ? pageIndex : 0);
-    } else {
-      // Start new survey with first page
-      const firstPage = survey.pages[0];
-
-      if (!firstPage || !firstPage.id) {
-        console.error(
-          `Survey ${survey.id} has no pages or first page has no ID`
-        );
-        return;
-      }
-
-      updateSurveyStarted(survey.id, survey.name, firstPage.id);
+    if (!hasHydrated || surveyProgress) {
+      return;
     }
+
+    const firstPage = survey.pages[0];
+    if (!firstPage || !firstPage.id) {
+      console.error(`Survey ${survey.id} has no pages or first page has no ID`);
+      return;
+    }
+
+    updateSurveyStarted(survey.id, survey.name, firstPage.id);
   }, [
+    hasHydrated,
     survey.id,
     survey.name,
     survey.pages,
-    shouldResumeSurvey,
-    getResumePageId,
+    surveyProgress,
     updateSurveyStarted,
   ]);
 
@@ -57,17 +70,18 @@ const Survey = ({ survey }: { survey: SurveyType }) => {
 
     if (nextPage) {
       updateSurveyProgress(survey.id, nextPage.id);
-      setCurrentPageIndex(nextPageIndex);
     } else {
-      updateSurveyClosed(survey.id);
-      setClosed(true);
       // TODO: Mark as completed (add to uf_completed later)
+      updateSurveyCompleted(survey.id);
     }
   };
 
-  const currentPage = survey.pages[currentPageIndex];
-
-  if (closed || !currentPage) {
+  // Don't show if:
+  // - Store hasn't hydrated from AsyncStorage yet
+  // - No valid page to display
+  // - User closed this survey in current session
+  // - Survey is in uf_completed (TODO: implement this check)
+  if (!hasHydrated || !currentPage || selfClosed || isCompleted) {
     return null;
   }
 
@@ -84,7 +98,7 @@ const Survey = ({ survey }: { survey: SurveyType }) => {
             <CrossBtn
               onClose={() => {
                 updateSurveyClosed(survey.id);
-                setClosed(true);
+                setSelfClosed(true);
               }}
             />
           </View>
