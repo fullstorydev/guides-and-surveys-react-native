@@ -73,13 +73,13 @@ export const useSurveyProgressStore = create(
           const existing = state.surveyProgress.find((s) => s.id === surveyId);
 
           if (existing) {
-            // Survey exists - update it to inProgress
+            // Survey progress exists - update it to inProgress
             return updateSurveyData(state, surveyId, {
               currentPageId: initialPageId,
               state: SURVEY_STATE.IN_PROGRESS,
             });
           } else {
-            // Survey doesn't exist - create new
+            // Survey progress doesn't exist - create new
             return {
               surveyProgress: [
                 ...state.surveyProgress,
