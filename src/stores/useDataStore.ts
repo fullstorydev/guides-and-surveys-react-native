@@ -6,6 +6,7 @@ import {
 } from 'zustand/middleware';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { fetchDataJson, fetchProgressor } from '../services/api';
+import { visitor } from '../services/Visitor';
 import type { Tour, Survey, UsetifulTag, ProgressorData } from '../types';
 
 interface DataStoreState {
@@ -42,21 +43,27 @@ export const useDataStore = create(
         },
 
         initialize: async (token, tags) => {
-          set({ token, tags });
+          try {
+            // Parallel fetch for better performance
+            const [visitorIdent, response, progressorData] = await Promise.all([
+              visitor.getIdent(),
+              fetchDataJson(token),
+              tags?.userId
+                ? fetchProgressor(token, tags.userId)
+                : Promise.resolve(null),
+            ]);
 
-          // Parallel fetch for better performance
-          const [response, progressorData] = await Promise.all([
-            fetchDataJson(token),
-            tags?.userId
-              ? fetchProgressor(token, tags.userId)
-              : Promise.resolve(null),
-          ]);
-
-          set({
-            tours: response?.tours || [],
-            surveys: response?.surveys || [],
-            progressorData: progressorData || get().progressorData,
-          });
+            set({
+              token,
+              tags: { ...tags, visitorIdent },
+              tours: response?.tours || [],
+              surveys: response?.surveys || [],
+              progressorData: progressorData || get().progressorData,
+            });
+          } catch (error) {
+            // TODO: send error to analytics
+            console.error('Error initializing data store:', error);
+          }
         },
 
         setTours: (tours) => set({ tours }),
