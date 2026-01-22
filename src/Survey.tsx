@@ -1,27 +1,75 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { StyleSheet, Text, View, Pressable, TextInput } from 'react-native';
 import { useForm, Controller } from 'react-hook-form';
 import type { Survey as SurveyType } from './types';
 import { CrossBtn } from './components/Cross';
 import { NPS } from './components/NPS/NPS';
+import { useSurveyProgressStore } from './stores/useSurveyProgressStore';
 
 const Survey = ({ survey }: { survey: SurveyType }) => {
-  const [closed, setClosed] = useState(false);
-  // TODO default to 0 for now
-  const [currentPageIndex] = useState(0);
+  const {
+    updateSurveyStarted,
+    updateSurveyProgress,
+    shouldResumeSurvey,
+    getResumePageId,
+    updateSurveyClosed,
+  } = useSurveyProgressStore();
 
+  const [closed, setClosed] = useState(false);
+  const [currentPageIndex, setCurrentPageIndex] = useState(0);
   const { control, handleSubmit } = useForm();
+
+  // On survey start - check if we should resume
+  useEffect(() => {
+    if (shouldResumeSurvey(survey.id)) {
+      const resumePageId = getResumePageId(survey.id);
+      // Find page index from pageId and resume
+      const pageIndex = survey.pages.findIndex((p) => p.id === resumePageId);
+      setCurrentPageIndex(pageIndex >= 0 ? pageIndex : 0);
+    } else {
+      // Start new survey with first page
+      const firstPage = survey.pages[0];
+
+      if (!firstPage || !firstPage.id) {
+        console.error(
+          `Survey ${survey.id} has no pages or first page has no ID`
+        );
+        return;
+      }
+
+      updateSurveyStarted(survey.id, survey.name, firstPage.id);
+    }
+  }, [
+    survey.id,
+    survey.name,
+    survey.pages,
+    shouldResumeSurvey,
+    getResumePageId,
+    updateSurveyStarted,
+  ]);
+
+  const onSubmit = (data: any) => {
+    // TODO: Save answers when we implement answer storage
+    console.log('Survey submitted:', data);
+
+    const nextPageIndex = currentPageIndex + 1;
+    const nextPage = survey.pages[nextPageIndex];
+
+    if (nextPage) {
+      updateSurveyProgress(survey.id, nextPage.id);
+      setCurrentPageIndex(nextPageIndex);
+    } else {
+      updateSurveyClosed(survey.id);
+      setClosed(true);
+      // TODO: Mark as completed (add to uf_completed later)
+    }
+  };
 
   const currentPage = survey.pages[currentPageIndex];
 
   if (closed || !currentPage) {
     return null;
   }
-
-  const onSubmit = (data: any) => {
-    console.log('Survey submitted:', data);
-    // TODO: Send to API
-  };
 
   // Filter to only supported question types
   const supportedQuestions = currentPage.questions.filter(
@@ -33,7 +81,12 @@ const Survey = ({ survey }: { survey: SurveyType }) => {
       <View style={styles.modal}>
         {currentPage.actions.close && (
           <View style={styles.modalHeader}>
-            <CrossBtn onClose={() => setClosed(true)} />
+            <CrossBtn
+              onClose={() => {
+                updateSurveyClosed(survey.id);
+                setClosed(true);
+              }}
+            />
           </View>
         )}
         <View style={styles.modalBody}>

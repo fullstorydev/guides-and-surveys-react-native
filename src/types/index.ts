@@ -1,3 +1,5 @@
+import { SURVEY_STATE } from '../constants';
+
 export type UsetifulResponse = {
   tours?: Tour[];
   surveys?: Survey[];
@@ -96,6 +98,16 @@ export type ProgressorData = {
   autoSegment: string;
   customSegments: string[];
   storedAt: string;
+};
+
+type SurveyState = (typeof SURVEY_STATE)[keyof typeof SURVEY_STATE];
+
+export type SurveyProgress = {
+  id: string;
+  name: string;
+  currentPageId: string;
+  updatedAt: string;
+  state: SurveyState;
 };
 
 export type ActiveExperience =
