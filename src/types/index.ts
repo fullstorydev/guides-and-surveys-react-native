@@ -88,7 +88,7 @@ export type ProgressorTour = {
 
 export type UFCompleted = {
   type: string;
-  id: number;
+  id: string;
   updatedAt: string;
 };
 

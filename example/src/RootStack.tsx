@@ -3,6 +3,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useNavigation, type NavigationProp } from '@react-navigation/native';
 import { setPointer } from 'usetiful-react-native';
 import KitchenSinkScreen from './screens/KitchenSink';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 type RootStackParamList = {
   Detail: undefined;
@@ -31,6 +32,12 @@ export const HomeScreen = () => {
           <Button
             title="Kitchen Sink"
             onPress={() => navitaion.navigate('KitchenSink')}
+          />
+        </View>
+        <View style={styles.navBtn}>
+          <Button
+            title="Clear Async Storage"
+            onPress={() => AsyncStorage.clear()}
           />
         </View>
       </View>
@@ -69,6 +76,8 @@ const styles = StyleSheet.create({
   },
   navContainer: {
     flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'center',
     gap: 2,
   },
   navBtn: {

@@ -4,19 +4,16 @@ import { useForm, Controller } from 'react-hook-form';
 import type { Survey as SurveyType } from './types';
 import { CrossBtn } from './components/Cross';
 import { NPS } from './components/NPS/NPS';
-import { useSurveyProgressStore } from './stores/useSurveyProgressStore';
+import {
+  updateSurveyStarted,
+  updateSurveyProgress,
+  updateSurveyClosed,
+  updateSurveyCompleted,
+} from './stores/util/surveyProgress';
 import { useActiveExperienceStore } from './stores/useActiveExperienceStore';
 import { useDataStore } from './stores/useDataStore';
 
 const Survey = ({ survey }: { survey: SurveyType }) => {
-  const {
-    isCompleted,
-    updateSurveyStarted,
-    updateSurveyProgress,
-    updateSurveyClosed,
-    updateSurveyCompleted,
-  } = useSurveyProgressStore();
-
   const selfClosed = useActiveExperienceStore((s) => s.selfClosed);
   const setSelfClosed = useActiveExperienceStore((s) => s.setSelfClosed);
 
@@ -53,13 +50,7 @@ const Survey = ({ survey }: { survey: SurveyType }) => {
     }
 
     updateSurveyStarted(survey.id, survey.name, firstPage.id);
-  }, [
-    survey.id,
-    survey.name,
-    survey.pages,
-    surveyProgress,
-    updateSurveyStarted,
-  ]);
+  }, [survey.id, survey.name, survey.pages, surveyProgress]);
 
   const onSubmit = (data: any) => {
     // TODO: Save answers when we implement answer storage
@@ -71,7 +62,6 @@ const Survey = ({ survey }: { survey: SurveyType }) => {
     if (nextPage) {
       updateSurveyProgress(survey.id, nextPage.id);
     } else {
-      // TODO: Mark as completed (add to uf_completed later)
       updateSurveyCompleted(survey.id);
     }
   };
@@ -79,8 +69,7 @@ const Survey = ({ survey }: { survey: SurveyType }) => {
   // Don't show if:
   // - No valid page to display
   // - User closed this survey in current session
-  // - Survey is in uf_completed (TODO: implement this check)
-  if (!currentPage || selfClosed || isCompleted) {
+  if (!currentPage || selfClosed) {
     return null;
   }
 
