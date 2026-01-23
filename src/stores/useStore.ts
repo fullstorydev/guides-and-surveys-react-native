@@ -185,6 +185,7 @@ export const useStore = create(
         uf_completed: [],
         tours: [],
         uf_surveys: [],
+        uf_survey_answers: [],
         autoSegment: '',
         customSegments: [],
         storedAt: '',

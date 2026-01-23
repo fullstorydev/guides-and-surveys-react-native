@@ -10,6 +10,7 @@ import {
   updateSurveyClosed,
   updateSurveyCompleted,
 } from './stores/util/surveyProgress';
+import { saveSurveyAnswer } from './stores/util/surveyAnswers';
 import { useActiveExperienceStore } from './stores/useActiveExperienceStore';
 import { useDataStore } from './stores/useDataStore';
 
@@ -52,9 +53,31 @@ const Survey = ({ survey }: { survey: SurveyType }) => {
     updateSurveyStarted(survey.id, survey.name, firstPage.id);
   }, [survey.id, survey.name, survey.pages, surveyProgress]);
 
+  // Filter to only supported question types
+  const supportedQuestions =
+    currentPage?.questions.filter(
+      (q) => q.type === 'nps' || q.type === 'open'
+    ) || [];
+
   const onSubmit = (data: any) => {
-    // TODO: Save answers when we implement answer storage
-    console.log('Survey submitted:', data);
+    if (!currentPage) {
+      return;
+    }
+
+    // Save each answer
+    Object.entries(data).forEach(([questionId, value]) => {
+      const question = supportedQuestions.find((q) => q.id === questionId);
+      if (question && value !== undefined && value !== null && value !== '') {
+        saveSurveyAnswer(
+          survey.id,
+          questionId,
+          question.type,
+          value as string | number,
+          currentPage.id,
+          currentPage.name
+        );
+      }
+    });
 
     const nextPageIndex = currentPageIndex + 1;
     const nextPage = survey.pages[nextPageIndex];
@@ -72,11 +95,6 @@ const Survey = ({ survey }: { survey: SurveyType }) => {
   if (!currentPage || selfClosed) {
     return null;
   }
-
-  // Filter to only supported question types
-  const supportedQuestions = currentPage.questions.filter(
-    (q) => q.type === 'nps' || q.type === 'open'
-  );
 
   return (
     <View style={styles.container}>
