@@ -1,5 +1,10 @@
-import { SURVEY_STATE } from '../constants';
-
+import {
+  SURVEY_STATE,
+  TARGET_TYPE_ADDRESS_SIMPLE,
+  TARGET_TYPE_USER_SEGMENT,
+  TARGET_OPERATOR_SEGMENT_EXACT,
+  TARGET_OPERATOR_SEGMENT_IS_NOT,
+} from '../constants';
 export type UsetifulResponse = {
   tours?: Tour[];
   surveys?: Survey[];
@@ -39,12 +44,27 @@ export type TourStep = {
 export type TourTrigger = {
   type: string;
 };
-export type Target = {
-  type: 'address-simple' | 'user-segment' | string;
-  url?: string;
-  formattedName?: string;
-  name?: string;
+
+export type AddressTarget = {
+  type: typeof TARGET_TYPE_ADDRESS_SIMPLE;
+  url: string;
 };
+
+export type UserSegmentTarget = {
+  type: typeof TARGET_TYPE_USER_SEGMENT;
+  operator:
+    | typeof TARGET_OPERATOR_SEGMENT_EXACT
+    | typeof TARGET_OPERATOR_SEGMENT_IS_NOT;
+  name?: string;
+  formattedName?: string;
+};
+
+export type TargetGroup = {
+  targets: Target[];
+  targetOperator: 0 | 1;
+};
+
+export type Target = AddressTarget | UserSegmentTarget | TargetGroup;
 
 export type Measure = {
   x: number;
@@ -169,6 +189,8 @@ export type Survey = {
   pages: SurveyPage[];
   targets: Target[];
   trigger: SurveyTrigger;
+  // 0: all conditions must be true, 1: any condition must be true
+  targetOperator: 0 | 1;
 };
 
 export type SurveyTrigger = AutomaticSurveyTrigger | ManualSurveyTrigger;

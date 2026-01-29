@@ -84,7 +84,7 @@ export const fetchProgressor = async (
     if (result.tours) {
       try {
         tours = JSON.parse(result.tours);
-      } catch (error) {
+      } catch {
         console.warn("Warning: 'tours' key is not a valid JSON string.");
       }
     } else {
