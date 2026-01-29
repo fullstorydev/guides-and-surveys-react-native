@@ -130,7 +130,7 @@ export const saveProgressor = async (
   const body = JSON.stringify({
     userId,
     accountToken: token,
-    data: { ...progressorData },
+    data: progressorData,
   });
 
   try {
