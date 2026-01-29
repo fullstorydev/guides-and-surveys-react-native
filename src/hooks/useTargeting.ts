@@ -62,7 +62,6 @@ export const useTargeting = (
             return true;
           }
 
-          // Evaluate all targets based on the survey's targetOperator
           const targetResults = survey.targets.map((target: Target) => {
             return evaluateTarget(
               target,
@@ -72,7 +71,6 @@ export const useTargeting = (
             );
           });
 
-          // targetOperator: 0 = all conditions must be true, 1 = any condition must be true
           return survey.targetOperator === 0
             ? targetResults.every((result) => result)
             : targetResults.some((result) => result);
@@ -168,7 +166,6 @@ const evaluateTarget = (
   autoSegment?: string,
   customSegments?: string[]
 ): boolean => {
-  // Type guard: Check if this is a TargetGroup (has nested targets)
   if ('targets' in target) {
     const nestedResults = target.targets.map((nestedTarget: Target) =>
       evaluateTarget(nestedTarget, path, autoSegment, customSegments)
@@ -180,7 +177,6 @@ const evaluateTarget = (
       : nestedResults.some((result: boolean) => result);
   }
 
-  // Type guard: Handle individual target types based on discriminated union
   if (target.type === TARGET_TYPE_USER_SEGMENT) {
     const isInSegment = !!(
       target.formattedName &&
