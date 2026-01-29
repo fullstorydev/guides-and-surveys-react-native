@@ -108,3 +108,50 @@ export const fetchProgressor = async (
     return null;
   }
 };
+
+/**
+ * Saves user progress data to the Progressor API
+ * @param token - Authentication token
+ * @param userId - User ID to save progress for
+ * @param progressorData - Progress data to save
+ * @returns True if save was successful, false otherwise
+ */
+export const saveProgressor = async (
+  token: string,
+  userId: string,
+  progressorData: ProgressorData
+): Promise<boolean> => {
+  const url = API_CONFIG.PROGRESSOR_SAVE_URL;
+  const headers = {
+    'Content-Type': 'application/json',
+    'X-Requested-With': 'XMLHttpRequest',
+    'X-AUTH-TOKEN': token,
+  };
+  const body = JSON.stringify({
+    userId,
+    accountToken: token,
+    data: { ...progressorData },
+  });
+
+  try {
+    const response = await fetch(url, {
+      keepalive: true,
+      method: 'POST',
+      headers: headers,
+      body: body,
+    });
+
+    if (!response.ok) {
+      console.error(
+        '=======Error=====>',
+        new Error(`Usetiful: connection error ${response.status}`)
+      );
+      return false;
+    }
+    console.log('Usetiful: Progressor is updated!');
+    return true;
+  } catch (error: any) {
+    console.error('=======Error=====>', error.message);
+    return false;
+  }
+};
