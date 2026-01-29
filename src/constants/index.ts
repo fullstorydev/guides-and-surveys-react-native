@@ -43,3 +43,8 @@ export const webViewFontHandler = () => {
       return FONT_SIZE_DEFAULT;
   }
 };
+
+export const SURVEY_STATE = {
+  IN_PROGRESS: 'inProgress',
+  CLOSED: 'closed',
+} as const;

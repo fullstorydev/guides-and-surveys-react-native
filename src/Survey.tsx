@@ -1,27 +1,77 @@
-import { useState } from 'react';
+import { useEffect, useMemo } from 'react';
 import { StyleSheet, Text, View, Pressable, TextInput } from 'react-native';
 import { useForm, Controller } from 'react-hook-form';
 import type { Survey as SurveyType } from './types';
 import { CrossBtn } from './components/Cross';
 import { NPS } from './components/NPS/NPS';
+import {
+  updateSurveyStarted,
+  updateSurveyProgress,
+  updateSurveyClosed,
+  updateSurveyCompleted,
+} from './stores/util/surveyProgress';
+import { useActiveExperienceStore } from './stores/useActiveExperienceStore';
+import { useDataStore } from './stores/useDataStore';
 
 const Survey = ({ survey }: { survey: SurveyType }) => {
-  const [closed, setClosed] = useState(false);
-  // TODO default to 0 for now
-  const [currentPageIndex] = useState(0);
+  const selfClosed = useActiveExperienceStore((s) => s.selfClosed);
+  const setSelfClosed = useActiveExperienceStore((s) => s.setSelfClosed);
 
   const { control, handleSubmit } = useForm();
 
-  const currentPage = survey.pages[currentPageIndex];
+  const surveyProgress = useDataStore((s) =>
+    s.progressorData.uf_surveys?.find((sp) => sp.id === survey.id)
+  );
 
-  if (closed || !currentPage) {
-    return null;
-  }
+  const currentPageIndex = useMemo(
+    () =>
+      surveyProgress
+        ? survey.pages.findIndex((p) => p.id === surveyProgress.currentPageId)
+        : 0,
+    [survey.pages, surveyProgress]
+  );
+
+  const currentPage = useMemo(
+    () =>
+      currentPageIndex >= 0 ? survey.pages[currentPageIndex] : survey.pages[0],
+    [survey.pages, currentPageIndex]
+  );
+
+  // Initialize survey in store if it's new
+  useEffect(() => {
+    if (surveyProgress) {
+      return;
+    }
+
+    const firstPage = survey.pages[0];
+    if (!firstPage || !firstPage.id) {
+      console.error(`Survey ${survey.id} has no pages or first page has no ID`);
+      return;
+    }
+
+    updateSurveyStarted(survey.id, survey.name, firstPage.id);
+  }, [survey.id, survey.name, survey.pages, surveyProgress]);
 
   const onSubmit = (data: any) => {
+    // TODO: Save answers when we implement answer storage
     console.log('Survey submitted:', data);
-    // TODO: Send to API
+
+    const nextPageIndex = currentPageIndex + 1;
+    const nextPage = survey.pages[nextPageIndex];
+
+    if (nextPage) {
+      updateSurveyProgress(survey.id, nextPage.id);
+    } else {
+      updateSurveyCompleted(survey.id);
+    }
   };
+
+  // Don't show if:
+  // - No valid page to display
+  // - User closed this survey in current session
+  if (!currentPage || selfClosed) {
+    return null;
+  }
 
   // Filter to only supported question types
   const supportedQuestions = currentPage.questions.filter(
@@ -33,7 +83,12 @@ const Survey = ({ survey }: { survey: SurveyType }) => {
       <View style={styles.modal}>
         {currentPage.actions.close && (
           <View style={styles.modalHeader}>
-            <CrossBtn onClose={() => setClosed(true)} />
+            <CrossBtn
+              onClose={() => {
+                updateSurveyClosed(survey.id);
+                setSelfClosed(true);
+              }}
+            />
           </View>
         )}
         <View style={styles.modalBody}>

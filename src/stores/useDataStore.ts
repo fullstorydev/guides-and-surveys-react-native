@@ -37,6 +37,7 @@ export const useDataStore = create(
         progressorData: {
           uf_completed: [],
           tours: [],
+          uf_surveys: [],
           autoSegment: '',
           customSegments: [],
           storedAt: '',

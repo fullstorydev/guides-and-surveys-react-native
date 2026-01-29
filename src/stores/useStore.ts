@@ -184,6 +184,7 @@ export const useStore = create(
       progressorData: {
         uf_completed: [],
         tours: [],
+        uf_surveys: [],
         autoSegment: '',
         customSegments: [],
         storedAt: '',
