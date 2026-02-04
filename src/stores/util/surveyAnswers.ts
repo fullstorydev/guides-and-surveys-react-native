@@ -9,7 +9,7 @@ export const saveSurveyAnswer = (
   pageId: string,
   pageName?: string
 ) => {
-  const progressorData = useDataStore.getState().progressorData;
+  const progressorData = useDataStore.getState().getCurrentProgressorData();
   const uf_survey_answers = progressorData.uf_survey_answers || [];
 
   const answer: SurveyAnswer = {

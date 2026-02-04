@@ -17,7 +17,7 @@ export const useTargeting = (
   const setActiveExperience = useActiveExperienceStore(
     (s) => s.setActiveExperience
   );
-  const progressorData = useDataStore((s) => s.progressorData);
+  const progressorData = useDataStore((s) => s.getCurrentProgressorData());
 
   useEffect(() => {
     if (!navigationRef?.current) return;

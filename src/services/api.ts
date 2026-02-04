@@ -79,30 +79,7 @@ export const fetchProgressor = async (
     }
 
     const result = JSON.parse(await response.json());
-
-    let tours = [];
-    if (result.tours) {
-      try {
-        tours = JSON.parse(result.tours);
-      } catch {
-        console.warn("Warning: 'tours' key is not a valid JSON string.");
-      }
-    } else {
-      console.warn("Warning: 'tours' key not found in response.");
-    }
-
-    const autoSegment = result.autoSegment;
-    const storedAt = result.storedAt;
-    const customSegments = result.customSegments;
-    const uf_completed = result.uf_completed;
-
-    return {
-      tours,
-      autoSegment,
-      customSegments,
-      storedAt,
-      uf_completed,
-    } as ProgressorData;
+    return result;
   } catch (error: any) {
     console.error('=======Error=====>', error.message);
     return null;

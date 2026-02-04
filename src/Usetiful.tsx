@@ -7,7 +7,6 @@ import {
 import { StyleSheet, View } from 'react-native';
 import type { UsetifulTag, Measure } from './types';
 import { useTargeting } from './hooks/useTargeting';
-import { useProgressorUpdate } from './hooks/useProgressorUpdate';
 import { useActiveExperienceStore } from './stores/useActiveExperienceStore';
 import Survey from './Survey';
 import { useDataStore } from './stores/useDataStore';
@@ -32,10 +31,9 @@ export const Usetiful = ({ children, token, tags, navigationRef }: Props) => {
     initialize(token, tags);
     // TODO integrate Tour store
     // initializeOldStore(token, tags);
-  }, [initialize, initializeOldStore, tags, token]);
+  }, [initialize, initializeOldStore, tags, tags?.userId, token]);
 
   useTargeting(navigationRef);
-  useProgressorUpdate();
   const [layoutMeasure, setLayoutMeasure] = useState<Measure>();
   const availableTour = useStore((s) => s.availableTour);
   const activeExperience = useActiveExperienceStore((s) => s.activeExperience);

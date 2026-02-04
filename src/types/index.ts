@@ -132,7 +132,11 @@ export type ProgressorData = {
   uf_survey_answers: SurveyAnswer[];
   autoSegment: string;
   customSegments: string[];
-  storedAt: string;
+  storedAt: string | null;
+  isTemporaryProfile: boolean;
+  abExperiments: any[];
+  tags: any[];
+  progressClearedAt: string | null;
 };
 
 type SurveyState = (typeof SURVEY_STATE)[keyof typeof SURVEY_STATE];
