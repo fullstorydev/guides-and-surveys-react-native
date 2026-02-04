@@ -92,10 +92,24 @@ export type UFCompleted = {
   updatedAt: string;
 };
 
+export type SurveyAnswer = {
+  id: string;
+  updatedAt: string;
+  surveyId: string;
+  questionId: string;
+  questionType: string;
+  pageId: string;
+  pageName?: string;
+  optionValue?: number;
+  optionValues?: number[];
+  answerText?: string;
+};
+
 export type ProgressorData = {
   uf_completed: UFCompleted[];
   tours: ProgressorTour[];
   uf_surveys: SurveyProgress[];
+  uf_survey_answers: SurveyAnswer[];
   autoSegment: string;
   customSegments: string[];
   storedAt: string;
