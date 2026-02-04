@@ -48,3 +48,8 @@ export const SURVEY_STATE = {
   IN_PROGRESS: 'inProgress',
   CLOSED: 'closed',
 } as const;
+
+export const TARGET_TYPE_ADDRESS_SIMPLE = 'address-simple';
+export const TARGET_TYPE_USER_SEGMENT = 'user-segment';
+export const TARGET_OPERATOR_SEGMENT_EXACT = 'segment-exact';
+export const TARGET_OPERATOR_SEGMENT_IS_NOT = 'segment-is-not';
