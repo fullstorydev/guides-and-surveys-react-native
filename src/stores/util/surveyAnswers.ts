@@ -35,10 +35,3 @@ export const saveSurveyAnswer = (
     uf_survey_answers: [...uf_survey_answers, answer],
   });
 };
-
-export const getSurveyAnswers = (surveyId: string): SurveyAnswer[] => {
-  const progressorData = useDataStore.getState().progressorData;
-  return (progressorData.uf_survey_answers || []).filter(
-    (answer) => answer.surveyId === surveyId
-  );
-};
