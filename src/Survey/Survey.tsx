@@ -1,19 +1,19 @@
 import { useEffect, useMemo } from 'react';
-import { StyleSheet, Text, View, Pressable, TextInput } from 'react-native';
+import { Text, View, Pressable, TextInput } from 'react-native';
 import { useForm, Controller } from 'react-hook-form';
-import type { Survey as SurveyType } from './types';
-import { CrossBtn } from './components/Cross';
-import { NPS } from './components/NPS/NPS';
+import type { Survey as SurveyType } from '../types';
+import { CrossBtn } from '../components/Cross';
+import { NPS } from '../components/NPS/NPS';
 import {
   updateSurveyStarted,
   updateSurveyProgress,
   updateSurveyClosed,
   updateSurveyCompleted,
-} from './stores/util/surveyProgress';
-import { saveSurveyAnswer } from './stores/util/surveyAnswers';
-import { useActiveExperienceStore } from './stores/useActiveExperienceStore';
-import { useDataStore } from './stores/useDataStore';
-import { resolveFont } from './utils/fonts';
+} from '../stores/util/surveyProgress';
+import { saveSurveyAnswer } from '../stores/util/surveyAnswers';
+import { useActiveExperienceStore } from '../stores/useActiveExperienceStore';
+import { useDataStore } from '../stores/useDataStore';
+import { createSurveyStyles } from './createSurveyStyles';
 
 const Survey = ({ survey }: { survey: SurveyType }) => {
   const selfClosed = useActiveExperienceStore((s) => s.selfClosed);
@@ -91,79 +91,7 @@ const Survey = ({ survey }: { survey: SurveyType }) => {
     }
   };
 
-  // Dynamic styles based on theme
-  const styles = useMemo(
-    () =>
-      StyleSheet.create({
-        container: {
-          position: 'absolute',
-          width: '100%',
-          height: '100%',
-          backgroundColor: '#000000cc',
-        },
-        modal: {
-          backgroundColor: theme.bgColor,
-          marginTop: '50%',
-          marginHorizontal: '5%',
-          shadowColor: '#000000',
-          shadowOpacity: 0.5,
-          borderRadius: 5,
-          paddingHorizontal: 10,
-          paddingVertical: 8,
-        },
-        modalHeader: {
-          alignItems: 'flex-end',
-        },
-        modalBody: {
-          paddingVertical: 8,
-        },
-        questionContainer: {
-          marginBottom: 20,
-        },
-        questionText: {
-          fontSize: theme.fontTitleSize || 16,
-          fontFamily: resolveFont(
-            theme.fontTitleFamily,
-            theme.customFontTitleFamily
-          ),
-          fontWeight: '600',
-          marginBottom: 12,
-          color: theme.fontColor,
-        },
-        textInput: {
-          borderWidth: 1,
-          borderColor: '#E0E0E0',
-          borderRadius: 8,
-          padding: 12,
-          fontSize: theme.fontSize || 16,
-          fontFamily: resolveFont(theme.fontFamily, theme.customFontFamily),
-          color: theme.fontColor,
-          backgroundColor: theme.bgColor,
-          minHeight: 100,
-        },
-        modalFooter: {
-          paddingTop: 8,
-          paddingBottom: 8,
-        },
-        submitButton: {
-          backgroundColor: theme.primaryColor,
-          borderRadius: 8,
-          paddingVertical: 12,
-          paddingHorizontal: 24,
-          alignItems: 'center',
-        },
-        submitButtonText: {
-          color: '#FFFFFF',
-          fontSize: theme.fontButtonSize || 16,
-          fontFamily: resolveFont(
-            theme.fontButtonFamily,
-            theme.customFontButtonFamily
-          ),
-          fontWeight: '600',
-        },
-      }),
-    [theme]
-  );
+  const styles = useMemo(() => createSurveyStyles(theme), [theme]);
 
   // Don't show if:
   // - No valid page to display

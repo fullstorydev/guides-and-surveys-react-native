@@ -18,9 +18,6 @@ export const resolveFont = (
   if (fontFamily.toLowerCase() === 'default' || fontFamily === '') {
     return undefined;
   }
-  const platform = Platform.OS;
-  if (platform !== 'ios' && platform !== 'android') {
-    return undefined;
-  }
-  return FONT_MAP[fontFamily]?.[platform];
+
+  return FONT_MAP[fontFamily]?.[Platform.OS as 'ios' | 'android'];
 };

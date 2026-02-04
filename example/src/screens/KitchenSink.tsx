@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { View, ScrollView, StyleSheet } from 'react-native';
 import { NPS } from '../../../src/components/NPS/NPS';
+import { THEME_DEFAULT } from '../../../src/constants';
 
 /**
  * Kitchen Sink Screen - Demonstrates all Usetiful components and features
@@ -12,7 +13,7 @@ function KitchenSinkScreen() {
   return (
     <ScrollView style={styles.container}>
       <View style={styles.content}>
-        <NPS value={npsValue} onChange={setNpsValue} />
+        <NPS value={npsValue} onChange={setNpsValue} theme={THEME_DEFAULT} />
       </View>
     </ScrollView>
   );

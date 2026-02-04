@@ -1,7 +1,7 @@
+import { useMemo } from 'react';
 import { View, Text, Pressable } from 'react-native';
 import type { Theme } from '../../types';
-import { THEME_DEFAULT } from '../../constants';
-import { useNPSStyles } from './useNPSStyles';
+import { createNPSStyles } from './createNPSStyles';
 
 const NPS_SCALE = 10;
 
@@ -10,7 +10,7 @@ type NPSProps = {
   rightLabel?: string;
   value: number | null;
   onChange: (value: number) => void;
-  theme?: Theme;
+  theme: Theme;
 };
 
 export const NPS = ({
@@ -18,9 +18,9 @@ export const NPS = ({
   rightLabel = 'Very likely',
   value: rating,
   onChange,
-  theme = THEME_DEFAULT,
+  theme,
 }: NPSProps) => {
-  const styles = useNPSStyles(theme);
+  const styles = useMemo(() => createNPSStyles(theme), [theme]);
 
   return (
     <View style={styles.container}>
