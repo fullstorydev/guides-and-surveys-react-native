@@ -6,6 +6,7 @@ export const API_CONFIG = {
   BASE_URL: 'https://www.usetiful.com',
   // BASE_URL: 'https://admin:admin123@dev.usetiful.com', // Dev environment
   PROGRESSOR_URL: 'https://progressor.usetiful.com/api/get',
+  PROGRESSOR_SAVE_URL: 'https://progressor.usetiful.com/api/save',
   ENDPOINTS: {
     DATA: '/api-space/data.json',
   },

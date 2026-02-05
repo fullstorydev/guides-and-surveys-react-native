@@ -16,12 +16,14 @@ interface DataStoreState {
   token: string | undefined;
   tags: UsetifulTag | undefined;
   progressorData: ProgressorData;
+  progressorHasChanged: boolean;
 
   // Actions
   initialize: (token: string, tags?: UsetifulTag) => Promise<void>;
   setTours: (tours: Tour[]) => void;
   setSurveys: (surveys: Survey[]) => void;
   setProgressorData: (data: ProgressorData) => void;
+  setProgressorHasChanged: (hasChanged: boolean) => void;
 }
 
 type DataStorePersistedState = Pick<DataStoreState, 'progressorData'>;
@@ -43,6 +45,7 @@ export const useDataStore = create(
           customSegments: [],
           storedAt: '',
         },
+        progressorHasChanged: false,
 
         initialize: async (token, tags) => {
           try {
@@ -70,7 +73,10 @@ export const useDataStore = create(
 
         setTours: (tours) => set({ tours }),
         setSurveys: (surveys) => set({ surveys }),
-        setProgressorData: (data) => set({ progressorData: data }),
+        setProgressorData: (data) =>
+          set({ progressorData: data, progressorHasChanged: true }),
+        setProgressorHasChanged: (hasChanged) =>
+          set({ progressorHasChanged: hasChanged }),
       }),
       {
         name: 'usetiful-data-storage',
