@@ -7,10 +7,11 @@ const root = path.resolve(__dirname, '..');
 module.exports = function (api) {
   api.cache(true);
 
+  const isWeb = api.caller((caller) => caller && caller.platform === 'web');
   return getConfig(
     {
       presets: ['babel-preset-expo'],
-      plugins: ['@fullstory/react-native'],
+      plugins: isWeb ? [] : ['@fullstory/react-native'],
     },
     { root, pkg }
   );
