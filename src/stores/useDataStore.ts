@@ -25,8 +25,7 @@ interface DataStoreState {
   orgId: string | undefined;
   tags: UsetifulTag | undefined;
   visitorIdent: string | undefined;
-  // User-scoped progressor data: key = sessionId (or anonymous)
-  progressorDataByUser: Record<string, ProgressorData>;
+  progressorData: ProgressorData;
   spaceToken: string | undefined;
   sessionId: string | undefined;
 
@@ -40,7 +39,7 @@ interface DataStoreState {
 
 type DataStorePersistedState = Pick<
   DataStoreState,
-  'progressorDataByUser' | 'visitorIdent'
+  'progressorData' | 'visitorIdent'
 >;
 
 const emptyProgressorData = (): ProgressorData => ({
@@ -56,14 +55,6 @@ const emptyProgressorData = (): ProgressorData => ({
   tags: [],
   progressClearedAt: null,
 });
-
-/**
- * Gets the storage key for current user's progressor data.
- * Returns userId if authenticated, otherwise "anonymous" for device-level storage.
- */
-const getUserKey = (sessionId?: string): string => {
-  return sessionId || 'anonymous';
-};
 
 /**
  * Merges local and server progressor data, keeping whichever has newer updatedAt timestamps.
@@ -138,13 +129,12 @@ export const useDataStore = create(
         orgId: undefined,
         tags: undefined,
         visitorIdent: undefined,
-        progressorDataByUser: {},
+        progressorData: emptyProgressorData(),
         spaceToken: undefined,
         sessionId: undefined,
 
         getCurrentProgressorData: () => {
-          const userKey = getUserKey(get().sessionId);
-          return get().progressorDataByUser[userKey] || emptyProgressorData();
+          return get().progressorData;
         },
 
         initialize: async (orgId, tags) => {
@@ -158,7 +148,6 @@ export const useDataStore = create(
             const response = await fetchDataJson(orgId);
             const spaceToken = response?.spaceToken || '';
 
-            // manage Progressor data for current session
             const sessionId = await Fullstory.getCurrentSession();
 
             set({
@@ -170,10 +159,8 @@ export const useDataStore = create(
               sessionId,
             });
 
-            if (sessionId) {
-              set({ sessionId });
-              const localProgressorData =
-                get().progressorDataByUser[sessionId] || emptyProgressorData();
+            if (sessionId && spaceToken) {
+              const localProgressorData = get().progressorData;
 
               const serverProgressorData = await fetchProgressor(
                 spaceToken,
@@ -184,19 +171,13 @@ export const useDataStore = create(
                 serverProgressorData &&
                 !serverProgressorData.isTemporaryProfile
               ) {
-                const mergedProgressorData = serverProgressorData
-                  ? mergeProgressorData(
-                      localProgressorData,
-                      serverProgressorData
-                    )
-                  : localProgressorData;
+                const mergedProgressorData = mergeProgressorData(
+                  localProgressorData,
+                  serverProgressorData
+                );
 
-                set({
-                  progressorDataByUser: {
-                    ...get().progressorDataByUser,
-                    [sessionId]: mergedProgressorData,
-                  },
-                });
+                set({ progressorData: mergedProgressorData });
+
                 if (
                   JSON.stringify(mergedProgressorData) !==
                   JSON.stringify(serverProgressorData)
@@ -219,16 +200,8 @@ export const useDataStore = create(
         setTours: (tours) => set({ tours }),
         setSurveys: (surveys) => set({ surveys }),
         setProgressorData: (data) => {
-          const spaceToken = get().spaceToken;
-          const sessionId = get().sessionId;
-          const userKey = getUserKey(get().sessionId);
-
-          set({
-            progressorDataByUser: {
-              ...get().progressorDataByUser,
-              [userKey]: data,
-            },
-          });
+          const { sessionId, spaceToken } = get();
+          set({ progressorData: data });
 
           // isTemporaryProfile is required to be false to sync progressor data
           if (!data.isTemporaryProfile && sessionId && spaceToken) {
@@ -240,7 +213,7 @@ export const useDataStore = create(
         name: 'usetiful-data-storage',
         storage: createJSONStorage(() => AsyncStorage),
         partialize: (state) => ({
-          progressorDataByUser: state.progressorDataByUser,
+          progressorData: state.progressorData,
           visitorIdent: state.visitorIdent,
         }),
       }
