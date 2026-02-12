@@ -9,12 +9,12 @@ import { API_CONFIG } from '../constants/api';
 export const fetchDataJson = async (
   token: string
 ): Promise<UsetifulResponse | null> => {
-  const reqUrl = `${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.DATA}?lang=${API_CONFIG.DEFAULT_PARAMS.lang}&app=${API_CONFIG.DEFAULT_PARAMS.app}`;
+  const reqUrl = `${API_CONFIG.PLAYPEN_BASE_URL}${API_CONFIG.ENDPOINTS.DATA}?lang=${API_CONFIG.DEFAULT_PARAMS.lang}&app=${API_CONFIG.DEFAULT_PARAMS.app}`;
   try {
     const response = await fetch(reqUrl, {
       method: 'GET',
       headers: {
-        'X-Auth-Token': token,
+        'x-org-id': token,
         'X-Requested-With': 'XMLHttpRequest',
         'Content-Type': 'application/json; charset=utf-8',
       },
@@ -45,22 +45,22 @@ export const fetchDataJson = async (
 
 /**
  * Fetches user progress data from the Progressor API
- * @param token - Authentication token
- * @param userId - User ID to fetch progress for
+ * @param accountToken - Guide & Surveys space token
+ * @param sessionId - Session ID to fetch progress for
  * @returns Progress data or null on error
  */
 export const fetchProgressor = async (
-  token: string,
-  userId: string
+  accountToken: string,
+  sessionId: string
 ): Promise<ProgressorData | null> => {
-  const url = API_CONFIG.PROGRESSOR_URL;
+  const url = `${API_CONFIG.PLAYPEN_BASE_URL}${API_CONFIG.ENDPOINTS.PROGRESSOR_GET}`;
   const headers = {
     'Content-Type': 'application/json',
     'X-Requested-With': 'XMLHttpRequest',
   };
   const body = JSON.stringify({
-    userId,
-    accountToken: token,
+    sessionId,
+    accountToken,
   });
 
   try {
@@ -88,25 +88,24 @@ export const fetchProgressor = async (
 
 /**
  * Saves user progress data to the Progressor API
- * @param token - Authentication token
- * @param userId - User ID to save progress for
+ * @param accountToken - Guide & Surveys space token
+ * @param sessionId - Session ID to save progress for
  * @param progressorData - Progress data to save
  * @returns True if save was successful, false otherwise
  */
 export const saveProgressor = async (
-  token: string,
-  userId: string,
+  accountToken: string,
+  sessionId: string,
   progressorData: ProgressorData
 ): Promise<boolean> => {
-  const url = API_CONFIG.PROGRESSOR_SAVE_URL;
+  const url = `${API_CONFIG.PLAYPEN_BASE_URL}${API_CONFIG.ENDPOINTS.PROGRESSOR_SAVE}`;
   const headers = {
     'Content-Type': 'application/json',
     'X-Requested-With': 'XMLHttpRequest',
-    'X-AUTH-TOKEN': token,
   };
   const body = JSON.stringify({
-    userId,
-    accountToken: token,
+    sessionId,
+    accountToken,
     data: progressorData,
   });
 

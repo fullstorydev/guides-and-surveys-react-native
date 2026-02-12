@@ -8,6 +8,7 @@ import {
 export type UsetifulResponse = {
   tours?: Tour[];
   surveys?: Survey[];
+  spaceToken: string;
 };
 
 export type Tour = {

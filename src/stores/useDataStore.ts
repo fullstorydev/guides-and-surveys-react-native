@@ -5,6 +5,7 @@ import {
   subscribeWithSelector,
 } from 'zustand/middleware';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Fullstory from '@fullstory/react-native';
 import { fetchDataJson, fetchProgressor } from '../services/api';
 import { visitor } from '../services/Visitor';
 import type {
@@ -21,14 +22,16 @@ interface DataStoreState {
   // Raw data
   tours: Tour[];
   surveys: Survey[];
-  token: string | undefined;
+  orgId: string | undefined;
   tags: UsetifulTag | undefined;
   visitorIdent: string | undefined;
-  // User-scoped progressor data: key = userId (or anonymous)
+  // User-scoped progressor data: key = sessionId (or anonymous)
   progressorDataByUser: Record<string, ProgressorData>;
+  spaceToken: string | undefined;
+  sessionId: string | undefined;
 
   // Actions
-  initialize: (token: string, tags?: UsetifulTag) => Promise<void>;
+  initialize: (orgId: string, tags?: UsetifulTag) => Promise<void>;
   setTours: (tours: Tour[]) => void;
   setSurveys: (surveys: Survey[]) => void;
   setProgressorData: (data: ProgressorData) => void;
@@ -47,7 +50,7 @@ const emptyProgressorData = (): ProgressorData => ({
   uf_survey_answers: [],
   autoSegment: '',
   customSegments: [],
-  storedAt: '',
+  storedAt: null,
   isTemporaryProfile: false,
   abExperiments: [],
   tags: [],
@@ -58,8 +61,8 @@ const emptyProgressorData = (): ProgressorData => ({
  * Gets the storage key for current user's progressor data.
  * Returns userId if authenticated, otherwise "anonymous" for device-level storage.
  */
-const getUserKey = (tags?: UsetifulTag): string => {
-  return tags?.userId || 'anonymous';
+const getUserKey = (sessionId?: string): string => {
+  return sessionId || 'anonymous';
 };
 
 /**
@@ -116,9 +119,9 @@ const mergeProgressorData = (
     ),
     autoSegment: server.autoSegment || local.autoSegment || '',
     customSegments: server.customSegments || local.customSegments || [],
-    storedAt: server.storedAt || local.storedAt || '',
+    storedAt: server.storedAt || local.storedAt || null,
     isTemporaryProfile:
-      server.isTemporaryProfile ?? local.isTemporaryProfile ?? false,
+      server.isTemporaryProfile ?? local.isTemporaryProfile ?? true,
     abExperiments: server.abExperiments || local.abExperiments || [],
     tags: server.tags || local.tags || [],
     progressClearedAt:
@@ -132,17 +135,19 @@ export const useDataStore = create(
       (set, get) => ({
         tours: [],
         surveys: [],
-        token: undefined,
+        orgId: undefined,
         tags: undefined,
         visitorIdent: undefined,
         progressorDataByUser: {},
+        spaceToken: undefined,
+        sessionId: undefined,
 
         getCurrentProgressorData: () => {
-          const userKey = getUserKey(get().tags);
+          const userKey = getUserKey(get().sessionId);
           return get().progressorDataByUser[userKey] || emptyProgressorData();
         },
 
-        initialize: async (token, tags) => {
+        initialize: async (orgId, tags) => {
           try {
             let visitorIdent = get().visitorIdent;
             if (!visitorIdent) {
@@ -150,40 +155,60 @@ export const useDataStore = create(
               set({ visitorIdent });
             }
 
-            const [response, serverProgressorData] = await Promise.all([
-              fetchDataJson(token),
-              tags?.userId
-                ? fetchProgressor(token, tags.userId)
-                : Promise.resolve(null),
-            ]);
+            const response = await fetchDataJson(orgId);
+            const spaceToken = response?.spaceToken || '';
 
-            const userKey = getUserKey(tags);
-
-            const localProgressorData =
-              get().progressorDataByUser[userKey] || emptyProgressorData();
-
-            const mergedProgressorData = serverProgressorData
-              ? mergeProgressorData(localProgressorData, serverProgressorData)
-              : localProgressorData;
+            // manage Progressor data for current session
+            const sessionId = await Fullstory.getCurrentSession();
 
             set({
-              token,
+              orgId,
+              spaceToken,
               tags: { ...tags, visitorIdent },
               tours: response?.tours || [],
               surveys: response?.surveys || [],
-              progressorDataByUser: {
-                ...get().progressorDataByUser,
-                [userKey]: mergedProgressorData,
-              },
+              sessionId,
             });
 
-            if (
-              serverProgressorData &&
-              tags?.userId &&
-              JSON.stringify(mergedProgressorData) !==
-                JSON.stringify(serverProgressorData)
-            ) {
-              syncProgressor(mergedProgressorData, token, tags.userId, 0);
+            if (sessionId) {
+              set({ sessionId });
+              const localProgressorData =
+                get().progressorDataByUser[sessionId] || emptyProgressorData();
+
+              const serverProgressorData = await fetchProgressor(
+                spaceToken,
+                sessionId
+              );
+
+              if (
+                serverProgressorData &&
+                !serverProgressorData.isTemporaryProfile
+              ) {
+                const mergedProgressorData = serverProgressorData
+                  ? mergeProgressorData(
+                      localProgressorData,
+                      serverProgressorData
+                    )
+                  : localProgressorData;
+
+                set({
+                  progressorDataByUser: {
+                    ...get().progressorDataByUser,
+                    [sessionId]: mergedProgressorData,
+                  },
+                });
+                if (
+                  JSON.stringify(mergedProgressorData) !==
+                  JSON.stringify(serverProgressorData)
+                ) {
+                  syncProgressor(
+                    mergedProgressorData,
+                    spaceToken,
+                    sessionId,
+                    0
+                  );
+                }
+              }
             }
           } catch (error) {
             // TODO: send error to analytics
@@ -194,9 +219,9 @@ export const useDataStore = create(
         setTours: (tours) => set({ tours }),
         setSurveys: (surveys) => set({ surveys }),
         setProgressorData: (data) => {
-          const tags = get().tags;
-          const token = get().token;
-          const userKey = getUserKey(tags);
+          const spaceToken = get().spaceToken;
+          const sessionId = get().sessionId;
+          const userKey = getUserKey(get().sessionId);
 
           set({
             progressorDataByUser: {
@@ -205,9 +230,9 @@ export const useDataStore = create(
             },
           });
 
-          // Sync only if user has userId
-          if (tags?.userId && token) {
-            syncProgressor(data, token, tags.userId);
+          // isTemporaryProfile is required to be false to sync progressor data
+          if (!data.isTemporaryProfile && sessionId && spaceToken) {
+            syncProgressor(data, spaceToken, sessionId);
           }
         },
       }),

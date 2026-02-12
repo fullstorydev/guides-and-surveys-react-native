@@ -3,16 +3,16 @@
  * Central location for all API URLs and endpoints
  */
 export const API_CONFIG = {
+  PLAYPEN_BASE_URL: 'https://guides.onfire.fyi',
   BASE_URL: 'https://www.usetiful.com',
   // BASE_URL: 'https://admin:admin123@dev.usetiful.com', // Dev environment
-  PROGRESSOR_URL: 'https://progressor.usetiful.com/api/get',
-  PROGRESSOR_SAVE_URL: 'https://progressor.usetiful.com/api/save',
   ENDPOINTS: {
     DATA: '/api-space/data.json',
+    PROGRESSOR_GET: '/progressor/api/get',
+    PROGRESSOR_SAVE: '/progressor/api/save',
   },
   DEFAULT_PARAMS: {
     lang: 'en',
-    // TODO: Change to 'mobile' when API is ready
-    app: 'web',
+    app: 'mobile',
   },
 } as const;
