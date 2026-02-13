@@ -14384,7 +14384,6 @@ __metadata:
     react-native-screens: ~4.10.0
     react-native-web: ~0.20.0
     react-native-webview: 13.13.5
-    reactotron-react-native: ^5.1.18
   languageName: unknown
   linkType: soft
 
