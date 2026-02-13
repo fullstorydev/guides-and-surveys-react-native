@@ -4,6 +4,7 @@ import { useNavigation, type NavigationProp } from '@react-navigation/native';
 import { setPointer } from 'usetiful-react-native';
 import KitchenSinkScreen from './screens/KitchenSink';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Fullstory from '@fullstory/react-native';
 
 type RootStackParamList = {
   Detail: undefined;
@@ -38,6 +39,40 @@ export const HomeScreen = () => {
           <Button
             title="Clear Async Storage"
             onPress={() => AsyncStorage.clear()}
+          />
+        </View>
+        <View style={styles.navBtn}>
+          <Button
+            title="Fullstory Identify"
+            onPress={() => Fullstory.identify('1234567890')}
+          />
+          <Button
+            title="Fullstory Set User Properties"
+            onPress={() => Fullstory.setUserVars({ name: 'John Doe' })}
+          />
+          <Button
+            title="Fullstory Anonymize"
+            onPress={() => Fullstory.anonymize()}
+          />
+          <Button
+            title="Get Session Id"
+            onPress={() => {
+              Fullstory.getCurrentSession().then((session) => {
+                console.log('session', session);
+              });
+            }}
+          />
+          <Button
+            title="Shutdown Fullstory"
+            onPress={() => {
+              Fullstory.shutdown();
+            }}
+          />
+          <Button
+            title="Restart Fullstory"
+            onPress={() => {
+              Fullstory.restart();
+            }}
           />
         </View>
       </View>
