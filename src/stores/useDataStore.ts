@@ -5,7 +5,6 @@ import {
   subscribeWithSelector,
 } from 'zustand/middleware';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import Fullstory from '@fullstory/react-native';
 import { fetchDataJson, fetchProgressor } from '../services/api';
 import { visitor } from '../services/Visitor';
 import type {
@@ -17,6 +16,7 @@ import type {
   SurveyAnswer,
 } from '../types';
 import { syncProgressor } from '../services/syncProgressor';
+import { useReportQueueStore } from './useReportQueueStore';
 
 interface DataStoreState {
   // Raw data
@@ -30,7 +30,12 @@ interface DataStoreState {
   sessionId: string | undefined;
 
   // Actions
-  initialize: (orgId: string, tags?: UsetifulTag) => Promise<void>;
+  initialize: (
+    orgId: string,
+    tags?: UsetifulTag,
+    sessionId?: string | null
+  ) => Promise<void>;
+  refreshProgressor: (spaceToken: string, sessionId: string) => Promise<void>;
   setTours: (tours: Tour[]) => void;
   setSurveys: (surveys: Survey[]) => void;
   setProgressorData: (data: ProgressorData) => void;
@@ -137,7 +142,7 @@ export const useDataStore = create(
           return get().progressorData;
         },
 
-        initialize: async (orgId, tags) => {
+        initialize: async (orgId, tags, sessionId) => {
           try {
             let visitorIdent = get().visitorIdent;
             if (!visitorIdent) {
@@ -148,52 +153,59 @@ export const useDataStore = create(
             const response = await fetchDataJson(orgId);
             const spaceToken = response?.spaceToken || '';
 
-            const sessionId = await Fullstory.getCurrentSession();
-
             set({
               orgId,
               spaceToken,
               tags: { ...tags, visitorIdent },
               tours: response?.tours || [],
               surveys: response?.surveys || [],
-              sessionId,
             });
 
-            if (sessionId && spaceToken) {
-              const localProgressorData = get().progressorData;
+            if (!spaceToken) {
+              throw new Error('Space token not found');
+            }
+            if (sessionId) {
+              get().refreshProgressor(spaceToken, sessionId);
+            }
+            useReportQueueStore.getState().processQueue(spaceToken);
+          } catch (error) {
+            // TODO: send error to analytics
+            console.error('Error initializing data store:', error);
+          }
+        },
 
-              const serverProgressorData = await fetchProgressor(
-                spaceToken,
-                sessionId
+        refreshProgressor: async (spaceToken, sessionId) => {
+          if (!spaceToken || !sessionId) return;
+          set({ sessionId });
+
+          try {
+            const localProgressorData = get().progressorData;
+            const serverProgressorData = await fetchProgressor(
+              spaceToken,
+              sessionId
+            );
+
+            if (
+              serverProgressorData &&
+              !serverProgressorData.isTemporaryProfile
+            ) {
+              const mergedProgressorData = mergeProgressorData(
+                localProgressorData,
+                serverProgressorData
               );
 
+              set({ progressorData: mergedProgressorData });
+
               if (
-                serverProgressorData &&
-                !serverProgressorData.isTemporaryProfile
+                JSON.stringify(mergedProgressorData) !==
+                JSON.stringify(serverProgressorData)
               ) {
-                const mergedProgressorData = mergeProgressorData(
-                  localProgressorData,
-                  serverProgressorData
-                );
-
-                set({ progressorData: mergedProgressorData });
-
-                if (
-                  JSON.stringify(mergedProgressorData) !==
-                  JSON.stringify(serverProgressorData)
-                ) {
-                  syncProgressor(
-                    mergedProgressorData,
-                    spaceToken,
-                    sessionId,
-                    0
-                  );
-                }
+                syncProgressor(mergedProgressorData, spaceToken, sessionId, 0);
               }
             }
           } catch (error) {
             // TODO: send error to analytics
-            console.error('Error initializing data store:', error);
+            console.error('Error refreshing progressor:', error);
           }
         },
 

@@ -13,6 +13,7 @@ import { useDataStore } from './stores/useDataStore';
 import type { Survey as SurveyType } from './types';
 import type { NavigationContainerRef } from '@react-navigation/native';
 import { Tour } from './Tour';
+import Fullstory from '@fullstory/react-native';
 // TODO remove this once we combine stores
 import { useStore } from './stores/useStore';
 
@@ -26,12 +27,25 @@ export const Usetiful = ({ children, orgId, tags, navigationRef }: Props) => {
   // TODO remove this once we combine stores
   const initializeOldStore = useStore((s) => s.initialize);
   const initialize = useDataStore((s) => s.initialize);
+  const refreshProgressor = useDataStore((s) => s.refreshProgressor);
+  const spaceToken = useDataStore((s) => s.spaceToken);
 
   useEffect(() => {
-    initialize(orgId, tags);
-    // TODO integrate Tour store
-    // initializeOldStore(token, tags);
+    initialize(orgId, tags, null);
   }, [initialize, initializeOldStore, tags, tags?.userId, orgId]);
+
+  useEffect(() => {
+    let cancelled = false;
+    Fullstory.onReady().then((result: { sessionId?: string }) => {
+      if (!cancelled && result.sessionId && spaceToken) {
+        console.log('Usetiful: Fullstory is ready, refreshing progressor');
+        refreshProgressor(spaceToken, result.sessionId);
+      }
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [refreshProgressor, spaceToken]);
 
   useTargeting(navigationRef);
   const [layoutMeasure, setLayoutMeasure] = useState<Measure>();

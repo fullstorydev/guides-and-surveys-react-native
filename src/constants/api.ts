@@ -10,6 +10,7 @@ export const API_CONFIG = {
     DATA: '/api-space/data.json',
     PROGRESSOR_GET: '/progressor/api/get',
     PROGRESSOR_SAVE: '/progressor/api/save',
+    SURVEY_RESPONSES: '/reporter/api/surveys',
   },
   DEFAULT_PARAMS: {
     lang: 'en',

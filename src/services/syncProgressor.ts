@@ -1,8 +1,9 @@
 import { saveProgressor } from './api';
 import type { ProgressorData } from '../types';
+import { withRetry } from '../utils/retry';
 
 // Debounce timer to batch rapid changes
-let debounceTimer: NodeJS.Timeout | null = null;
+let debounceTimer: ReturnType<typeof setTimeout> | null = null;
 
 /**
  * Syncs progressor data to server with exponential backoff retry.
@@ -23,23 +24,10 @@ export const syncProgressor = (
     clearTimeout(debounceTimer);
   }
 
-  // Schedule sync after debounce delay
   debounceTimer = setTimeout(async () => {
-    const maxRetries = 5;
-    let attempt = 0;
-    let success = false;
-
-    while (attempt < maxRetries && !success) {
-      attempt++;
-
-      success = await saveProgressor(accountToken, sessionId, progressorData);
-
-      if (!success && attempt < maxRetries) {
-        const delay = Math.min(1000 * Math.pow(2, attempt - 1), 16000);
-        await new Promise((resolve) => setTimeout(resolve, delay));
-      }
-    }
-
+    const success = await withRetry(() =>
+      saveProgressor(accountToken, sessionId, progressorData)
+    );
     if (!success) {
       // TODO: send error to analytics
     }
