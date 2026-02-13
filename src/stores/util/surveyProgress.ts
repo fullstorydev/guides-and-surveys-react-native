@@ -7,7 +7,7 @@ const updateSurveyData = (
   surveyId: string,
   updates: Partial<Omit<SurveyProgress, 'id' | 'updatedAt'>>
 ) => {
-  const progressorData = useDataStore.getState().progressorData;
+  const progressorData = useDataStore.getState().getCurrentProgressorData();
   const uf_surveys = progressorData.uf_surveys || [];
 
   const existingIndex = uf_surveys.findIndex((s) => s.id === surveyId);
@@ -32,7 +32,7 @@ export const updateSurveyStarted = (
   surveyName: string,
   initialPageId: string
 ) => {
-  const progressorData = useDataStore.getState().progressorData;
+  const progressorData = useDataStore.getState().getCurrentProgressorData();
   const uf_surveys = progressorData.uf_surveys || [];
   const existing = uf_surveys.find((s) => s.id === surveyId);
 
@@ -72,7 +72,7 @@ export const updateSurveyClosed = (surveyId: string) => {
 };
 
 export const updateSurveyCompleted = (surveyId: string) => {
-  const progressorData = useDataStore.getState().progressorData;
+  const progressorData = useDataStore.getState().getCurrentProgressorData();
   const uf_completed = progressorData.uf_completed || [];
   const newUfCompleted = [
     ...uf_completed,

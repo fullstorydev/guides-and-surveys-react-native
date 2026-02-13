@@ -29,5 +29,15 @@ export default {
     extra: {
       USETIFUL_TOKEN: process.env.USETIFUL_TOKEN,
     },
+    plugins: [
+      [
+        '@fullstory/react-native',
+        {
+          version: '1.67.1',
+          org: 'o-1Y9Z-na1',
+          host: 'onfire.fyi',
+        },
+      ],
+    ],
   },
 };

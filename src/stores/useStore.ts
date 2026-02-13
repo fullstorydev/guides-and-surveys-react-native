@@ -189,6 +189,10 @@ export const useStore = create(
         autoSegment: '',
         customSegments: [],
         storedAt: '',
+        isTemporaryProfile: true,
+        abExperiments: [],
+        tags: [],
+        progressClearedAt: null,
       },
       setProgressorData: (progressorData) =>
         set({ progressorData, progressorHasChanged: true }),

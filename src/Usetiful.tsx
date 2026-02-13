@@ -7,7 +7,6 @@ import {
 import { StyleSheet, View } from 'react-native';
 import type { UsetifulTag, Measure } from './types';
 import { useTargeting } from './hooks/useTargeting';
-import { useProgressorUpdate } from './hooks/useProgressorUpdate';
 import { useActiveExperienceStore } from './stores/useActiveExperienceStore';
 import Survey from './Survey';
 import { useDataStore } from './stores/useDataStore';
@@ -18,24 +17,23 @@ import { Tour } from './Tour';
 import { useStore } from './stores/useStore';
 
 type Props = {
-  token: string;
+  orgId: string;
   tags?: UsetifulTag;
   navigationRef?: RefObject<NavigationContainerRef<any>>;
 } & PropsWithChildren;
 
-export const Usetiful = ({ children, token, tags, navigationRef }: Props) => {
+export const Usetiful = ({ children, orgId, tags, navigationRef }: Props) => {
   // TODO remove this once we combine stores
   const initializeOldStore = useStore((s) => s.initialize);
   const initialize = useDataStore((s) => s.initialize);
 
   useEffect(() => {
-    initialize(token, tags);
+    initialize(orgId, tags);
     // TODO integrate Tour store
     // initializeOldStore(token, tags);
-  }, [initialize, initializeOldStore, tags, token]);
+  }, [initialize, initializeOldStore, tags, tags?.userId, orgId]);
 
   useTargeting(navigationRef);
-  useProgressorUpdate();
   const [layoutMeasure, setLayoutMeasure] = useState<Measure>();
   const availableTour = useStore((s) => s.availableTour);
   const activeExperience = useActiveExperienceStore((s) => s.activeExperience);

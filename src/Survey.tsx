@@ -21,7 +21,7 @@ const Survey = ({ survey }: { survey: SurveyType }) => {
   const { control, handleSubmit } = useForm();
 
   const surveyProgress = useDataStore((s) =>
-    s.progressorData.uf_surveys?.find((sp) => sp.id === survey.id)
+    s.getCurrentProgressorData().uf_surveys?.find((sp) => sp.id === survey.id)
   );
 
   const currentPageIndex = useMemo(
