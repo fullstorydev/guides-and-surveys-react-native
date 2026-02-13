@@ -10722,6 +10722,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"mitt@npm:^3.0.1":
+  version: 3.0.1
+  resolution: "mitt@npm:3.0.1"
+  checksum: b55a489ac9c2949ab166b7f060601d3b6d893a852515ae9eca4e11df01c013876df777ea109317622b5c1c60e8aae252558e33c8c94e14124db38f64a39614b1
+  languageName: node
+  linkType: hard
+
 "mkdirp@npm:^0.5.1":
   version: 0.5.6
   resolution: "mkdirp@npm:0.5.6"
@@ -12226,6 +12233,34 @@ __metadata:
   version: 19.0.0
   resolution: "react@npm:19.0.0"
   checksum: 86de15d85b2465feb40297a90319c325cb07cf27191a361d47bcfe8c6126c973d660125aa67b8f4cbbe39f15a2f32efd0c814e98196d8e5b68c567ba40a399c6
+  languageName: node
+  linkType: hard
+
+"reactotron-core-client@npm:2.9.9":
+  version: 2.9.9
+  resolution: "reactotron-core-client@npm:2.9.9"
+  dependencies:
+    reactotron-core-contract: 0.3.2
+  checksum: 28b03ffefaa516f9c95cc7edc68a46cf6699232c1cfaec7920834a86cecc4d16b0a64774cf1240e1961f792cefb3bd346f8974691662c154c5ff90ccd89cea9c
+  languageName: node
+  linkType: hard
+
+"reactotron-core-contract@npm:0.3.2":
+  version: 0.3.2
+  resolution: "reactotron-core-contract@npm:0.3.2"
+  checksum: fe7ec0ca048437c559b6904377f20b29ec9defecc3bc4859d13eebbaada168a26a2daff0050ac79d138d981f1be32bea79ac499f14b007932e1671605c7085ff
+  languageName: node
+  linkType: hard
+
+"reactotron-react-native@npm:^5.1.18":
+  version: 5.1.18
+  resolution: "reactotron-react-native@npm:5.1.18"
+  dependencies:
+    mitt: ^3.0.1
+    reactotron-core-client: 2.9.9
+  peerDependencies:
+    react-native: ">=0.40.0"
+  checksum: 7914aa56f5d8932734718cad701f7a155dc0aa3f724d247373ffe65f6b6aba50b1eddde28888ce3c85b7190a7d39d59b9747bf201b0bd0b7d73a706a3bea51d2
   languageName: node
   linkType: hard
 
@@ -14349,6 +14384,7 @@ __metadata:
     react-native-screens: ~4.10.0
     react-native-web: ~0.20.0
     react-native-webview: 13.13.5
+    reactotron-react-native: ^5.1.18
   languageName: unknown
   linkType: soft
 
@@ -14377,6 +14413,7 @@ __metadata:
     react-native: 0.79.2
     react-native-builder-bob: ^0.29.0
     react-native-webview: ^13.0.0
+    reactotron-react-native: ^5.1.18
     release-it: ^18.1.2
     typescript: ^5.2.2
     zustand: ^4.5.5

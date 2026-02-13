@@ -1,9 +1,6 @@
 export type RetryOptions<T> = {
-  /** Max number of attempts (default: 5). */
   maxRetries?: number;
-  /** Delay in ms before the next attempt. Receives 1-based attempt number. Default: exponential 1s, 2s, 4s, 8s, 16s (capped). */
   getDelayMs?: (attempt: number) => number;
-  /** Consider result successful; stop retrying when true. Default: (x) => x === true (for boolean returns). */
   isSuccess?: (result: T) => boolean;
 };
 

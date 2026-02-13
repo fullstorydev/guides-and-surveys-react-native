@@ -81,6 +81,7 @@
     "react-native": "0.79.2",
     "react-native-builder-bob": "^0.29.0",
     "react-native-webview": "^13.0.0",
+    "reactotron-react-native": "^5.1.18",
     "release-it": "^18.1.2",
     "typescript": "^5.2.2",
     "zustand": "^4.5.5"
