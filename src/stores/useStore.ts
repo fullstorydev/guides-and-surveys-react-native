@@ -189,7 +189,7 @@ export const useStore = create(
         autoSegment: '',
         customSegments: [],
         storedAt: '',
-        isTemporaryProfile: false,
+        isTemporaryProfile: true,
         abExperiments: [],
         tags: [],
         progressClearedAt: null,

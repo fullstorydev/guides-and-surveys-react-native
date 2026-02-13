@@ -50,7 +50,7 @@ const emptyProgressorData = (): ProgressorData => ({
   autoSegment: '',
   customSegments: [],
   storedAt: null,
-  isTemporaryProfile: false,
+  isTemporaryProfile: true,
   abExperiments: [],
   tags: [],
   progressClearedAt: null,
