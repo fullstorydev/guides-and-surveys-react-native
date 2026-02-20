@@ -1,4 +1,8 @@
-import type { UsetifulResponse, ProgressorData } from '../types';
+import type {
+  UsetifulResponse,
+  ProgressorData,
+  SurveyReporterAnswer,
+} from '../types';
 import { API_CONFIG } from '../constants/api';
 
 /**
@@ -27,14 +31,7 @@ export const fetchDataJson = async (
 
     const res: UsetifulResponse = await response.json();
 
-    console.log(`
-      =============================================
-      =============================================
-      ============== USETIFUL =====================
-      ================= IS ========================
-      ============== LOADED =======================
-      =============================================
-      =============================================`);
+    console.log(`Usetiful: data loaded`);
 
     return res;
   } catch (error: any) {
@@ -78,7 +75,7 @@ export const fetchProgressor = async (
       return null;
     }
 
-    const result = JSON.parse(await response.json());
+    const result = await response.json();
     return result;
   } catch (error: any) {
     console.error('=======Error=====>', error.message);
@@ -128,6 +125,52 @@ export const saveProgressor = async (
     return true;
   } catch (error: any) {
     console.error('=======Error=====>', error.message);
+    return false;
+  }
+};
+
+/**
+ * Posts a survey response to the reporter API for analytics.
+ * @param accountToken - Guide & Surveys space token
+ * @param surveyId - Survey ID
+ * @param payload - Survey response payload (visitorIdent, tags, respondedAt, etc.)
+ * @returns True if post was successful, false otherwise
+ */
+export const postSurveyResponse = async (
+  accountToken: string,
+  surveyId: string,
+  payload: SurveyReporterAnswer[]
+): Promise<boolean> => {
+  const url = `${API_CONFIG.PLAYPEN_BASE_URL}${API_CONFIG.ENDPOINTS.SURVEY_RESPONSES}/${surveyId}/responses/`;
+  const headers = {
+    'Content-Type': 'application/json; charset=utf-8',
+    'x-auth-token': accountToken,
+  };
+  const body = JSON.stringify(payload);
+
+  try {
+    const response = await fetch(url, {
+      method: 'POST',
+      headers,
+      body,
+    });
+
+    if (!response.ok) {
+      console.error(
+        'Usetiful: reporter survey response error',
+        response.status
+      );
+      return false;
+    }
+
+    console.log(
+      'Usetiful: reporter survey response is sent:',
+      response.status,
+      body
+    );
+    return true;
+  } catch (error: any) {
+    console.error('Usetiful: reporter survey response error', error?.message);
     return false;
   }
 };

@@ -126,6 +126,31 @@ export type SurveyAnswer = {
   answerText?: string;
 };
 
+export type SurveyReporterAnswer = {
+  questionId: string;
+  questionType: string;
+  visitorIdent: string;
+  respondedAt: string;
+  optionValue?: number;
+  optionValues?: number[];
+  answerText?: string;
+  sessionId?: string;
+  tags?: UsetifulTag;
+};
+
+/** Report type discriminator for the reporter queue. Extend with 'entity' | 'form' | 'error' | 'assistant' when needed. */
+export const REPORT_TYPE_SURVEY = 'survey';
+export type ReportType = typeof REPORT_TYPE_SURVEY;
+
+/** A single item in the reporter queue. Survey reports can be batched per surveyId when sending. */
+export type PendingReport = {
+  id: string;
+  reportType: typeof REPORT_TYPE_SURVEY;
+  surveyId: string;
+  payload: SurveyReporterAnswer;
+};
+// Future: extend with | { id; reportType: 'entity'; ... } | { reportType: 'form'; ... } etc.
+
 export type ProgressorData = {
   uf_completed: UFCompleted[];
   tours: ProgressorTour[];
