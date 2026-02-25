@@ -183,21 +183,35 @@ export type ActiveExperience =
 /*
   Survey types
   */
+export const SURVEY_ACTION_TYPES = {
+  CONFIRM_SURVEY: 'confirm-survey',
+  CLOSE_SURVEY: 'close-survey',
+  SHOW_LATER: 'show-later',
+} as const;
+
+export type SurveyActionType =
+  (typeof SURVEY_ACTION_TYPES)[keyof typeof SURVEY_ACTION_TYPES];
+
+export type SurveyPageAction = {
+  id: string;
+  type: SurveyActionType;
+  value: string;
+  styleType: 'Primary' | 'Secondary' | 'Custom';
+  classes?: string;
+  showLaterDuration?: number;
+  showLaterTimeUnit?: 'hours' | 'days' | 'weeks' | 'months';
+};
+
 export type SurveyPage = {
   id: string;
   name: string;
   type: 'modal' | 'slideout';
   content: any;
   customStyle: any;
-  actions: SurveyAction;
+  closeButton: boolean;
+  alignment: 'center' | 'right' | 'left';
+  actions: SurveyPageAction[];
   questions: SurveyQuestion[];
-};
-
-export type SurveyAction = {
-  action: string;
-  close: boolean;
-  confirm: boolean;
-  label: string;
 };
 
 export type SurveyQuestion = {
