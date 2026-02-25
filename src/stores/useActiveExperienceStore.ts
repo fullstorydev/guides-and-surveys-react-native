@@ -25,10 +25,10 @@ export const useActiveExperienceStore = create<ActiveExperienceStoreState>(
     theme: THEME_DEFAULT,
     selfClosed: false,
 
-    setActiveExperience: (experience) => {
+    setActiveExperience: (activeExperience) => {
       set({
-        activeExperience: experience,
-        theme: experience?.experience?.themeObject || THEME_DEFAULT,
+        activeExperience,
+        theme: activeExperience?.experience.themeObject || THEME_DEFAULT,
         selfClosed: false,
       });
     },
