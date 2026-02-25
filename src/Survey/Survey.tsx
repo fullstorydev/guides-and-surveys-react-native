@@ -1,22 +1,24 @@
 import { useEffect, useMemo } from 'react';
-import { StyleSheet, Text, View, Pressable, TextInput } from 'react-native';
+import { Text, View, Pressable, TextInput } from 'react-native';
 import { useForm, Controller } from 'react-hook-form';
-import type { Survey as SurveyType } from './types';
-import { CrossBtn } from './components/Cross';
-import { NPS } from './components/NPS/NPS';
+import type { Survey as SurveyType } from '../types';
+import { CrossBtn } from '../components/Cross';
+import { NPS } from '../components/NPS/NPS';
 import {
   updateSurveyStarted,
   updateSurveyProgress,
   updateSurveyClosed,
   updateSurveyCompleted,
-} from './stores/util/surveyProgress';
-import { saveSurveyAnswer } from './stores/util/surveyAnswers';
-import { useActiveExperienceStore } from './stores/useActiveExperienceStore';
-import { useDataStore } from './stores/useDataStore';
+} from '../stores/util/surveyProgress';
+import { saveSurveyAnswer } from '../stores/util/surveyAnswers';
+import { useActiveExperienceStore } from '../stores/useActiveExperienceStore';
+import { useDataStore } from '../stores/useDataStore';
+import { createSurveyStyles } from './createSurveyStyles';
 
 const Survey = ({ survey }: { survey: SurveyType }) => {
   const selfClosed = useActiveExperienceStore((s) => s.selfClosed);
   const setSelfClosed = useActiveExperienceStore((s) => s.setSelfClosed);
+  const theme = useActiveExperienceStore((s) => s.theme);
 
   const { control, handleSubmit } = useForm();
 
@@ -89,6 +91,8 @@ const Survey = ({ survey }: { survey: SurveyType }) => {
     }
   };
 
+  const styles = useMemo(() => createSurveyStyles(theme), [theme]);
+
   // Don't show if:
   // - No valid page to display
   // - User closed this survey in current session
@@ -125,6 +129,7 @@ const Survey = ({ survey }: { survey: SurveyType }) => {
                         onChange={onChange}
                         leftLabel={question.minimalValueLabel}
                         rightLabel={question.maximalValueLabel}
+                        theme={theme}
                       />
                     );
                   }
@@ -163,63 +168,3 @@ const Survey = ({ survey }: { survey: SurveyType }) => {
 };
 
 export default Survey;
-
-const styles = StyleSheet.create({
-  container: {
-    position: 'absolute',
-    width: '100%',
-    height: '100%',
-    backgroundColor: '#000000cc',
-  },
-  modal: {
-    backgroundColor: 'white',
-    marginTop: '50%',
-    marginHorizontal: '5%',
-    shadowColor: '#000000',
-    shadowOpacity: 0.5,
-    borderRadius: 5,
-    paddingHorizontal: 10,
-    paddingVertical: 8,
-  },
-  modalHeader: {
-    alignItems: 'flex-end',
-  },
-  modalBody: {
-    paddingVertical: 8,
-  },
-  questionContainer: {
-    marginBottom: 20,
-  },
-  questionText: {
-    fontSize: 16,
-    fontWeight: '600',
-    marginBottom: 12,
-    color: '#333333',
-  },
-  textInput: {
-    borderWidth: 1,
-    borderColor: '#E0E0E0',
-    borderRadius: 8,
-    padding: 12,
-    fontSize: 16,
-    color: '#333333',
-    backgroundColor: '#FFFFFF',
-    minHeight: 100,
-  },
-  modalFooter: {
-    paddingTop: 8,
-    paddingBottom: 8,
-  },
-  submitButton: {
-    backgroundColor: '#007AFF',
-    borderRadius: 8,
-    paddingVertical: 12,
-    paddingHorizontal: 24,
-    alignItems: 'center',
-  },
-  submitButtonText: {
-    color: '#FFFFFF',
-    fontSize: 16,
-    fontWeight: '600',
-  },
-});

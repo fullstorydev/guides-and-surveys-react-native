@@ -218,6 +218,7 @@ export type Survey = {
   objectPriority: number;
   pages: SurveyPage[];
   targets: Target[];
+  themeObject: Theme;
   trigger: SurveyTrigger;
   // 0: all conditions must be true, 1: any condition must be true
   targetOperator: 0 | 1;

@@ -4,6 +4,7 @@ import { useMemo } from 'react';
 import { useStore } from '../../stores/useStore';
 import { RenderProgressBar } from '../ProgressBar';
 import { useOnClose } from '../../hooks/useOnClose';
+import { resolveFont } from '../../utils/fonts';
 
 type Props = {
   title: string;
@@ -23,7 +24,11 @@ export const StepHeader = ({ title }: Props) => {
         },
         text: {
           textAlign: 'center',
-          fontSize: theme.fontSize * 1.5,
+          fontSize: theme.fontTitleSize || theme.fontSize * 1.5,
+          fontFamily: resolveFont(
+            theme.fontTitleFamily,
+            theme.customFontTitleFamily
+          ),
           fontWeight: '600',
           color: theme.fontColor,
         },

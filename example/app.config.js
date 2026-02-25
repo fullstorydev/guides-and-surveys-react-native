@@ -30,6 +30,7 @@ export default {
       USETIFUL_TOKEN: process.env.USETIFUL_TOKEN,
     },
     plugins: [
+      ['expo-font', { fonts: ['./assets/fonts/RubikStorm-Regular.ttf'] }],
       [
         '@fullstory/react-native',
         {
