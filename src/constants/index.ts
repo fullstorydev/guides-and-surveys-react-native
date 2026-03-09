@@ -29,6 +29,7 @@ export const THEME_DEFAULT = {
   fontSize: 14,
   fontTitleSize: 14,
   fontButtonSize: 14,
+  fontContentColor: '#000',
 };
 
 const PIXEL_DENSITY_MEDIUM = 2;

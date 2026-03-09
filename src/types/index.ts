@@ -96,6 +96,7 @@ export type Theme = {
   fontSize: number;
   fontTitleSize: number;
   fontButtonSize: number;
+  fontContentColor: string;
 };
 
 export type UsetifulTag = {

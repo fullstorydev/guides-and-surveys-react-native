@@ -34,7 +34,7 @@ export const createNPSStyles = (theme: Theme, containerWidth: number) => {
       fontFamily: font,
       fontWeight: '600',
       marginBottom: 12,
-      color: theme.fontTitleColor || theme.fontColor,
+      color: theme.fontContentColor,
     },
     requiredAsterisk: {
       color: '#D02E0B',
