@@ -116,7 +116,6 @@ const Survey = ({ survey }: { survey: SurveyType }) => {
         <View style={styles.modalBody}>
           {supportedQuestions.map((question) => (
             <View key={question.id} style={styles.questionContainer}>
-              <Text style={styles.questionText}>{question.question}</Text>
               <Controller
                 control={control}
                 name={question.id}
@@ -130,6 +129,8 @@ const Survey = ({ survey }: { survey: SurveyType }) => {
                         leftLabel={question.minimalValueLabel}
                         rightLabel={question.maximalValueLabel}
                         theme={theme}
+                        question={question.question}
+                        required={question.required}
                       />
                     );
                   }

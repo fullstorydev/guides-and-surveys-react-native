@@ -88,8 +88,11 @@ export type Theme = {
   fontButtonFamily: string;
   customFontButtonFamily: string;
   fontColor: string;
+  fontTitleColor: string;
   bgColor: string;
   secondaryButtonColor: string;
+  surveyScaleColor: string;
+  surveyScaleTextColor: string;
   fontSize: number;
   fontTitleSize: number;
   fontButtonSize: number;

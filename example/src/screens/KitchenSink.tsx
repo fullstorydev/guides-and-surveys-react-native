@@ -13,7 +13,13 @@ function KitchenSinkScreen() {
   return (
     <ScrollView style={styles.container}>
       <View style={styles.content}>
-        <NPS value={npsValue} onChange={setNpsValue} theme={THEME_DEFAULT} />
+        <NPS
+          value={npsValue}
+          onChange={setNpsValue}
+          theme={THEME_DEFAULT}
+          question="How likely are you to recommend this product to a friend or colleague?"
+          required={true}
+        />
       </View>
     </ScrollView>
   );
