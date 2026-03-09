@@ -1,7 +1,7 @@
 import { useEffect, useMemo } from 'react';
 import { Text, View, Pressable, TextInput } from 'react-native';
 import { useForm, Controller } from 'react-hook-form';
-import type { Survey as SurveyType } from '../types';
+import { type Survey as SurveyType, SURVEY_ACTION_TYPES } from '../types';
 import { CrossBtn } from '../components/Cross';
 import { NPS } from '../components/NPS/NPS';
 import {
@@ -103,7 +103,7 @@ const Survey = ({ survey }: { survey: SurveyType }) => {
   return (
     <View style={styles.container}>
       <View style={styles.modal}>
-        {currentPage.actions.close && (
+        {currentPage.closeButton && (
           <View style={styles.modalHeader}>
             <CrossBtn
               onClose={() => {
@@ -153,14 +153,28 @@ const Survey = ({ survey }: { survey: SurveyType }) => {
           ))}
         </View>
         <View style={styles.modalFooter}>
-          <Pressable
-            style={styles.submitButton}
-            onPress={handleSubmit(onSubmit)}
-          >
-            <Text style={styles.submitButtonText}>
-              {currentPage.actions.label || 'Submit'}
-            </Text>
-          </Pressable>
+          {currentPage.actions.map((action) => {
+            const handleActionPress = () => {
+              if (action.type === SURVEY_ACTION_TYPES.CONFIRM_SURVEY) {
+                handleSubmit(onSubmit)();
+              } else if (action.type === SURVEY_ACTION_TYPES.CLOSE_SURVEY) {
+                updateSurveyClosed(survey.id);
+                setSelfClosed(true);
+              } else {
+                setSelfClosed(true);
+              }
+            };
+
+            return (
+              <Pressable
+                style={styles.submitButton}
+                key={action.id}
+                onPress={handleActionPress}
+              >
+                <Text style={styles.submitButtonText}>{action.value}</Text>
+              </Pressable>
+            );
+          })}
         </View>
       </View>
     </View>
