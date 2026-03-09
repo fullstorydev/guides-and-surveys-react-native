@@ -1,6 +1,6 @@
 import { StyleSheet, View, type ViewStyle } from 'react-native';
 import { Body } from '../Body';
-import { Action } from '../Action';
+import { OldAction } from '../Action';
 import type { Measure, TourStep } from '../../types';
 import { useStore } from '../../stores/useStore';
 import { useEffect, useMemo, useRef, useState } from 'react';
@@ -165,7 +165,7 @@ export const Pointer = ({ step, layoutMeasure }: Props) => {
             </View>
             <View style={styles.pointerFooter}>
               {actions.map((action) => {
-                return <Action key={action.id} {...{ action }} />;
+                return <OldAction key={action.id} {...{ action }} />;
               })}
             </View>
           </View>

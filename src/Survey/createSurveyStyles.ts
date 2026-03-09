@@ -1,6 +1,5 @@
 import { StyleSheet } from 'react-native';
 import type { Theme } from '../types';
-import { resolveFont } from '../utils/fonts';
 
 export const createSurveyStyles = (theme: Theme) =>
   StyleSheet.create({
@@ -9,16 +8,21 @@ export const createSurveyStyles = (theme: Theme) =>
       width: '100%',
       height: '100%',
       backgroundColor: '#000000cc',
+      justifyContent: 'center',
+      alignItems: 'center',
     },
     modal: {
       backgroundColor: theme.bgColor,
-      marginTop: '50%',
-      marginHorizontal: '5%',
+      width: '90%',
+      maxHeight: '80%',
       shadowColor: '#000000',
       shadowOpacity: 0.5,
-      borderRadius: 5,
-      paddingHorizontal: 10,
-      paddingVertical: 8,
+      shadowRadius: 8,
+      shadowOffset: { width: 0, height: 4 },
+      elevation: 8,
+      borderRadius: 12,
+      paddingHorizontal: 16,
+      paddingVertical: 12,
     },
     modalHeader: {
       alignItems: 'flex-end',
@@ -32,21 +36,7 @@ export const createSurveyStyles = (theme: Theme) =>
     modalFooter: {
       paddingTop: 8,
       paddingBottom: 8,
-    },
-    submitButton: {
-      backgroundColor: theme.primaryColor,
-      borderRadius: 8,
-      paddingVertical: 12,
-      paddingHorizontal: 24,
-      alignItems: 'center',
-    },
-    submitButtonText: {
-      color: '#FFFFFF',
-      fontSize: theme.fontButtonSize || 16,
-      fontFamily: resolveFont(
-        theme.fontButtonFamily,
-        theme.customFontButtonFamily
-      ),
-      fontWeight: '600',
+      flexDirection: 'row',
+      justifyContent: 'center',
     },
   });
