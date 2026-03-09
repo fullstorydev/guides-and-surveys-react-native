@@ -36,7 +36,7 @@ export const createNPSStyles = (theme: Theme, containerWidth: number) => {
       width: '100%',
     },
     questionText: {
-      fontSize: theme.fontTitleSize || 16,
+      fontSize: theme.fontSize || 16,
       fontFamily: font,
       fontWeight: '600',
       marginBottom: 12,
