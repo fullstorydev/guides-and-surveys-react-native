@@ -3,23 +3,17 @@ import { resolveFont } from '../../utils/fonts';
 import { StyleSheet } from 'react-native';
 
 export const NPS_SCALE_LENGTH = 11;
-const MIN_TOUCH_TARGET = 44;
+const TOUCH_TARGET = 44;
 const BUTTON_MARGIN = 4;
 
 export const createNPSStyles = (theme: Theme, containerWidth: number) => {
   const availableWidth = containerWidth;
-  const totalMargins = (NPS_SCALE_LENGTH - 1) * (BUTTON_MARGIN * 2);
-  const buttonWidth = (availableWidth - totalMargins) / NPS_SCALE_LENGTH;
-
-  const shouldWrap = buttonWidth < MIN_TOUCH_TARGET;
-  const buttonsPerRow = shouldWrap
-    ? Math.floor(availableWidth / (MIN_TOUCH_TARGET + BUTTON_MARGIN * 2))
-    : NPS_SCALE_LENGTH;
-  const wrappedButtonWidth = shouldWrap
-    ? (availableWidth - (buttonsPerRow - 1) * BUTTON_MARGIN * 2) / buttonsPerRow
-    : buttonWidth;
-
-  const buttonSize = Math.max(wrappedButtonWidth, MIN_TOUCH_TARGET);
+  const buttonsPerRow = Math.min(
+    NPS_SCALE_LENGTH,
+    Math.max(1, Math.floor(availableWidth / (TOUCH_TARGET + BUTTON_MARGIN * 2)))
+  );
+  const shouldWrap = buttonsPerRow < NPS_SCALE_LENGTH;
+  const buttonSize = TOUCH_TARGET;
   const font = resolveFont(theme.fontFamily, theme.customFontFamily);
   const surveyScaleBorderColor =
     theme.surveyScaleColor || theme.secondaryButtonColor || '#E0E0E0';
