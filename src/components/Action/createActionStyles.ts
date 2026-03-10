@@ -29,9 +29,9 @@ export const createActionStyles = (theme: Theme) =>
       fontWeight: '600',
     },
     buttonTextPrimary: {
-      color: '#FFFFFF',
+      color: theme.primaryColorText,
     },
     buttonTextSecondary: {
-      color: theme.secondaryButtonColor,
+      color: theme.secondaryColorText,
     },
   });

@@ -93,6 +93,9 @@ export type Theme = {
   secondaryButtonColor: string;
   surveyScaleColor: string;
   surveyScaleTextColor: string;
+  primaryColorText: string;
+  secondaryColorText: string;
+  surveyCloseIconColor: string;
   fontSize: number;
   fontTitleSize: number;
   fontButtonSize: number;

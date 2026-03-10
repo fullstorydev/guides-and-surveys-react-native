@@ -112,6 +112,7 @@ const Survey = ({ survey }: { survey: SurveyType }) => {
                 updateSurveyClosed(survey.id);
                 setSelfClosed(true);
               }}
+              color={theme.surveyCloseIconColor}
             />
           </View>
         )}

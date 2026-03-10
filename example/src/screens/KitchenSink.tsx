@@ -4,6 +4,7 @@ import { NPS } from '../../../src/components/NPS/NPS';
 import { THEME_DEFAULT } from '../../../src/constants';
 import { OpenQuestion } from '../../../src/components/OpenQuestion/OpenQuestion';
 import { Action } from '../../../src/components/Action';
+import { CrossBtn } from '../../../src/components/Cross';
 
 /**
  * Kitchen Sink Screen - Demonstrates all Usetiful components and features
@@ -48,6 +49,12 @@ function KitchenSinkScreen() {
             }}
           />
         </View>
+        <CrossBtn
+          onClose={() => {
+            console.log('Close');
+          }}
+          color={THEME_DEFAULT.surveyCloseIconColor}
+        />
       </View>
     </ScrollView>
   );
