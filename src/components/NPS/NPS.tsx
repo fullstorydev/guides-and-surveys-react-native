@@ -56,7 +56,7 @@ export const NPS = ({
               ]}
               onPress={() => onChange(value)}
               accessibilityRole="button"
-              accessibilityLabel={`Rate ${value} out of 10`}
+              accessibilityLabel={`Rate ${value} out of ${NPS_SCALE_LENGTH - 1}`}
               accessibilityState={{ selected: isSelected }}
             >
               <Text
@@ -73,8 +73,12 @@ export const NPS = ({
       </View>
 
       <View style={styles.labelsContainer}>
-        <Text style={[styles.label, styles.leftLabel]}>{leftLabel}</Text>
-        <Text style={[styles.label, styles.rightLabel]}>{rightLabel}</Text>
+        <Text style={[styles.label, styles.leftLabel]}>
+          {'0 - ' + leftLabel}
+        </Text>
+        <Text style={[styles.label, styles.rightLabel]}>
+          {NPS_SCALE_LENGTH - 1 + ' - ' + rightLabel}
+        </Text>
       </View>
     </View>
   );
