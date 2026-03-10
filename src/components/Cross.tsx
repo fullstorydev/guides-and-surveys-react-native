@@ -3,7 +3,7 @@ import { useMemo } from 'react';
 
 type Props = {
   onClose: () => void;
-  color?: string;
+  color: string;
   size?: number;
 };
 

@@ -5,6 +5,7 @@ import { useStore } from '../../stores/useStore';
 import { RenderProgressBar } from '../ProgressBar';
 import { useOnClose } from '../../hooks/useOnClose';
 import { resolveFont } from '../../utils/fonts';
+import { THEME_DEFAULT } from '../../constants';
 
 type Props = {
   title: string;
@@ -40,7 +41,10 @@ export const StepHeader = ({ title }: Props) => {
     <>
       <View style={styles.header}>
         <Text style={styles.text}>{title}</Text>
-        <CrossBtn onClose={onCloseHandler} />
+        <CrossBtn
+          onClose={onCloseHandler}
+          color={THEME_DEFAULT.surveyCloseIconColor}
+        />
       </View>
       {progress.type === 1 && <RenderProgressBar />}
     </>
