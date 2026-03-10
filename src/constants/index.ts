@@ -21,11 +21,15 @@ export const THEME_DEFAULT = {
   fontButtonFamily: '',
   customFontButtonFamily: '',
   fontColor: '#000',
+  fontTitleColor: '#000',
   bgColor: '#fff',
   secondaryButtonColor: '',
+  surveyScaleColor: '',
+  surveyScaleTextColor: '',
   fontSize: 14,
   fontTitleSize: 14,
   fontButtonSize: 14,
+  fontContentColor: '#000',
 };
 
 const PIXEL_DENSITY_MEDIUM = 2;

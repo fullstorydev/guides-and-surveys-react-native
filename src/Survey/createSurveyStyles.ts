@@ -29,16 +29,6 @@ export const createSurveyStyles = (theme: Theme) =>
     questionContainer: {
       marginBottom: 20,
     },
-    questionText: {
-      fontSize: theme.fontTitleSize || 16,
-      fontFamily: resolveFont(
-        theme.fontTitleFamily,
-        theme.customFontTitleFamily
-      ),
-      fontWeight: '600',
-      marginBottom: 12,
-      color: theme.fontColor,
-    },
     textInput: {
       borderWidth: 1,
       borderColor: '#E0E0E0',
