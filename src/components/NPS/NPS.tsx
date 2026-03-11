@@ -61,14 +61,7 @@ export const NPS = ({
               accessibilityLabel={`Rate ${value} out of ${NPS_SCALE_LENGTH - 1}`}
               accessibilityState={{ selected: isSelected }}
             >
-              <Text
-                style={[
-                  styles.ratingText,
-                  isSelected && styles.ratingTextSelected,
-                ]}
-              >
-                {value}
-              </Text>
+              <Text style={[styles.ratingText]}>{value}</Text>
             </Pressable>
           );
         })}

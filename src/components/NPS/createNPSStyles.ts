@@ -72,9 +72,6 @@ export const createNPSStyles = (
       fontWeight: '600',
       color: surveyScaleTextColor,
     },
-    ratingTextSelected: {
-      color: '#FFFFFF',
-    },
     labelsContainer: {
       flexDirection: 'row',
       justifyContent: 'space-between',

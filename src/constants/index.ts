@@ -30,6 +30,9 @@ export const THEME_DEFAULT = {
   fontTitleSize: 14,
   fontButtonSize: 14,
   fontContentColor: '#000',
+  surveyCloseIconColor: '#000',
+  primaryColorText: '#000',
+  secondaryColorText: '#000',
 };
 
 const PIXEL_DENSITY_MEDIUM = 2;
