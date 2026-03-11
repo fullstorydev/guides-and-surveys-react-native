@@ -11,7 +11,9 @@ module.exports = function (api) {
   return getConfig(
     {
       presets: ['babel-preset-expo'],
-      plugins: isWeb ? [] : ['@fullstory/react-native'],
+      plugins: isWeb
+        ? []
+        : ['@fullstory/react-native', 'react-native-worklets/plugin'],
     },
     { root, pkg }
   );
