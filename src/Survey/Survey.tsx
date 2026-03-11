@@ -1,7 +1,8 @@
 import { useEffect, useMemo } from 'react';
-import { Text, View, Pressable } from 'react-native';
+import { View, ScrollView } from 'react-native';
 import { useForm, Controller } from 'react-hook-form';
 import { type Survey as SurveyType, SURVEY_ACTION_TYPES } from '../types';
+import { Action } from '../components/Action';
 import { CrossBtn } from '../components/Cross';
 import { NPS } from '../components/NPS/NPS';
 import { OpenQuestion } from '../components/OpenQuestion/OpenQuestion';
@@ -114,7 +115,10 @@ const Survey = ({ survey }: { survey: SurveyType }) => {
             />
           </View>
         )}
-        <View style={styles.modalBody}>
+        <ScrollView
+          contentContainerStyle={styles.modalBody}
+          showsVerticalScrollIndicator={false}
+        >
           {supportedQuestions.map((question) => (
             <View key={question.id} style={styles.questionContainer}>
               <Controller
@@ -153,31 +157,31 @@ const Survey = ({ survey }: { survey: SurveyType }) => {
               />
             </View>
           ))}
-        </View>
-        <View style={styles.modalFooter}>
-          {currentPage.actions.map((action) => {
-            const handleActionPress = () => {
-              if (action.type === SURVEY_ACTION_TYPES.CONFIRM_SURVEY) {
-                handleSubmit(onSubmit)();
-              } else if (action.type === SURVEY_ACTION_TYPES.CLOSE_SURVEY) {
-                updateSurveyClosed(survey.id);
-                setSelfClosed(true);
-              } else {
-                setSelfClosed(true);
-              }
-            };
+          <View style={styles.modalFooter}>
+            {currentPage.actions.map((action) => {
+              const handleActionPress = () => {
+                if (action.type === SURVEY_ACTION_TYPES.CONFIRM_SURVEY) {
+                  handleSubmit(onSubmit)();
+                } else if (action.type === SURVEY_ACTION_TYPES.CLOSE_SURVEY) {
+                  updateSurveyClosed(survey.id);
+                  setSelfClosed(true);
+                } else {
+                  setSelfClosed(true);
+                }
+              };
 
-            return (
-              <Pressable
-                style={styles.submitButton}
-                key={action.id}
-                onPress={handleActionPress}
-              >
-                <Text style={styles.submitButtonText}>{action.value}</Text>
-              </Pressable>
-            );
-          })}
-        </View>
+              return (
+                <Action
+                  key={action.id}
+                  value={action.value}
+                  styleType={action.styleType}
+                  theme={theme}
+                  onPress={handleActionPress}
+                />
+              );
+            })}
+          </View>
+        </ScrollView>
       </View>
     </View>
   );

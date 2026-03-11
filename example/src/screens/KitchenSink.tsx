@@ -3,6 +3,7 @@ import { View, ScrollView, StyleSheet } from 'react-native';
 import { NPS } from '../../../src/components/NPS/NPS';
 import { THEME_DEFAULT } from '../../../src/constants';
 import { OpenQuestion } from '../../../src/components/OpenQuestion/OpenQuestion';
+import { Action } from '../../../src/components/Action';
 
 /**
  * Kitchen Sink Screen - Demonstrates all Usetiful components and features
@@ -29,6 +30,24 @@ function KitchenSinkScreen() {
           question="What is do you like about the product?"
           required={true}
         />
+        <View style={styles.actionContainer}>
+          <Action
+            value="Submit"
+            styleType="Primary"
+            theme={THEME_DEFAULT}
+            onPress={() => {
+              console.log('Submit');
+            }}
+          />
+          <Action
+            value="Cancel"
+            styleType="Secondary"
+            theme={THEME_DEFAULT}
+            onPress={() => {
+              console.log('Cancel');
+            }}
+          />
+        </View>
       </View>
     </ScrollView>
   );
@@ -41,6 +60,11 @@ const styles = StyleSheet.create({
   },
   content: {
     padding: 20,
+  },
+  actionContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 

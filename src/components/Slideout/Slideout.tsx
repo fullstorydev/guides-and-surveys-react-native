@@ -1,6 +1,6 @@
 import { StyleSheet, View } from 'react-native';
 import { Body } from '../Body';
-import { Action } from '../Action';
+import { OldAction } from '../Action';
 import type { TourStep } from '../../types';
 import { useStore } from '../../stores/useStore';
 import { useMemo } from 'react';
@@ -47,7 +47,7 @@ export const Slideout = ({ step }: Props) => {
       </View>
       <View style={styles.slidoutFooter}>
         {actions.map((action) => {
-          return <Action key={action.id} {...{ action }} />;
+          return <OldAction key={action.id} {...{ action }} />;
         })}
       </View>
     </View>
