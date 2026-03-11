@@ -14,6 +14,7 @@ export const createSurveyStyles = (theme: Theme) =>
     modal: {
       backgroundColor: theme.bgColor,
       width: '90%',
+      maxWidth: 540,
       maxHeight: '80%',
       shadowColor: '#000000',
       shadowOpacity: 0.5,
