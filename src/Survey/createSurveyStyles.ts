@@ -29,17 +29,6 @@ export const createSurveyStyles = (theme: Theme) =>
     questionContainer: {
       marginBottom: 20,
     },
-    textInput: {
-      borderWidth: 1,
-      borderColor: '#E0E0E0',
-      borderRadius: 8,
-      padding: 12,
-      fontSize: theme.fontSize || 16,
-      fontFamily: resolveFont(theme.fontFamily, theme.customFontFamily),
-      color: theme.fontColor,
-      backgroundColor: theme.bgColor,
-      minHeight: 100,
-    },
     modalFooter: {
       paddingTop: 8,
       paddingBottom: 8,

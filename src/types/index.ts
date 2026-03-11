@@ -222,11 +222,12 @@ export type SurveyQuestion = {
   alignment: 'left' | 'right' | 'center';
   id: string;
   type: 'nps' | 'open';
-  maximalValueLabel: string;
-  minimalValueLabel: string;
-  options: any[] | null;
+  maximalValueLabel?: string;
+  minimalValueLabel?: string;
+  options?: any[] | null;
   required: boolean;
   question: string;
+  placeholderText?: string;
 };
 
 export type Survey = {

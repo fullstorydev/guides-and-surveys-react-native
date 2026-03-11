@@ -1,9 +1,10 @@
 import { useEffect, useMemo } from 'react';
-import { Text, View, Pressable, TextInput } from 'react-native';
+import { Text, View, Pressable } from 'react-native';
 import { useForm, Controller } from 'react-hook-form';
 import { type Survey as SurveyType, SURVEY_ACTION_TYPES } from '../types';
 import { CrossBtn } from '../components/Cross';
 import { NPS } from '../components/NPS/NPS';
+import { OpenQuestion } from '../components/OpenQuestion/OpenQuestion';
 import {
   updateSurveyStarted,
   updateSurveyProgress,
@@ -131,21 +132,21 @@ const Survey = ({ survey }: { survey: SurveyType }) => {
                         theme={theme}
                         question={question.question}
                         required={question.required}
+                        titleAlignment={question.alignment}
                       />
                     );
                   }
 
                   // question.type === 'open'
                   return (
-                    <TextInput
-                      style={styles.textInput}
+                    <OpenQuestion
                       value={value || ''}
-                      onChangeText={onChange}
-                      multiline
-                      numberOfLines={4}
-                      placeholder="Type your answer here..."
-                      placeholderTextColor="#999999"
-                      textAlignVertical="top"
+                      onChange={onChange}
+                      theme={theme}
+                      question={question.question}
+                      required={question.required}
+                      titleAlignment={question.alignment}
+                      placeholder={question.placeholderText}
                     />
                   );
                 }}

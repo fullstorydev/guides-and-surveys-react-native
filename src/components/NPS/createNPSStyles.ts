@@ -6,7 +6,11 @@ export const NPS_SCALE_LENGTH = 11;
 const TOUCH_TARGET = 44;
 const BUTTON_MARGIN = 4;
 
-export const createNPSStyles = (theme: Theme, containerWidth: number) => {
+export const createNPSStyles = (
+  theme: Theme,
+  containerWidth: number,
+  titleAlignment: 'left' | 'right' | 'center'
+) => {
   const availableWidth = containerWidth;
   const buttonsPerRow = Math.min(
     NPS_SCALE_LENGTH,
@@ -35,6 +39,7 @@ export const createNPSStyles = (theme: Theme, containerWidth: number) => {
       fontWeight: '600',
       marginBottom: 12,
       color: theme.fontContentColor,
+      textAlign: titleAlignment,
     },
     requiredAsterisk: {
       color: '#D02E0B',

@@ -10,6 +10,7 @@ type NPSProps = {
   value: number | null;
   onChange: (value: number) => void;
   theme: Theme;
+  titleAlignment?: 'left' | 'right' | 'center';
   question?: string;
   required?: boolean;
 };
@@ -21,12 +22,13 @@ export const NPS = ({
   onChange,
   theme,
   question,
+  titleAlignment = 'left',
   required = false,
 }: NPSProps) => {
   const [containerWidth, setContainerWidth] = useState(0);
   const styles = useMemo(
-    () => createNPSStyles(theme, containerWidth),
-    [theme, containerWidth]
+    () => createNPSStyles(theme, containerWidth, titleAlignment),
+    [theme, containerWidth, titleAlignment]
   );
 
   const onLayout = (e: LayoutChangeEvent) => {
