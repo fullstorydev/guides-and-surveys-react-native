@@ -166,6 +166,7 @@ const Survey = ({ survey }: { survey: SurveyType }) => {
 
   const onSubmit = useCallback(
     (data: any) => {
+      Keyboard.dismiss();
       saveAnswers(data);
 
       const nextPageIndex = currentPageIndex + 1;
