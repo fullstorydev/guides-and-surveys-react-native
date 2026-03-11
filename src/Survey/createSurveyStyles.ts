@@ -39,4 +39,10 @@ export const createSurveyStyles = (theme: Theme) =>
       flexDirection: 'row',
       justifyContent: 'center',
     },
+    keyboardAvoidingView: {
+      width: '100%',
+      alignItems: 'center',
+      flex: 1,
+      justifyContent: 'center',
+    },
   });
