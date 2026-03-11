@@ -77,40 +77,35 @@ const Survey = ({ survey }: { survey: SurveyType }) => {
   }, [survey.id, survey.name, survey.pages, surveyProgress]);
 
   // Filter to only supported question types
-  const supportedQuestions =
-    currentPage?.questions.filter(
-      (q) => q.type === 'nps' || q.type === 'open'
-    ) || [];
+  const supportedQuestions = useMemo(
+    () =>
+      currentPage?.questions.filter(
+        (q) => q.type === 'nps' || q.type === 'open'
+      ) || [],
+    [currentPage]
+  );
 
-  const onSubmit = (data: any) => {
-    if (!currentPage) {
-      return;
-    }
-
-    // Save each answer
-    Object.entries(data).forEach(([questionId, value]) => {
-      const question = supportedQuestions.find((q) => q.id === questionId);
-      if (question && value !== undefined && value !== null && value !== '') {
-        saveSurveyAnswer(
-          survey.id,
-          questionId,
-          question.type,
-          value as string | number,
-          currentPage.id,
-          currentPage.name
-        );
+  const saveAnswers = useCallback(
+    (data: any) => {
+      if (!currentPage) {
+        return;
       }
-    });
-
-    const nextPageIndex = currentPageIndex + 1;
-    const nextPage = survey.pages[nextPageIndex];
-
-    if (nextPage) {
-      updateSurveyProgress(survey.id, nextPage.id);
-    } else {
-      updateSurveyCompleted(survey.id);
-    }
-  };
+      Object.entries(data).forEach(([questionId, value]) => {
+        const question = supportedQuestions.find((q) => q.id === questionId);
+        if (question && value !== undefined && value !== null && value !== '') {
+          saveSurveyAnswer(
+            survey.id,
+            questionId,
+            question.type,
+            value as string | number,
+            currentPage.id,
+            currentPage.name
+          );
+        }
+      });
+    },
+    [currentPage, supportedQuestions, survey.id]
+  );
 
   const styles = useMemo(() => createSurveyStyles(theme), [theme]);
 
@@ -162,11 +157,27 @@ const Survey = ({ survey }: { survey: SurveyType }) => {
     (onComplete: () => void) => {
       translateY.value = withSpring(
         screenHeight,
-        { damping: 400, stiffness: 1000 },
+        { damping: 200, stiffness: 400 },
         () => runOnJS(onComplete)()
       );
     },
     [translateY, screenHeight]
+  );
+
+  const onSubmit = useCallback(
+    (data: any) => {
+      saveAnswers(data);
+
+      const nextPageIndex = currentPageIndex + 1;
+      const nextPage = survey.pages[nextPageIndex];
+
+      if (nextPage) {
+        updateSurveyProgress(survey.id, nextPage.id);
+      } else {
+        animateOut(() => updateSurveyCompleted(survey.id));
+      }
+    },
+    [saveAnswers, currentPageIndex, survey.pages, survey.id, animateOut]
   );
 
   // Wrapped in useCallback so it can be passed to runOnJS, which requires a stable JS function reference
@@ -205,7 +216,7 @@ const Survey = ({ survey }: { survey: SurveyType }) => {
             runOnJS(dismissKeyboard)();
             translateY.value = withSpring(
               screenHeight,
-              { damping: 400, stiffness: 1000 },
+              { damping: 200, stiffness: 400 },
               () => {
                 runOnJS(updateSurveyClosed)(survey.id);
                 runOnJS(setSelfClosed)(true);
