@@ -14,20 +14,7 @@
   },
   "files": [
     "lib",
-    "android",
-    "ios",
-    "cpp",
-    "*.podspec",
-    "!ios/build",
-    "!android/build",
-    "!android/gradle",
-    "!android/gradlew",
-    "!android/gradlew.bat",
-    "!android/local.properties",
-    "!**/__tests__",
-    "!**/__fixtures__",
-    "!**/__mocks__",
-    "!**/.*"
+    "src"
   ],
   "scripts": {
     "example": "yarn workspace usetiful-react-native-example",
@@ -50,10 +37,7 @@
   },
   "author": "Vahid <vahid@dobbytec.com> (https://github.com/usetiful)",
   "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/usetiful/usetiful-react-native/issues"
-  },
-  "homepage": "https://github.com/usetiful/usetiful-react-native#readme",
+  "homepage": "https://github.com/fullstorydev/guides-and-surveys-react-native#readme",
   "publishConfig": {
     "registry": "https://registry.npmjs.org/"
   },
@@ -183,9 +167,5 @@
         }
       ]
     ]
-  },
-  "create-react-native-library": {
-    "type": "library",
-    "version": "0.40.0"
   }
 }
