@@ -1,5 +1,24 @@
-import { useEffect, useMemo } from 'react';
-import { View, ScrollView } from 'react-native';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
+import {
+  Dimensions,
+  Keyboard,
+  KeyboardAvoidingView,
+  Platform,
+  View,
+} from 'react-native';
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withSpring,
+  runOnJS,
+  interpolate,
+  Extrapolation,
+} from 'react-native-reanimated';
+import {
+  Gesture,
+  GestureDetector,
+  ScrollView,
+} from 'react-native-gesture-handler';
 import { useForm, Controller } from 'react-hook-form';
 import { type Survey as SurveyType, SURVEY_ACTION_TYPES } from '../types';
 import { Action } from '../components/Action';
@@ -58,42 +77,165 @@ const Survey = ({ survey }: { survey: SurveyType }) => {
   }, [survey.id, survey.name, survey.pages, surveyProgress]);
 
   // Filter to only supported question types
-  const supportedQuestions =
-    currentPage?.questions.filter(
-      (q) => q.type === 'nps' || q.type === 'open'
-    ) || [];
+  const supportedQuestions = useMemo(
+    () =>
+      currentPage?.questions.filter(
+        (q) => q.type === 'nps' || q.type === 'open'
+      ) || [],
+    [currentPage]
+  );
 
-  const onSubmit = (data: any) => {
-    if (!currentPage) {
-      return;
-    }
-
-    // Save each answer
-    Object.entries(data).forEach(([questionId, value]) => {
-      const question = supportedQuestions.find((q) => q.id === questionId);
-      if (question && value !== undefined && value !== null && value !== '') {
-        saveSurveyAnswer(
-          survey.id,
-          questionId,
-          question.type,
-          value as string | number,
-          currentPage.id,
-          currentPage.name
-        );
+  const saveAnswers = useCallback(
+    (data: any) => {
+      if (!currentPage) {
+        return;
       }
-    });
-
-    const nextPageIndex = currentPageIndex + 1;
-    const nextPage = survey.pages[nextPageIndex];
-
-    if (nextPage) {
-      updateSurveyProgress(survey.id, nextPage.id);
-    } else {
-      updateSurveyCompleted(survey.id);
-    }
-  };
+      Object.entries(data).forEach(([questionId, value]) => {
+        const question = supportedQuestions.find((q) => q.id === questionId);
+        if (question && value !== undefined && value !== null && value !== '') {
+          saveSurveyAnswer(
+            survey.id,
+            questionId,
+            question.type,
+            value as string | number,
+            currentPage.id,
+            currentPage.name
+          );
+        }
+      });
+    },
+    [currentPage, supportedQuestions, survey.id]
+  );
 
   const styles = useMemo(() => createSurveyStyles(theme), [theme]);
+
+  const screenHeight = Dimensions.get('window').height;
+  const translateY = useSharedValue(screenHeight);
+  const scrollY = useSharedValue(0);
+  const scrollViewRef = useRef<ScrollView>(null);
+  const questionYPositions = useRef<number[]>([]);
+  const focusedQuestionIndex = useRef<number>(-1);
+
+  const handleQuestionFocus = useCallback((index: number) => {
+    focusedQuestionIndex.current = index;
+  }, []);
+
+  useEffect(() => {
+    const subscription = Keyboard.addListener('keyboardDidShow', () => {
+      const index = focusedQuestionIndex.current;
+      const y = questionYPositions.current[index];
+      if (index >= 0 && y !== undefined) {
+        scrollViewRef.current?.scrollTo({ y, animated: true });
+      }
+    });
+    return () => subscription.remove();
+  }, []);
+
+  useEffect(() => {
+    if (currentPage && !selfClosed) {
+      questionYPositions.current = [];
+      focusedQuestionIndex.current = -1;
+      translateY.value = withSpring(0, { damping: 400, stiffness: 1000 });
+    }
+  }, [currentPage, selfClosed, translateY]);
+
+  const animatedModalStyle = useAnimatedStyle(() => ({
+    transform: [{ translateY: translateY.value }],
+  }));
+
+  const animatedContainerStyle = useAnimatedStyle(() => {
+    const opacity = interpolate(
+      translateY.value,
+      [screenHeight * 0.3, screenHeight * 0.6],
+      [1, 0],
+      Extrapolation.CLAMP
+    );
+    return { opacity };
+  });
+
+  const animateOut = useCallback(
+    (onComplete: () => void) => {
+      translateY.value = withSpring(
+        screenHeight,
+        { damping: 200, stiffness: 400 },
+        () => runOnJS(onComplete)()
+      );
+    },
+    [translateY, screenHeight]
+  );
+
+  const onSubmit = useCallback(
+    (data: any) => {
+      Keyboard.dismiss();
+      saveAnswers(data);
+
+      const nextPageIndex = currentPageIndex + 1;
+      const nextPage = survey.pages[nextPageIndex];
+
+      if (nextPage) {
+        updateSurveyProgress(survey.id, nextPage.id);
+      } else {
+        animateOut(() => updateSurveyCompleted(survey.id));
+      }
+    },
+    [saveAnswers, currentPageIndex, survey.pages, survey.id, animateOut]
+  );
+
+  // Wrapped in useCallback so it can be passed to runOnJS, which requires a stable JS function reference
+  const dismissKeyboard = useCallback(() => {
+    Keyboard.dismiss();
+  }, []);
+
+  const handleClose = useCallback(() => {
+    Keyboard.dismiss();
+    animateOut(() => {
+      updateSurveyClosed(survey.id);
+      setSelfClosed(true);
+    });
+  }, [animateOut, survey.id, setSelfClosed]);
+
+  const isDismissGesture = useRef(false);
+
+  const panGesture = useMemo(
+    () =>
+      Gesture.Pan()
+        .simultaneousWithExternalGesture(scrollViewRef)
+        .onBegin(() => {
+          isDismissGesture.current = scrollY.value <= 0;
+        })
+        .onUpdate((e) => {
+          if (isDismissGesture.current && e.translationY > 0) {
+            translateY.value = e.translationY;
+          }
+        })
+        .onEnd((e) => {
+          if (!isDismissGesture.current) {
+            return;
+          }
+          const shouldDismiss = e.translationY > 350 || e.velocityY > 2000;
+          if (shouldDismiss) {
+            runOnJS(dismissKeyboard)();
+            translateY.value = withSpring(
+              screenHeight,
+              { damping: 200, stiffness: 400 },
+              () => {
+                runOnJS(updateSurveyClosed)(survey.id);
+                runOnJS(setSelfClosed)(true);
+              }
+            );
+          } else {
+            translateY.value = withSpring(0, { damping: 400, stiffness: 1000 });
+          }
+        }),
+    [
+      dismissKeyboard,
+      screenHeight,
+      scrollY,
+      setSelfClosed,
+      survey.id,
+      translateY,
+    ]
+  );
 
   // Don't show if:
   // - No valid page to display
@@ -103,88 +245,107 @@ const Survey = ({ survey }: { survey: SurveyType }) => {
   }
 
   return (
-    <View style={styles.container}>
-      <View style={styles.modal}>
-        {currentPage.closeButton && (
-          <View style={styles.modalHeader}>
-            <CrossBtn
-              onClose={() => {
-                updateSurveyClosed(survey.id);
-                setSelfClosed(true);
+    <Animated.View style={[styles.container, animatedContainerStyle]}>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={styles.keyboardAvoidingView}
+      >
+        <GestureDetector gesture={panGesture}>
+          <Animated.View style={[styles.modal, animatedModalStyle]}>
+            {currentPage.closeButton && (
+              <View style={styles.modalHeader}>
+                <CrossBtn
+                  onClose={handleClose}
+                  color={theme.surveyCloseIconColor}
+                />
+              </View>
+            )}
+            <ScrollView
+              ref={scrollViewRef}
+              contentContainerStyle={styles.modalBody}
+              showsVerticalScrollIndicator={false}
+              keyboardShouldPersistTaps="handled"
+              onScroll={(e) => {
+                scrollY.value = e.nativeEvent.contentOffset.y;
               }}
-              color={theme.surveyCloseIconColor}
-            />
-          </View>
-        )}
-        <ScrollView
-          contentContainerStyle={styles.modalBody}
-          showsVerticalScrollIndicator={false}
-        >
-          {supportedQuestions.map((question) => (
-            <View key={question.id} style={styles.questionContainer}>
-              <Controller
-                control={control}
-                name={question.id}
-                rules={{ required: question.required }}
-                render={({ field: { onChange, value } }) => {
-                  if (question.type === 'nps') {
-                    return (
-                      <NPS
-                        value={value}
-                        onChange={onChange}
-                        leftLabel={question.minimalValueLabel}
-                        rightLabel={question.maximalValueLabel}
-                        theme={theme}
-                        question={question.question}
-                        required={question.required}
-                        titleAlignment={question.alignment}
-                      />
-                    );
-                  }
+              scrollEventThrottle={16}
+            >
+              {supportedQuestions.map((question, index) => (
+                <View
+                  key={question.id}
+                  onLayout={(e) => {
+                    questionYPositions.current[index] = e.nativeEvent.layout.y;
+                  }}
+                  style={styles.questionContainer}
+                >
+                  <Controller
+                    control={control}
+                    name={question.id}
+                    rules={{ required: question.required }}
+                    render={({ field: { onChange, value } }) => {
+                      if (question.type === 'nps') {
+                        return (
+                          <NPS
+                            value={value}
+                            onChange={onChange}
+                            leftLabel={question.minimalValueLabel}
+                            rightLabel={question.maximalValueLabel}
+                            theme={theme}
+                            question={question.question}
+                            required={question.required}
+                            titleAlignment={question.alignment}
+                          />
+                        );
+                      }
 
-                  // question.type === 'open'
+                      // question.type === 'open'
+                      return (
+                        <OpenQuestion
+                          value={value || ''}
+                          onChange={onChange}
+                          theme={theme}
+                          question={question.question}
+                          required={question.required}
+                          titleAlignment={question.alignment}
+                          placeholder={question.placeholderText}
+                          onFocus={() => handleQuestionFocus(index)}
+                        />
+                      );
+                    }}
+                  />
+                </View>
+              ))}
+              <View style={styles.modalFooter}>
+                {currentPage.actions.map((action) => {
+                  const handleActionPress = () => {
+                    if (action.type === SURVEY_ACTION_TYPES.CONFIRM_SURVEY) {
+                      handleSubmit(onSubmit)();
+                    } else if (
+                      action.type === SURVEY_ACTION_TYPES.CLOSE_SURVEY
+                    ) {
+                      handleClose();
+                    } else {
+                      // TODO: Implement show later logic
+                      handleClose();
+                    }
+                  };
+
                   return (
-                    <OpenQuestion
-                      value={value || ''}
-                      onChange={onChange}
+                    <Action
+                      key={action.id}
+                      value={action.value}
+                      styleType={action.styleType}
                       theme={theme}
-                      question={question.question}
-                      required={question.required}
-                      titleAlignment={question.alignment}
-                      placeholder={question.placeholderText}
+                      onPress={handleActionPress}
                     />
                   );
-                }}
-              />
-            </View>
-          ))}
-          <View style={styles.modalFooter}>
-            {currentPage.actions.map((action) => {
-              const handleActionPress = () => {
-                if (action.type === SURVEY_ACTION_TYPES.CONFIRM_SURVEY) {
-                  handleSubmit(onSubmit)();
-                } else if (action.type === SURVEY_ACTION_TYPES.CLOSE_SURVEY) {
-                  updateSurveyClosed(survey.id);
-                  setSelfClosed(true);
-                } else {
-                  setSelfClosed(true);
-                }
-              };
-
-              return (
-                <Action
-                  key={action.id}
-                  value={action.value}
-                  styleType={action.styleType}
-                  theme={theme}
-                  onPress={handleActionPress}
-                />
-              );
-            })}
-          </View>
-        </ScrollView>
-      </View>
-    </View>
+                })}
+              </View>
+            </ScrollView>
+          </Animated.View>
+        </GestureDetector>
+      </KeyboardAvoidingView>
+    </Animated.View>
   );
 };
 

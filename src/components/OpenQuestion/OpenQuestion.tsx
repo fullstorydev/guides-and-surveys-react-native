@@ -11,6 +11,7 @@ type OpenQuestionProps = {
   required?: boolean;
   titleAlignment?: 'left' | 'right' | 'center';
   placeholder?: string;
+  onFocus?: () => void;
 };
 
 export const OpenQuestion = ({
@@ -21,6 +22,7 @@ export const OpenQuestion = ({
   placeholder,
   required = false,
   titleAlignment = 'left',
+  onFocus,
 }: OpenQuestionProps) => {
   const [isFocused, setIsFocused] = useState(false);
   const styles = useMemo(
@@ -40,7 +42,10 @@ export const OpenQuestion = ({
         style={[styles.textInput, isFocused && styles.textInputFocused]}
         value={value}
         onChangeText={onChange}
-        onFocus={() => setIsFocused(true)}
+        onFocus={() => {
+          setIsFocused(true);
+          onFocus?.();
+        }}
         onBlur={() => setIsFocused(false)}
         multiline
         numberOfLines={5}

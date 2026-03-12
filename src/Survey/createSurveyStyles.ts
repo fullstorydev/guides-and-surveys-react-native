@@ -14,6 +14,7 @@ export const createSurveyStyles = (theme: Theme) =>
     modal: {
       backgroundColor: theme.bgColor,
       width: '90%',
+      maxWidth: 540,
       maxHeight: '80%',
       shadowColor: '#000000',
       shadowOpacity: 0.5,
@@ -37,6 +38,12 @@ export const createSurveyStyles = (theme: Theme) =>
       paddingTop: 8,
       paddingBottom: 8,
       flexDirection: 'row',
+      justifyContent: 'center',
+    },
+    keyboardAvoidingView: {
+      width: '100%',
+      alignItems: 'center',
+      flex: 1,
       justifyContent: 'center',
     },
   });
