@@ -1,0 +1,80 @@
+version: 2.1
+executors:
+  node-executor:
+    docker:
+      - image: cimg/node:22.14
+    working_directory: ~/repo
+jobs:
+  build-react-native:
+    executor: node-executor
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "yarn.lock" }}
+            - v1-dependencies-
+      - run:
+          name: Install
+          command: yarn install --immutable
+      - save_cache:
+          paths:
+            - node_modules
+            - .yarn/install-state.gz
+          key: v1-dependencies-{{ checksum "yarn.lock" }}
+      - run:
+          name: Audit
+          command: yarn npm audit --audit-level=low --environment production
+      - run:
+          name: Lint
+          command: yarn run lint
+      - run:
+          name: Typecheck
+          command: yarn run typecheck
+      - run:
+          name: Build
+          command: yarn prepare
+      - run:
+          name: Test
+          command: yarn test
+      - persist_to_workspace:
+          root: .
+          paths: [.]
+  deploy-react-native:
+    executor: node-executor
+    steps:
+      - attach_workspace:
+          at: ~/repo
+      - run:
+          name: Authenticate with registry
+          command: echo "//registry.npmjs.org/:_authToken=$npm_TOKEN" > .npmrc
+      - run:
+          name: Publish package
+          command: npm publish --access public
+workflows:
+  version: 2
+  test-deploy:
+    jobs:
+      - build-react-native:
+          filters:
+            # test on all branches and tags (all branches are included by default)
+            tags:
+              only: /.*/
+      - hold:
+          type: approval
+          requires:
+            - build-react-native
+          filters:
+            # hold only on version tags
+            tags:
+              only: /^v.*/
+            branches:
+              ignore: /.*/
+      - deploy-react-native:
+          requires:
+            - hold
+          filters:
+            # deploy only on version tags
+            tags:
+              only: /^v.*/
+            branches:
+              ignore: /.*/
