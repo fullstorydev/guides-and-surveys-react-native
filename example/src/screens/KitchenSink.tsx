@@ -25,12 +25,28 @@ function KitchenSinkScreen() {
           question="How likely are you to recommend this product to a friend or colleague?"
           required={true}
         />
+        <NPS
+          value={npsValue}
+          onChange={setNpsValue}
+          theme={THEME_DEFAULT}
+          question="How likely are you to recommend this product to a friend or colleague?"
+          required={true}
+          hasError={true}
+        />
         <OpenQuestion
           value={openQuestionValue}
           onChange={setOpenQuestionValue}
           theme={THEME_DEFAULT}
           question="What is do you like about the product?"
           required={true}
+        />
+        <OpenQuestion
+          value={openQuestionValue}
+          onChange={setOpenQuestionValue}
+          theme={THEME_DEFAULT}
+          question="What is do you like about the product?"
+          required={true}
+          hasError={true}
         />
         <View style={styles.actionContainer}>
           <Action

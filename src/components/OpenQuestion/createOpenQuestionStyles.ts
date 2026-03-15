@@ -57,5 +57,8 @@ export const createOpenQuestionStyles = (
       shadowRadius: 4,
       elevation: 3,
     },
+    textInputError: {
+      borderColor: '#D02E0B',
+    },
   });
 };

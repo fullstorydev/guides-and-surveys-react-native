@@ -13,6 +13,7 @@ type NPSProps = {
   titleAlignment?: 'left' | 'right' | 'center';
   question?: string;
   required?: boolean;
+  hasError?: boolean;
 };
 
 export const NPS = ({
@@ -24,6 +25,7 @@ export const NPS = ({
   question,
   titleAlignment = 'left',
   required = false,
+  hasError = false,
 }: NPSProps) => {
   const [containerWidth, setContainerWidth] = useState(0);
   const styles = useMemo(
@@ -43,7 +45,9 @@ export const NPS = ({
           {required ? <Text style={styles.requiredAsterisk}> *</Text> : null}
         </Text>
       ) : null}
-      <View style={styles.scaleContainer}>
+      <View
+        style={[styles.scaleContainer, hasError && styles.scaleContainerError]}
+      >
         {Array.from({ length: NPS_SCALE_LENGTH }, (_, i) => {
           const value = i;
           const isSelected = rating === value;

@@ -19,7 +19,7 @@ import {
   GestureDetector,
   ScrollView,
 } from 'react-native-gesture-handler';
-import { useForm, Controller } from 'react-hook-form';
+import { useForm, Controller, type FieldErrors } from 'react-hook-form';
 import { type Survey as SurveyType, SURVEY_ACTION_TYPES } from '../types';
 import { Action } from '../components/Action';
 import { CrossBtn } from '../components/Cross';
@@ -198,6 +198,18 @@ const Survey = ({ survey }: { survey: SurveyType }) => {
     ]
   );
 
+  const onError = (fieldErrors: FieldErrors) => {
+    const firstErrorIndex = supportedQuestions.findIndex(
+      (q) => fieldErrors[q.id]
+    );
+    if (firstErrorIndex >= 0) {
+      const y = questionYPositions.current[firstErrorIndex];
+      if (y !== undefined) {
+        scrollViewRef.current?.scrollTo({ y, animated: true });
+      }
+    }
+  };
+
   // Wrapped in useCallback so it can be passed to runOnJS, which requires a stable JS function reference
   const dismissKeyboard = useCallback(() => {
     Keyboard.dismiss();
@@ -315,7 +327,10 @@ const Survey = ({ survey }: { survey: SurveyType }) => {
                         control={control}
                         name={question.id}
                         rules={{ required: question.required }}
-                        render={({ field: { onChange, value } }) => {
+                        render={({
+                          field: { onChange, value },
+                          fieldState: { error },
+                        }) => {
                           if (question.type === 'nps') {
                             return (
                               <NPS
@@ -327,6 +342,7 @@ const Survey = ({ survey }: { survey: SurveyType }) => {
                                 question={question.question}
                                 required={question.required}
                                 titleAlignment={question.alignment}
+                                hasError={!!error}
                               />
                             );
                           }
@@ -342,6 +358,7 @@ const Survey = ({ survey }: { survey: SurveyType }) => {
                               titleAlignment={question.alignment}
                               placeholder={question.placeholderText}
                               onFocus={() => handleQuestionFocus(index)}
+                              hasError={!!error}
                             />
                           );
                         }}
@@ -354,7 +371,7 @@ const Survey = ({ survey }: { survey: SurveyType }) => {
                         if (
                           action.type === SURVEY_ACTION_TYPES.CONFIRM_SURVEY
                         ) {
-                          handleSubmit(onSubmit)();
+                          handleSubmit(onSubmit, onError)();
                         } else if (
                           action.type === SURVEY_ACTION_TYPES.CLOSE_SURVEY
                         ) {
