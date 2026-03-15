@@ -35,7 +35,7 @@ export const createNPSStyles = (
       borderRadius: 8,
       borderWidth: 1,
       borderColor: 'transparent',
-      padding: 4,
+      paddingVertical: 6,
     },
     scaleContainerError: {
       borderColor: '#D02E0B',
