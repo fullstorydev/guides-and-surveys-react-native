@@ -25,6 +25,7 @@ import { Action } from '../components/Action';
 import { CrossBtn } from '../components/Cross';
 import { NPS } from '../components/NPS/NPS';
 import { OpenQuestion } from '../components/OpenQuestion/OpenQuestion';
+import ThankYouPage from '../components/ThankYouPage';
 import {
   updateSurveyStarted,
   updateSurveyProgress,
@@ -39,6 +40,10 @@ import { createSurveyStyles } from './createSurveyStyles';
 const Survey = ({ survey }: { survey: SurveyType }) => {
   const selfClosed = useActiveExperienceStore((s) => s.selfClosed);
   const setSelfClosed = useActiveExperienceStore((s) => s.setSelfClosed);
+  const showingThankYou = useActiveExperienceStore((s) => s.showingThankYou);
+  const setShowingThankYou = useActiveExperienceStore(
+    (s) => s.setShowingThankYou
+  );
   const theme = useActiveExperienceStore((s) => s.theme);
 
   const { control, handleSubmit } = useForm();
@@ -174,11 +179,23 @@ const Survey = ({ survey }: { survey: SurveyType }) => {
 
       if (nextPage) {
         updateSurveyProgress(survey.id, nextPage.id);
+      } else if (survey.showThankYouMessage && survey.thankYouMessage) {
+        updateSurveyCompleted(survey.id);
+        setShowingThankYou(true);
       } else {
         animateOut(() => updateSurveyCompleted(survey.id));
       }
     },
-    [saveAnswers, currentPageIndex, survey.pages, survey.id, animateOut]
+    [
+      saveAnswers,
+      currentPageIndex,
+      survey.pages,
+      survey.id,
+      survey.showThankYouMessage,
+      survey.thankYouMessage,
+      setShowingThankYou,
+      animateOut,
+    ]
   );
 
   // Wrapped in useCallback so it can be passed to runOnJS, which requires a stable JS function reference
@@ -220,6 +237,7 @@ const Survey = ({ survey }: { survey: SurveyType }) => {
               { damping: 200, stiffness: 400 },
               () => {
                 runOnJS(updateSurveyClosed)(survey.id);
+                runOnJS(setShowingThankYou)(false);
                 runOnJS(setSelfClosed)(true);
               }
             );
@@ -232,15 +250,16 @@ const Survey = ({ survey }: { survey: SurveyType }) => {
       screenHeight,
       scrollY,
       setSelfClosed,
+      setShowingThankYou,
       survey.id,
       translateY,
     ]
   );
 
   // Don't show if:
-  // - No valid page to display
+  // - No valid page to display and not on thank you page
   // - User closed this survey in current session
-  if (!currentPage || selfClosed) {
+  if ((!currentPage && !showingThankYou) || selfClosed) {
     return null;
   }
 
@@ -252,96 +271,114 @@ const Survey = ({ survey }: { survey: SurveyType }) => {
       >
         <GestureDetector gesture={panGesture}>
           <Animated.View style={[styles.modal, animatedModalStyle]}>
-            {currentPage.closeButton && (
-              <View style={styles.modalHeader}>
-                <CrossBtn
-                  onClose={handleClose}
-                  color={theme.surveyCloseIconColor}
-                />
-              </View>
-            )}
-            <ScrollView
-              ref={scrollViewRef}
-              contentContainerStyle={styles.modalBody}
-              showsVerticalScrollIndicator={false}
-              keyboardShouldPersistTaps="handled"
-              onScroll={(e) => {
-                scrollY.value = e.nativeEvent.contentOffset.y;
-              }}
-              scrollEventThrottle={16}
-            >
-              {supportedQuestions.map((question, index) => (
-                <View
-                  key={question.id}
-                  onLayout={(e) => {
-                    questionYPositions.current[index] = e.nativeEvent.layout.y;
+            {showingThankYou && survey.thankYouMessage ? (
+              <ThankYouPage
+                content={survey.thankYouMessage.content}
+                theme={theme}
+                onClose={() =>
+                  animateOut(() => {
+                    setShowingThankYou(false);
+                    setSelfClosed(true);
+                  })
+                }
+              />
+            ) : (
+              <>
+                {currentPage?.closeButton && (
+                  <View style={styles.modalHeader}>
+                    <CrossBtn
+                      onClose={handleClose}
+                      color={theme.surveyCloseIconColor}
+                    />
+                  </View>
+                )}
+                <ScrollView
+                  ref={scrollViewRef}
+                  contentContainerStyle={styles.modalBody}
+                  showsVerticalScrollIndicator={false}
+                  keyboardShouldPersistTaps="handled"
+                  onScroll={(e) => {
+                    scrollY.value = e.nativeEvent.contentOffset.y;
                   }}
-                  style={styles.questionContainer}
+                  scrollEventThrottle={16}
                 >
-                  <Controller
-                    control={control}
-                    name={question.id}
-                    rules={{ required: question.required }}
-                    render={({ field: { onChange, value } }) => {
-                      if (question.type === 'nps') {
-                        return (
-                          <NPS
-                            value={value}
-                            onChange={onChange}
-                            leftLabel={question.minimalValueLabel}
-                            rightLabel={question.maximalValueLabel}
-                            theme={theme}
-                            question={question.question}
-                            required={question.required}
-                            titleAlignment={question.alignment}
-                          />
-                        );
-                      }
+                  {supportedQuestions.map((question, index) => (
+                    <View
+                      key={question.id}
+                      onLayout={(e) => {
+                        questionYPositions.current[index] =
+                          e.nativeEvent.layout.y;
+                      }}
+                      style={styles.questionContainer}
+                    >
+                      <Controller
+                        control={control}
+                        name={question.id}
+                        rules={{ required: question.required }}
+                        render={({ field: { onChange, value } }) => {
+                          if (question.type === 'nps') {
+                            return (
+                              <NPS
+                                value={value}
+                                onChange={onChange}
+                                leftLabel={question.minimalValueLabel}
+                                rightLabel={question.maximalValueLabel}
+                                theme={theme}
+                                question={question.question}
+                                required={question.required}
+                                titleAlignment={question.alignment}
+                              />
+                            );
+                          }
 
-                      // question.type === 'open'
+                          // question.type === 'open'
+                          return (
+                            <OpenQuestion
+                              value={value || ''}
+                              onChange={onChange}
+                              theme={theme}
+                              question={question.question}
+                              required={question.required}
+                              titleAlignment={question.alignment}
+                              placeholder={question.placeholderText}
+                              onFocus={() => handleQuestionFocus(index)}
+                            />
+                          );
+                        }}
+                      />
+                    </View>
+                  ))}
+                  <View style={styles.modalFooter}>
+                    {currentPage?.actions.map((action) => {
+                      const handleActionPress = () => {
+                        if (
+                          action.type === SURVEY_ACTION_TYPES.CONFIRM_SURVEY
+                        ) {
+                          handleSubmit(onSubmit)();
+                        } else if (
+                          action.type === SURVEY_ACTION_TYPES.CLOSE_SURVEY
+                        ) {
+                          handleClose();
+                        } else {
+                          // TODO: Implement show later logic
+                          handleClose();
+                        }
+                      };
+
                       return (
-                        <OpenQuestion
-                          value={value || ''}
-                          onChange={onChange}
+                        <Action
+                          key={action.id}
+                          value={action.value}
+                          styleType={action.styleType}
                           theme={theme}
-                          question={question.question}
-                          required={question.required}
-                          titleAlignment={question.alignment}
-                          placeholder={question.placeholderText}
-                          onFocus={() => handleQuestionFocus(index)}
+                          onPress={handleActionPress}
                         />
                       );
-                    }}
-                  />
-                </View>
-              ))}
-              <View style={styles.modalFooter}>
-                {currentPage.actions.map((action) => {
-                  const handleActionPress = () => {
-                    if (action.type === SURVEY_ACTION_TYPES.CONFIRM_SURVEY) {
-                      handleSubmit(onSubmit)();
-                    } else if (
-                      action.type === SURVEY_ACTION_TYPES.CLOSE_SURVEY
-                    ) {
-                      handleClose();
-                    } else {
-                      // TODO: Implement show later logic
-                      handleClose();
-                    }
-                  };
-
-                  return (
-                    <Action
-                      key={action.id}
-                      value={action.value}
-                      styleType={action.styleType}
-                      theme={theme}
-                      onPress={handleActionPress}
-                    />
-                  );
-                })}
-              </View>
-            </ScrollView>
+                    })}
+                  </View>
+                </ScrollView>
+              </>
+            )}
           </Animated.View>
         </GestureDetector>
       </KeyboardAvoidingView>

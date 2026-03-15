@@ -233,6 +233,11 @@ export type SurveyQuestion = {
   placeholderText?: string;
 };
 
+export type ThankYouMessage = {
+  title: string;
+  content: string;
+};
+
 export type Survey = {
   active: boolean;
   id: string;
@@ -244,6 +249,8 @@ export type Survey = {
   trigger: SurveyTrigger;
   // 0: all conditions must be true, 1: any condition must be true
   targetOperator: 0 | 1;
+  showThankYouMessage: boolean;
+  thankYouMessage?: ThankYouMessage;
 };
 
 export type SurveyTrigger = AutomaticSurveyTrigger | ManualSurveyTrigger;

@@ -17,6 +17,7 @@ export const useTargeting = (
   const setActiveExperience = useActiveExperienceStore(
     (s) => s.setActiveExperience
   );
+  const showingThankYou = useActiveExperienceStore((s) => s.showingThankYou);
   const progressorData = useDataStore((s) => s.getCurrentProgressorData());
 
   useEffect(() => {
@@ -83,7 +84,7 @@ export const useTargeting = (
           experience: activeSurveys[0],
           currentPageIndex: 0,
         });
-      } else {
+      } else if (!showingThankYou) {
         // TODO: this logic will change once we have other experience types
         setActiveExperience(null);
       }
@@ -92,6 +93,7 @@ export const useTargeting = (
     surveys,
     currentRouteName,
     setActiveExperience,
+    showingThankYou,
     progressorData.uf_completed,
     progressorData.autoSegment,
     progressorData.customSegments,

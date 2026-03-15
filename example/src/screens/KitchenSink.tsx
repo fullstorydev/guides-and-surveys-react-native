@@ -5,6 +5,7 @@ import { THEME_DEFAULT } from '../../../src/constants';
 import { OpenQuestion } from '../../../src/components/OpenQuestion/OpenQuestion';
 import { Action } from '../../../src/components/Action';
 import { CrossBtn } from '../../../src/components/Cross';
+import CheckmarkIcon from '../../../src/components/CheckmarkIcon';
 
 /**
  * Kitchen Sink Screen - Demonstrates all Guides And Surveys components and features
@@ -55,6 +56,7 @@ function KitchenSinkScreen() {
           }}
           color={THEME_DEFAULT.surveyCloseIconColor}
         />
+        <CheckmarkIcon />
       </View>
     </ScrollView>
   );
