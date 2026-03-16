@@ -4,6 +4,7 @@ import {
   TARGET_TYPE_USER_SEGMENT,
   TARGET_OPERATOR_SEGMENT_EXACT,
   TARGET_OPERATOR_SEGMENT_IS_NOT,
+  TARGET_TYPE_AB_EXPERIMENT,
 } from '../constants';
 export type GuidesAndSurveysResponse = {
   tours?: Tour[];
@@ -60,12 +61,21 @@ export type UserSegmentTarget = {
   formattedName?: string;
 };
 
+export type ABExperimentTarget = {
+  type: typeof TARGET_TYPE_AB_EXPERIMENT;
+  variant: string;
+};
+
 export type TargetGroup = {
   targets: Target[];
   targetOperator: 0 | 1;
 };
 
-export type Target = AddressTarget | UserSegmentTarget | TargetGroup;
+export type Target =
+  | AddressTarget
+  | UserSegmentTarget
+  | ABExperimentTarget
+  | TargetGroup;
 
 export type Measure = {
   x: number;
