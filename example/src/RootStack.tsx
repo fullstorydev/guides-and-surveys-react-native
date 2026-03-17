@@ -15,24 +15,27 @@ type RootStackParamList = {
 };
 
 export const HomeScreen = () => {
-  const navitaion = useNavigation<NavigationProp<RootStackParamList>>();
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
 
   return (
     <View style={styles.home}>
       <View style={styles.navContainer}>
         <View style={styles.navBtn}>
-          <Button title="Detail" onPress={() => navitaion.navigate('Detail')} />
+          <Button
+            title="Detail"
+            onPress={() => navigation.navigate('Detail')}
+          />
         </View>
         <View style={styles.navBtn}>
-          <Button title="About" onPress={() => navitaion.navigate('About')} />
+          <Button title="About" onPress={() => navigation.navigate('About')} />
         </View>
         <View style={styles.navBtn}>
-          <Button title="Help" onPress={() => navitaion.navigate('Help')} />
+          <Button title="Help" onPress={() => navigation.navigate('Help')} />
         </View>
         <View style={styles.navBtn}>
           <Button
             title="Kitchen Sink"
-            onPress={() => navitaion.navigate('KitchenSink')}
+            onPress={() => navigation.navigate('KitchenSink')}
           />
         </View>
         <View style={styles.navBtn}>
@@ -124,7 +127,7 @@ const styles = StyleSheet.create({
 });
 
 function DetailsScreen() {
-  const navitaion = useNavigation<NavigationProp<RootStackParamList>>();
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
 
   return (
     <View style={{ ...styles.home, backgroundColor: 'green' }}>
@@ -150,32 +153,32 @@ function DetailsScreen() {
       </View>
       <Button
         title="Go to HomeScreen"
-        onPress={() => navitaion.navigate('Home')}
+        onPress={() => navigation.navigate('Home')}
       />
     </View>
   );
 }
 function AboutScreen() {
-  const navitaion = useNavigation<NavigationProp<RootStackParamList>>();
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
   return (
     <View style={{ ...styles.home, backgroundColor: 'lightblue' }}>
       <Text>About Screen</Text>
       <Button
         title="Go to HomeScreen"
-        onPress={() => navitaion.navigate('Home')}
+        onPress={() => navigation.navigate('Home')}
       />
     </View>
   );
 }
 
 function HelpScreen() {
-  const navitaion = useNavigation<NavigationProp<RootStackParamList>>();
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
   return (
     <View style={{ ...styles.home, backgroundColor: 'darkblue' }}>
       <Text>Help Screen</Text>
       <Button
         title="Go to HomeScreen"
-        onPress={() => navitaion.navigate('Home')}
+        onPress={() => navigation.navigate('Home')}
       />
     </View>
   );

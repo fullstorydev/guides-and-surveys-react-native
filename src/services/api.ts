@@ -76,7 +76,7 @@ export const fetchProgressor = async (
     }
 
     const result = await response.json();
-    return result;
+    return typeof result === 'string' ? JSON.parse(result) : result;
   } catch (error: any) {
     console.error('=======Error=====>', error.message);
     return null;

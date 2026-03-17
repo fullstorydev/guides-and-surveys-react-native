@@ -7,6 +7,7 @@ import {
   TARGET_TYPE_ADDRESS_SIMPLE,
   TARGET_TYPE_USER_SEGMENT,
   TARGET_OPERATOR_SEGMENT_IS_NOT,
+  TARGET_TYPE_AB_EXPERIMENT,
 } from '../constants';
 
 export const useTargeting = (
@@ -68,7 +69,8 @@ export const useTargeting = (
               target,
               currentRouteName,
               progressorData.autoSegment,
-              progressorData.customSegments
+              progressorData.customSegments,
+              progressorData.abExperiments
             );
           });
 
@@ -97,6 +99,7 @@ export const useTargeting = (
     progressorData.uf_completed,
     progressorData.autoSegment,
     progressorData.customSegments,
+    progressorData.abExperiments,
   ]);
 
   // TODO: reintegrate tours
@@ -160,17 +163,25 @@ export const useTargeting = (
  * @param path - Current route/screen name
  * @param autoSegment - Auto-assigned user segment
  * @param customSegments - Custom user segments
+ * @param abExperiments - AB experiment variant strings assigned to the user (e.g. ["ex_5_12"])
  * @returns true if the target matches, false otherwise
  */
 const evaluateTarget = (
   target: Target,
   path?: string,
   autoSegment?: string,
-  customSegments?: string[]
+  customSegments?: string[],
+  abExperiments?: string[]
 ): boolean => {
   if ('targets' in target) {
     const nestedResults = target.targets.map((nestedTarget: Target) =>
-      evaluateTarget(nestedTarget, path, autoSegment, customSegments)
+      evaluateTarget(
+        nestedTarget,
+        path,
+        autoSegment,
+        customSegments,
+        abExperiments
+      )
     );
 
     // Use the target group's own targetOperator
@@ -193,6 +204,13 @@ const evaluateTarget = (
 
   if (target.type === TARGET_TYPE_ADDRESS_SIMPLE) {
     return !!path && path.includes(target.url);
+  }
+
+  if (target.type === TARGET_TYPE_AB_EXPERIMENT) {
+    if (!Array.isArray(abExperiments)) {
+      return true;
+    }
+    return abExperiments.includes(target.variant);
   }
 
   // Fallback for unknown types
