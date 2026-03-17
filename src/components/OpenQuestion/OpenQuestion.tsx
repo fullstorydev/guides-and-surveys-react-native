@@ -12,6 +12,7 @@ type OpenQuestionProps = {
   titleAlignment?: 'left' | 'right' | 'center';
   placeholder?: string;
   onFocus?: () => void;
+  hasError?: boolean;
 };
 
 export const OpenQuestion = ({
@@ -23,6 +24,7 @@ export const OpenQuestion = ({
   required = false,
   titleAlignment = 'left',
   onFocus,
+  hasError = false,
 }: OpenQuestionProps) => {
   const [isFocused, setIsFocused] = useState(false);
   const styles = useMemo(
@@ -39,7 +41,11 @@ export const OpenQuestion = ({
         </Text>
       ) : null}
       <TextInput
-        style={[styles.textInput, isFocused && styles.textInputFocused]}
+        style={[
+          styles.textInput,
+          isFocused && styles.textInputFocused,
+          hasError && styles.textInputError,
+        ]}
         value={value}
         onChangeText={onChange}
         onFocus={() => {

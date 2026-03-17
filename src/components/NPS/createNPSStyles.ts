@@ -32,6 +32,13 @@ export const createNPSStyles = (
       flexWrap: shouldWrap ? 'wrap' : 'nowrap',
       justifyContent: shouldWrap ? 'center' : 'space-between',
       width: '100%',
+      borderRadius: 8,
+      borderWidth: 1,
+      borderColor: 'transparent',
+      paddingVertical: 6,
+    },
+    scaleContainerError: {
+      borderColor: '#D02E0B',
     },
     questionText: {
       fontSize: theme.fontSize || 16,
