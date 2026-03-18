@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { postSurveyResponse } from '../services/api';
+import type { GuidesAndSurveysApi } from '../services/api';
 import type { SurveyReporterAnswer, PendingReport } from '../types';
 import { REPORT_TYPE_SURVEY } from '../types';
 import { withRetry } from '../utils/retry';
@@ -20,7 +20,8 @@ function isSurveyReport(item: PendingReport): item is SurveyReportItem {
  */
 async function sendSurveys(
   accountToken: string,
-  items: SurveyReportItem[]
+  items: SurveyReportItem[],
+  api: GuidesAndSurveysApi
 ): Promise<Set<string>> {
   const sentIds = new Set<string>();
   if (items.length === 0) return sentIds;
@@ -45,7 +46,7 @@ async function sendSurveys(
 
   for (const [surveyId, { items: batchItems, payload }] of bySurvey) {
     const success = await withRetry(() =>
-      postSurveyResponse(accountToken, surveyId, payload)
+      api.postSurveyResponse(accountToken, surveyId, payload)
     );
     if (success) {
       batchItems.forEach((item) => sentIds.add(item.id));
@@ -66,10 +67,11 @@ interface ReportQueueState {
   addPendingReport: (
     surveyId: string,
     payload: SurveyReporterAnswer,
-    spaceToken: string
+    spaceToken: string,
+    api: GuidesAndSurveysApi
   ) => void;
   /** Process the queue: send survey reports in batched payloads per survey; other types can be added later. */
-  processQueue: (spaceToken: string) => Promise<void>;
+  processQueue: (spaceToken: string, api: GuidesAndSurveysApi) => Promise<void>;
 }
 
 export const useReportQueueStore = create<ReportQueueState>()(
@@ -78,7 +80,7 @@ export const useReportQueueStore = create<ReportQueueState>()(
       pendingReports: [],
       isProcessing: false,
 
-      addPendingReport: (surveyId, payload, spaceToken) => {
+      addPendingReport: (surveyId, payload, spaceToken, api) => {
         const id = `survey_${surveyId}_${Date.now()}_${Math.random().toString(36).slice(2)}`;
         const item: PendingReport = {
           id,
@@ -97,11 +99,11 @@ export const useReportQueueStore = create<ReportQueueState>()(
         }
         processQueueDebounceTimer = setTimeout(() => {
           processQueueDebounceTimer = null;
-          get().processQueue(spaceToken);
+          get().processQueue(spaceToken, api);
         }, PROCESS_QUEUE_DEBOUNCE_MS);
       },
 
-      processQueue: async (spaceToken: string) => {
+      processQueue: async (spaceToken: string, api: GuidesAndSurveysApi) => {
         const { pendingReports, isProcessing } = get();
         if (isProcessing || pendingReports.length === 0) {
           return;
@@ -109,7 +111,7 @@ export const useReportQueueStore = create<ReportQueueState>()(
         set({ isProcessing: true });
 
         const surveyItems = pendingReports.filter(isSurveyReport);
-        const sentIds = await sendSurveys(spaceToken, surveyItems);
+        const sentIds = await sendSurveys(spaceToken, surveyItems, api);
 
         set({
           pendingReports: pendingReports.filter(

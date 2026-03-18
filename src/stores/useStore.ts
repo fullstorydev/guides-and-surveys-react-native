@@ -11,12 +11,17 @@ import { type LayoutChangeEvent } from 'react-native';
 import { createJSONStorage, persist } from 'zustand/middleware';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { THEME_DEFAULT } from '../constants';
-import { fetchDataJson, fetchProgressor } from '../services/api';
+import { createGuidesApi } from '../services/api';
+import type { GuidesAndSurveysApi } from '../services/api';
 
 interface StoreState {
   token: string | undefined;
   tags: Tag | undefined;
-  initialize: (token: string, tags?: Tag) => void;
+  initialize: (
+    token: string,
+    tags?: Tag,
+    api?: GuidesAndSurveysApi
+  ) => Promise<void>;
   selfClosed: boolean;
   setSelfClosed: (selfClosed: boolean) => void;
   surveys: Array<any>;
@@ -51,10 +56,10 @@ export const useStore = create(
     (set, get) => ({
       token: undefined,
       tags: undefined,
-      initialize: async (token, tags) => {
+      initialize: async (token, tags, api = createGuidesApi('playpen')) => {
         set({ token, tags });
 
-        const response = await fetchDataJson(token);
+        const response = await api.fetchDataJson(token);
 
         if (response) {
           if (response.tours) {
@@ -66,7 +71,7 @@ export const useStore = create(
         }
 
         if (tags && tags.userId) {
-          const progressorData = await fetchProgressor(
+          const progressorData = await api.fetchProgressor(
             token,
             tags.userId ?? ''
           );

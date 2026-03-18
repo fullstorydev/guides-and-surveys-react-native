@@ -15,6 +15,7 @@ export default function App() {
       <NavigationContainer ref={navigationRef}>
         <GuidesAndSurveys
           orgId={orgId}
+          environment="playpen"
           tags={{ userId: '2222' }}
           navigationRef={navigationRef}
         >
