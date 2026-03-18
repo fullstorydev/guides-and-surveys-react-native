@@ -2404,7 +2404,7 @@ __metadata:
   resolution: "@fullstory/guides-and-surveys-react-native@workspace:."
   dependencies:
     "@evilmartians/lefthook": ^1.5.0
-    "@fullstory/react-native": ^1.8.2
+    "@fullstory/react-native": ^1.9.0
     "@react-native-async-storage/async-storage": "*"
     "@react-native/eslint-config": ^0.73.1
     "@react-navigation/native": ^6.0.0
@@ -2428,7 +2428,7 @@ __metadata:
     typescript: ^5.2.2
     zustand: ^4.5.5
   peerDependencies:
-    "@fullstory/react-native": "*"
+    "@fullstory/react-native": ">=1.9.0"
     "@react-native-async-storage/async-storage": "*"
     "@react-navigation/native": ^6.0.0
     react: "*"
@@ -2439,9 +2439,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@fullstory/react-native@npm:^1.8.2":
-  version: 1.8.2
-  resolution: "@fullstory/react-native@npm:1.8.2"
+"@fullstory/react-native@npm:1.9.0, @fullstory/react-native@npm:^1.9.0":
+  version: 1.9.0
+  resolution: "@fullstory/react-native@npm:1.9.0"
   dependencies:
     "@fullstory/babel-plugin-annotate-react": ^2.3.2
     "@fullstory/babel-plugin-react-native": ^1.6.1
@@ -2452,7 +2452,7 @@ __metadata:
   peerDependenciesMeta:
     expo:
       optional: true
-  checksum: 7a734c2c3a0b1e74e62ca2e81b185916236c3fd3f85ec3f7382f3a2aa9513575c4d0a5f2baa2f592b7c7cc06e748ac915617437761e870b95c4b9583f7993f1d
+  checksum: 7b030de92538232ea4bd722dc0429073afd596026c2d5337e3f32b40b2abef16386db4433996e846d4a77daf26dbe29f5b571f58321a6471f744d4fab3c432eb
   languageName: node
   linkType: hard
 
@@ -6638,7 +6638,7 @@ __metadata:
   dependencies:
     "@babel/core": ^7.20.0
     "@expo/metro-runtime": ~5.0.5
-    "@fullstory/react-native": ^1.8.2
+    "@fullstory/react-native": 1.9.0
     "@react-native-async-storage/async-storage": ^2.1.1
     "@react-navigation/native": ^7.0.0
     "@react-navigation/native-stack": ^7.0.0

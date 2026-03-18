@@ -40,9 +40,8 @@ export const GuidesAndSurveys = ({
   }, [initialize, initializeOldStore, tags, tags?.userId, orgId]);
 
   useEffect(() => {
-    let cancelled = false;
-    Fullstory.onReady().then((result: { sessionId?: string }) => {
-      if (!cancelled && result.sessionId && spaceToken) {
+    const subscription = Fullstory.onReady((result) => {
+      if (result.sessionId && spaceToken) {
         console.log(
           'GuidesAndSurveys: Fullstory is ready, refreshing progressor'
         );
@@ -50,7 +49,7 @@ export const GuidesAndSurveys = ({
       }
     });
     return () => {
-      cancelled = true;
+      subscription.remove();
     };
   }, [refreshProgressor, spaceToken]);
 
