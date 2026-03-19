@@ -23,7 +23,7 @@ jobs:
           key: v1-dependencies-{{ checksum "yarn.lock" }}
       - run:
           name: Audit
-          command: yarn npm audit --audit-level=low --environment production
+          command: yarn npm audit --severity low --environment production
       - run:
           name: Lint
           command: yarn run lint
