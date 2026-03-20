@@ -33,6 +33,11 @@ import {
   updateSurveyCompleted,
 } from '../stores/util/surveyProgress';
 import { saveSurveyAnswer } from '../stores/util/surveyAnswers';
+import {
+  fsTrackSurveyStateChanged,
+  fsTrackSurveyPageSeen,
+  fsTrackQuestionAnswered,
+} from '../utils/fsEvents';
 import { useActiveExperienceStore } from '../stores/useActiveExperienceStore';
 import { useDataStore } from '../stores/useDataStore';
 import { createSurveyStyles } from './createSurveyStyles';
@@ -79,7 +84,17 @@ const Survey = ({ survey }: { survey: SurveyType }) => {
     }
 
     updateSurveyStarted(survey.id, survey.name, firstPage.id);
-  }, [survey.id, survey.name, survey.pages, surveyProgress]);
+    fsTrackSurveyStateChanged(survey, firstPage, 0, 'started');
+  }, [survey, surveyProgress]);
+
+  // Fire "Survey Page Seen" when showing any page
+  useEffect(() => {
+    if (!currentPage) {
+      return;
+    }
+
+    fsTrackSurveyPageSeen(survey, currentPage, currentPageIndex);
+  }, [survey, currentPage, currentPageIndex]);
 
   // Filter to only supported question types
   const supportedQuestions = useMemo(
@@ -98,18 +113,30 @@ const Survey = ({ survey }: { survey: SurveyType }) => {
       Object.entries(data).forEach(([questionId, value]) => {
         const question = supportedQuestions.find((q) => q.id === questionId);
         if (question && value !== undefined && value !== null && value !== '') {
+          const answer = value as string | number;
           saveSurveyAnswer(
             survey.id,
             questionId,
             question.type,
-            value as string | number,
+            answer,
             currentPage.id,
             currentPage.name
+          );
+          const questionIndex = currentPage.questions.findIndex(
+            (q) => q.id === questionId
+          );
+          fsTrackQuestionAnswered(
+            survey,
+            currentPage,
+            currentPageIndex,
+            question,
+            questionIndex >= 0 ? questionIndex : 0,
+            answer
           );
         }
       });
     },
-    [currentPage, supportedQuestions, survey.id]
+    [currentPage, supportedQuestions, survey, currentPageIndex]
   );
 
   const styles = useMemo(() => createSurveyStyles(theme), [theme]);
@@ -181,6 +208,12 @@ const Survey = ({ survey }: { survey: SurveyType }) => {
         updateSurveyProgress(survey.id, nextPage.id);
       } else if (survey.showThankYouMessage && survey.thankYouMessage) {
         updateSurveyCompleted(survey.id);
+        fsTrackSurveyStateChanged(
+          survey,
+          currentPage!,
+          currentPageIndex,
+          'completed'
+        );
         setShowingThankYou(true);
       } else {
         animateOut(() => updateSurveyCompleted(survey.id));
@@ -189,12 +222,10 @@ const Survey = ({ survey }: { survey: SurveyType }) => {
     [
       saveAnswers,
       currentPageIndex,
-      survey.pages,
-      survey.id,
-      survey.showThankYouMessage,
-      survey.thankYouMessage,
       setShowingThankYou,
       animateOut,
+      currentPage,
+      survey,
     ]
   );
 
@@ -220,8 +251,14 @@ const Survey = ({ survey }: { survey: SurveyType }) => {
     animateOut(() => {
       updateSurveyClosed(survey.id);
       setSelfClosed(true);
+      fsTrackSurveyStateChanged(
+        survey,
+        currentPage!,
+        currentPageIndex,
+        'closed'
+      );
     });
-  }, [animateOut, survey.id, setSelfClosed]);
+  }, [animateOut, survey, setSelfClosed, currentPage, currentPageIndex]);
 
   const isDismissGesture = useRef(false);
 
