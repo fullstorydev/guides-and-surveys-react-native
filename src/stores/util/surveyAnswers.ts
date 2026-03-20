@@ -83,10 +83,9 @@ export const saveSurveyAnswer = (
     uf_survey_answers: [...uf_survey_answers, progressorAnswer],
   });
 
-  const { visitorIdent, tags, spaceToken } = useDataStore.getState();
+  const { visitorIdent, tags, spaceToken, guidesApi } = useDataStore.getState();
 
-  // should always be available
-  if (visitorIdent && spaceToken) {
+  if (visitorIdent && spaceToken && guidesApi) {
     const reporterAnswer = createReporterAnswer(
       questionId,
       questionType,
@@ -97,6 +96,6 @@ export const saveSurveyAnswer = (
     );
     useReportQueueStore
       .getState()
-      .addPendingReport(surveyId, reporterAnswer, spaceToken);
+      .addPendingReport(surveyId, reporterAnswer, spaceToken, guidesApi);
   }
 };

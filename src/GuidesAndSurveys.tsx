@@ -1,15 +1,18 @@
 import {
   useEffect,
+  useMemo,
   useState,
   type PropsWithChildren,
   type RefObject,
 } from 'react';
 import { StyleSheet, View } from 'react-native';
 import type { Tag, Measure } from './types';
+import type { Environment } from './constants/api';
 import { useTargeting } from './hooks/useTargeting';
 import { useActiveExperienceStore } from './stores/useActiveExperienceStore';
 import Survey from './Survey';
 import { useDataStore } from './stores/useDataStore';
+import { createGuidesApi } from './services/api';
 import type { Survey as SurveyType } from './types';
 import type { NavigationContainerRef } from '@react-navigation/native';
 import { Tour } from './Tour';
@@ -19,6 +22,7 @@ import { useStore } from './stores/useStore';
 
 type Props = {
   orgId: string;
+  environment?: Environment;
   tags?: Tag;
   navigationRef?: RefObject<NavigationContainerRef<any>>;
 } & PropsWithChildren;
@@ -26,18 +30,19 @@ type Props = {
 export const GuidesAndSurveys = ({
   children,
   orgId,
+  environment = 'production',
   tags,
   navigationRef,
 }: Props) => {
-  // TODO remove this once we combine stores
-  const initializeOldStore = useStore((s) => s.initialize);
   const initialize = useDataStore((s) => s.initialize);
   const refreshProgressor = useDataStore((s) => s.refreshProgressor);
   const spaceToken = useDataStore((s) => s.spaceToken);
 
+  const guidesApi = useMemo(() => createGuidesApi(environment), [environment]);
+
   useEffect(() => {
-    initialize(orgId, tags, null);
-  }, [initialize, initializeOldStore, tags, tags?.userId, orgId]);
+    initialize(orgId, guidesApi, tags, null);
+  }, [initialize, orgId, tags, tags?.userId, guidesApi]);
 
   useEffect(() => {
     const subscription = Fullstory.onReady((result) => {

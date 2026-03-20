@@ -61,3 +61,9 @@ export const TARGET_TYPE_USER_SEGMENT = 'user-segment';
 export const TARGET_OPERATOR_SEGMENT_EXACT = 'segment-exact';
 export const TARGET_OPERATOR_SEGMENT_IS_NOT = 'segment-is-not';
 export const TARGET_TYPE_AB_EXPERIMENT = 'ab-test';
+
+export const FS_EVENT_NAMES = {
+  surveyStateChanged: 'Survey State Changed',
+  surveyPageSeen: 'Survey Page Seen',
+  questionAnswered: 'Question Answered',
+} as const;

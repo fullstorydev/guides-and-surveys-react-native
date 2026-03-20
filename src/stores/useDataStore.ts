@@ -5,7 +5,7 @@ import {
   subscribeWithSelector,
 } from 'zustand/middleware';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { fetchDataJson, fetchProgressor } from '../services/api';
+import type { GuidesAndSurveysApi } from '../services/api';
 import { visitor } from '../services/Visitor';
 import type {
   Tour,
@@ -28,10 +28,12 @@ interface DataStoreState {
   progressorData: ProgressorData;
   spaceToken: string | undefined;
   sessionId: string | undefined;
+  guidesApi: GuidesAndSurveysApi | null;
 
   // Actions
   initialize: (
     orgId: string,
+    api: GuidesAndSurveysApi,
     tags?: Tag,
     sessionId?: string | null
   ) => Promise<void>;
@@ -137,20 +139,23 @@ export const useDataStore = create(
         progressorData: emptyProgressorData(),
         spaceToken: undefined,
         sessionId: undefined,
+        guidesApi: null,
 
         getCurrentProgressorData: () => {
           return get().progressorData;
         },
 
-        initialize: async (orgId, tags, sessionId) => {
+        initialize: async (orgId, api, tags, sessionId) => {
           try {
+            set({ guidesApi: api });
+
             let visitorIdent = get().visitorIdent;
             if (!visitorIdent) {
               visitorIdent = await visitor.getIdent();
               set({ visitorIdent });
             }
 
-            const response = await fetchDataJson(orgId);
+            const response = await api.fetchDataJson(orgId);
             const spaceToken = response?.spaceToken || '';
 
             set({
@@ -167,7 +172,7 @@ export const useDataStore = create(
             if (sessionId) {
               get().refreshProgressor(spaceToken, sessionId);
             }
-            useReportQueueStore.getState().processQueue(spaceToken);
+            await useReportQueueStore.getState().processQueue(spaceToken, api);
           } catch (error) {
             // TODO: send error to analytics
             console.error('Error initializing data store:', error);
@@ -176,11 +181,13 @@ export const useDataStore = create(
 
         refreshProgressor: async (spaceToken, sessionId) => {
           if (!spaceToken || !sessionId) return;
+          const { guidesApi } = get();
+          if (!guidesApi) return;
           set({ sessionId });
 
           try {
             const localProgressorData = get().progressorData;
-            const serverProgressorData = await fetchProgressor(
+            const serverProgressorData = await guidesApi.fetchProgressor(
               spaceToken,
               sessionId
             );
@@ -200,7 +207,13 @@ export const useDataStore = create(
                 JSON.stringify(mergedProgressorData) !==
                 JSON.stringify(serverProgressorData)
               ) {
-                syncProgressor(mergedProgressorData, spaceToken, sessionId, 0);
+                syncProgressor(
+                  mergedProgressorData,
+                  spaceToken,
+                  sessionId,
+                  guidesApi,
+                  0
+                );
               }
             }
           } catch (error) {
@@ -212,12 +225,17 @@ export const useDataStore = create(
         setTours: (tours) => set({ tours }),
         setSurveys: (surveys) => set({ surveys }),
         setProgressorData: (data) => {
-          const { sessionId, spaceToken } = get();
+          const { sessionId, spaceToken, guidesApi } = get();
           set({ progressorData: data });
 
           // isTemporaryProfile is required to be false to sync progressor data
-          if (!data.isTemporaryProfile && sessionId && spaceToken) {
-            syncProgressor(data, spaceToken, sessionId);
+          if (
+            !data.isTemporaryProfile &&
+            sessionId &&
+            spaceToken &&
+            guidesApi
+          ) {
+            syncProgressor(data, spaceToken, sessionId, guidesApi);
           }
         },
       }),
