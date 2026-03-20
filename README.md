@@ -1,8 +1,19 @@
-# guides-and-surveys-react-native
+# @fullstory/guides-and-surveys-react-native
 
-### Empower Your React Native Apps with FullStory's Seamless Onboarding and Product Guidance
+Bring FullStory Guides and Surveys into your React Native app. This library fetches survey definitions from FullStory, and renders in-app surveys as overlays on top of your existing app UI.
 
-The FullStory Guides and Surveys React Native package brings the power of FullStory's user onboarding and engagement tools directly into React Native apps. Designed for those looking to enhance the user experience, FullStory seamlessly integrates guided tours, including modals, slideouts, and pointers, as well as onboarding flows to help users navigate your app more efficiently.
+## Prerequisites
+
+This library requires the following peer dependencies to be installed in your app:
+
+| Package                                     | Version    |
+| ------------------------------------------- | ---------- |
+| `@fullstory/react-native`                   | `>=1.9.0`  |
+| `@react-native-async-storage/async-storage` | any        |
+| `@react-navigation/native`                  | `>=6.0.0`  |
+| `react-native-gesture-handler`              | `>=2.16.1` |
+| `react-native-reanimated`                   | `>=2.0.0`  |
+| `react-native-webview`                      | `^13.0.0`  |
 
 ## Installation
 
@@ -16,70 +27,50 @@ yarn add @fullstory/guides-and-surveys-react-native
 
 ## Usage
 
-```js
+### Wrap your app with `GuidesAndSurveys`
+
+`GuidesAndSurveys` must be placed **inside** your `NavigationContainer` and `GestureHandlerRootView`. It renders your app as children and overlays any active surveys on top.
+
+```tsx
+import { useRef } from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { GuidesAndSurveys } from '@fullstory/guides-and-surveys-react-native';
+
+export default function App() {
+  const navigationRef = useRef(null);
+
+  return (
+    <GestureHandlerRootView>
+      <NavigationContainer ref={navigationRef}>
+        <GuidesAndSurveys orgId="YOUR_ORG_ID" navigationRef={navigationRef}>
+          <YourApp />
+        </GuidesAndSurveys>
+      </NavigationContainer>
+    </GestureHandlerRootView>
+  );
+}
 ```
 
-### Wrap Your App with GuidesAndSurveys
+### `GuidesAndSurveys` props
 
-Note: When using React Navigation, GuidesAndSurveys must be a child of the NavigationContainer. For Expo projects, you can wrap your main \_layout page with GuidesAndSurveys.
-
-```js
-<NavigationContainer>
-  <GuidesAndSurveys org={orgId}>
-    <YourApp />
-  </GuidesAndSurveys>
-</NavigationContainer>
-```
-
-## Create a tour in FullStory panel
-
-To create a tour, log in to your FullStory account and navigate to Home → Tour in the menu.
-
-## Modals and Slide Outs
-
-Slide-outs and modals are entirely codeless. Simply define them in the FullStory panel, and they will automatically appear in your target app.
-
-## Pointers
-
-To use pointers, you need to add following code to your target element. You can choose any key for your element and add it to setPointer function. Then, use your key as a selector in the FullStory admin.
-
-```js
-onLayout={(e) => setPointer('YOUR_KEY', e)}
-```
-
-Example:
-
-```js
-import { setPointer } from '@fullstory/guides-and-surveys-react-native';
-
-return (
-  <View>
-    <View onLayout={(e) => setPointer('YourFirstKey', e)}>
-      <Text>First Pointer</Text>
-    </View>
-    <View onLayout={(e) => setPointer('YourSecondKey', e)}>
-      <Text>Second Pointer</Text>
-    </View>
-    <View onLayout={(e) => setPointer('AnotherKey', e)}>
-      <Text>Third Pointer</Text>
-    </View>
-  </View>
-);
-```
+| Prop            | Type                                         | Required | Description                                                   |
+| --------------- | -------------------------------------------- | -------- | ------------------------------------------------------------- |
+| `orgId`         | `string`                                     | Yes      | Your FullStory org ID, used to fetch guides and surveys data. |
+| `navigationRef` | `RefObject<NavigationContainerRef>`          | No       | React Navigation ref used for screen-based targeting.         |
+| `tags`          | `{ userId?: string; [key: string]: string }` | No       | Visitor tags used for targeting and segmentation.             |
+| `environment`   | `'production' \| 'staging' \| 'playpen'`     | No       | API environment to connect to. Defaults to `'production'`.    |
 
 ## Targeting Screens
 
-We support React Navigation version 6 and higher. To target a screen, add the screen name as the value in the URL contains condition.
+Screen-based targeting uses React Navigation route names. Pass your `navigationRef` to `GuidesAndSurveys` and use the screen name as the value in the **URL contains** condition in the FullStory panel.
 
-Note: If your target screen is a child within a nested stack (default screen), you need to specify both the parent and child screen names. Separate them with "or" (as shown in the image) to account for different ways the screen might be navigated to.
+For screens that are the default child of a nested stack, specify both the parent and child screen names in the condition (joined with "or") to account for both navigation paths.
+
+Requires React Navigation v6 or higher.
 
 ![How to target screens](./src/assets/images/targeting.png)
 
 ## License
 
 MIT
-
----
-
-Made with [create-react-native-library](https://github.com/callstack/react-native-builder-bob)
