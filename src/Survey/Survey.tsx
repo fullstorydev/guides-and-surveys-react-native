@@ -196,6 +196,13 @@ const Survey = ({ survey }: { survey: SurveyType }) => {
     [translateY, screenHeight]
   );
 
+  const trackSurveyStateChanged = useCallback(
+    (state: 'started' | 'completed' | 'closed') => {
+      fsTrackSurveyStateChanged(survey, currentPage!, currentPageIndex, state);
+    },
+    [survey, currentPage, currentPageIndex]
+  );
+
   const onSubmit = useCallback(
     (data: any) => {
       Keyboard.dismiss();
@@ -208,15 +215,13 @@ const Survey = ({ survey }: { survey: SurveyType }) => {
         updateSurveyProgress(survey.id, nextPage.id);
       } else if (survey.showThankYouMessage && survey.thankYouMessage) {
         updateSurveyCompleted(survey.id);
-        fsTrackSurveyStateChanged(
-          survey,
-          currentPage!,
-          currentPageIndex,
-          'completed'
-        );
+        trackSurveyStateChanged('completed');
         setShowingThankYou(true);
       } else {
-        animateOut(() => updateSurveyCompleted(survey.id));
+        animateOut(() => {
+          trackSurveyStateChanged('completed');
+          updateSurveyCompleted(survey.id);
+        });
       }
     },
     [
@@ -224,8 +229,8 @@ const Survey = ({ survey }: { survey: SurveyType }) => {
       currentPageIndex,
       setShowingThankYou,
       animateOut,
-      currentPage,
       survey,
+      trackSurveyStateChanged,
     ]
   );
 
@@ -251,14 +256,9 @@ const Survey = ({ survey }: { survey: SurveyType }) => {
     animateOut(() => {
       updateSurveyClosed(survey.id);
       setSelfClosed(true);
-      fsTrackSurveyStateChanged(
-        survey,
-        currentPage!,
-        currentPageIndex,
-        'closed'
-      );
+      trackSurveyStateChanged('closed');
     });
-  }, [animateOut, survey, setSelfClosed, currentPage, currentPageIndex]);
+  }, [animateOut, survey, setSelfClosed, trackSurveyStateChanged]);
 
   const isDismissGesture = useRef(false);
 
@@ -285,6 +285,9 @@ const Survey = ({ survey }: { survey: SurveyType }) => {
               screenHeight,
               { damping: 200, stiffness: 400 },
               () => {
+                if (!showingThankYou) {
+                  runOnJS(trackSurveyStateChanged)('closed');
+                }
                 runOnJS(updateSurveyClosed)(survey.id);
                 runOnJS(setShowingThankYou)(false);
                 runOnJS(setSelfClosed)(true);
@@ -302,6 +305,8 @@ const Survey = ({ survey }: { survey: SurveyType }) => {
       setShowingThankYou,
       survey.id,
       translateY,
+      trackSurveyStateChanged,
+      showingThankYou,
     ]
   );
 
