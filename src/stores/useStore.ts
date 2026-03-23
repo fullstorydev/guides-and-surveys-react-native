@@ -56,7 +56,8 @@ export const useStore = create(
     (set, get) => ({
       token: undefined,
       tags: undefined,
-      initialize: async (token, tags, api = createGuidesApi('playpen')) => {
+      // placeholder, file to be deprecated
+      initialize: async (token, tags, api = createGuidesApi('playpen', '')) => {
         set({ token, tags });
 
         const response = await api.fetchDataJson(token);
