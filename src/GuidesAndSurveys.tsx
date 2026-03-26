@@ -38,7 +38,10 @@ export const GuidesAndSurveys = ({
   const refreshProgressor = useDataStore((s) => s.refreshProgressor);
   const spaceToken = useDataStore((s) => s.spaceToken);
 
-  const guidesApi = useMemo(() => createGuidesApi(environment), [environment]);
+  const guidesApi = useMemo(
+    () => createGuidesApi(environment, orgId),
+    [environment, orgId]
+  );
 
   useEffect(() => {
     initialize(orgId, guidesApi, tags, null);

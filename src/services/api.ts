@@ -4,7 +4,7 @@ import type {
   GuidesAndSurveysResponse,
 } from '../types';
 import type { Environment } from '../constants/api';
-import { API_CONFIG, getBaseUrl } from '../constants/api';
+import { API_CONFIG, getBaseUrl, orgLocale } from '../constants/api';
 
 export interface GuidesAndSurveysApi {
   fetchDataJson: (token: string) => Promise<GuidesAndSurveysResponse | null>;
@@ -26,9 +26,13 @@ export interface GuidesAndSurveysApi {
 
 /**
  * Network client for Guides & Surveys APIs, bound to a single environment (base URL).
+ * The realm is derived from the org ID and injected as a subdomain automatically.
  */
-export function createGuidesApi(environment: Environment): GuidesAndSurveysApi {
-  const baseUrl = getBaseUrl(environment);
+export function createGuidesApi(
+  environment: Environment,
+  orgId: string
+): GuidesAndSurveysApi {
+  const baseUrl = getBaseUrl(environment, orgLocale(orgId));
 
   return {
     async fetchDataJson(
