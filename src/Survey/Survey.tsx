@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   Dimensions,
   Keyboard,
@@ -45,6 +45,7 @@ import { createSurveyStyles } from './createSurveyStyles';
 const Survey = ({ survey }: { survey: SurveyType }) => {
   const selfClosed = useActiveExperienceStore((s) => s.selfClosed);
   const setSelfClosed = useActiveExperienceStore((s) => s.setSelfClosed);
+  const [isAnimatingOut, setIsAnimatingOut] = useState(false);
   const showingThankYou = useActiveExperienceStore((s) => s.showingThankYou);
   const setShowingThankYou = useActiveExperienceStore(
     (s) => s.setShowingThankYou
@@ -253,11 +254,11 @@ const Survey = ({ survey }: { survey: SurveyType }) => {
 
   const handleClose = useCallback(() => {
     Keyboard.dismiss();
-    animateOut(() => {
-      updateSurveyClosed(survey.id);
-      setSelfClosed(true);
-      trackSurveyStateChanged('closed');
-    });
+    updateSurveyClosed(survey.id);
+    setSelfClosed(true);
+    trackSurveyStateChanged('closed');
+    setIsAnimatingOut(true);
+    animateOut(() => setIsAnimatingOut(false));
   }, [animateOut, survey, setSelfClosed, trackSurveyStateChanged]);
 
   const isDismissGesture = useRef(false);
@@ -281,17 +282,17 @@ const Survey = ({ survey }: { survey: SurveyType }) => {
           const shouldDismiss = e.translationY > 350 || e.velocityY > 2000;
           if (shouldDismiss) {
             runOnJS(dismissKeyboard)();
+            if (!showingThankYou) {
+              runOnJS(trackSurveyStateChanged)('closed');
+            }
+            runOnJS(updateSurveyClosed)(survey.id);
+            runOnJS(setShowingThankYou)(false);
+            runOnJS(setSelfClosed)(true);
+            runOnJS(setIsAnimatingOut)(true);
             translateY.value = withSpring(
               screenHeight,
               { damping: 200, stiffness: 400 },
-              () => {
-                if (!showingThankYou) {
-                  runOnJS(trackSurveyStateChanged)('closed');
-                }
-                runOnJS(updateSurveyClosed)(survey.id);
-                runOnJS(setShowingThankYou)(false);
-                runOnJS(setSelfClosed)(true);
-              }
+              () => runOnJS(setIsAnimatingOut)(false)
             );
           } else {
             translateY.value = withSpring(0, { damping: 400, stiffness: 1000 });
@@ -302,6 +303,7 @@ const Survey = ({ survey }: { survey: SurveyType }) => {
       screenHeight,
       scrollY,
       setSelfClosed,
+      setIsAnimatingOut,
       setShowingThankYou,
       survey.id,
       translateY,
@@ -312,8 +314,8 @@ const Survey = ({ survey }: { survey: SurveyType }) => {
 
   // Don't show if:
   // - No valid page to display and not on thank you page
-  // - User closed this survey in current session
-  if ((!currentPage && !showingThankYou) || selfClosed) {
+  // - User closed this survey (but keep rendering until animation finishes)
+  if ((!currentPage && !showingThankYou) || (selfClosed && !isAnimatingOut)) {
     return null;
   }
 
