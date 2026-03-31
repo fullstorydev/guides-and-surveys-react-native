@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
-  Dimensions,
   Keyboard,
   KeyboardAvoidingView,
   Platform,
+  useWindowDimensions,
   View,
 } from 'react-native';
 import Animated, {
@@ -140,9 +140,11 @@ const Survey = ({ survey }: { survey: SurveyType }) => {
     [currentPage, supportedQuestions, survey, currentPageIndex]
   );
 
-  const styles = useMemo(() => createSurveyStyles(theme), [theme]);
-
-  const screenHeight = Dimensions.get('window').height;
+  const { width: screenWidth, height: screenHeight } = useWindowDimensions();
+  const styles = useMemo(
+    () => createSurveyStyles(theme, screenWidth),
+    [theme, screenWidth]
+  );
   const translateY = useSharedValue(screenHeight);
   const scrollY = useSharedValue(0);
   const scrollViewRef = useRef<ScrollView>(null);

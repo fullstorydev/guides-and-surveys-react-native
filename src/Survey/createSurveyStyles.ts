@@ -1,8 +1,14 @@
 import { StyleSheet } from 'react-native';
 import type { Theme } from '../types';
 
-export const createSurveyStyles = (theme: Theme) =>
-  StyleSheet.create({
+const TABLET_BREAKPOINT = 600;
+
+export const createSurveyStyles = (theme: Theme, screenWidth: number) => {
+  const isTablet = screenWidth >= TABLET_BREAKPOINT;
+  const modalWidth = isTablet ? '80%' : '90%';
+  const modalMaxWidth = isTablet ? 680 : 480;
+
+  return StyleSheet.create({
     container: {
       position: 'absolute',
       width: '100%',
@@ -13,8 +19,8 @@ export const createSurveyStyles = (theme: Theme) =>
     },
     modal: {
       backgroundColor: theme.bgColor,
-      width: '90%',
-      maxWidth: 540,
+      width: modalWidth,
+      maxWidth: modalMaxWidth,
       maxHeight: '80%',
       shadowColor: '#000000',
       shadowOpacity: 0.5,
@@ -47,3 +53,4 @@ export const createSurveyStyles = (theme: Theme) =>
       justifyContent: 'center',
     },
   });
+};
