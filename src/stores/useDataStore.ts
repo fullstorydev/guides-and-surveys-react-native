@@ -63,6 +63,19 @@ const emptyProgressorData = (): ProgressorData => ({
   progressClearedAt: null,
 });
 
+const toArray = <T>(value: T[] | string | unknown): T[] => {
+  if (Array.isArray(value)) return value;
+  if (typeof value === 'string') {
+    try {
+      const parsed = JSON.parse(value);
+      return Array.isArray(parsed) ? parsed : [];
+    } catch {
+      return [];
+    }
+  }
+  return [];
+};
+
 /**
  * Merges local and server progressor data, keeping whichever has newer updatedAt timestamps.
  * This prevents data loss when sync fails and app restarts.
@@ -104,16 +117,16 @@ const mergeProgressorData = (
   return {
     tours: server.tours || local.tours || [],
     uf_surveys: mergeArrayById<SurveyProgress>(
-      local.uf_surveys || [],
-      server.uf_surveys || []
+      toArray(local.uf_surveys),
+      toArray(server.uf_surveys)
     ),
     uf_survey_answers: mergeArrayById<SurveyAnswer>(
-      local.uf_survey_answers || [],
-      server.uf_survey_answers || []
+      toArray(local.uf_survey_answers),
+      toArray(server.uf_survey_answers)
     ),
     uf_completed: mergeArrayById(
-      local.uf_completed || [],
-      server.uf_completed || []
+      toArray(local.uf_completed),
+      toArray(server.uf_completed)
     ),
     autoSegment: server.autoSegment || local.autoSegment || '',
     customSegments: server.customSegments || local.customSegments || [],
@@ -121,7 +134,7 @@ const mergeProgressorData = (
     isTemporaryProfile:
       server.isTemporaryProfile ?? local.isTemporaryProfile ?? true,
     abExperiments: server.abExperiments || local.abExperiments || [],
-    tags: server.tags || local.tags || [],
+    tags: toArray(server.tags) || local.tags || [],
     progressClearedAt:
       server.progressClearedAt ?? local.progressClearedAt ?? null,
   };
