@@ -28,14 +28,15 @@ export const createSurveyStyles = (theme: Theme, screenWidth: number) => {
       shadowOffset: { width: 0, height: 4 },
       elevation: 8,
       borderRadius: 12,
-      paddingHorizontal: 16,
       paddingVertical: 12,
     },
     modalHeader: {
       alignItems: 'flex-end',
+      paddingHorizontal: 16,
     },
     modalBody: {
       paddingVertical: 8,
+      paddingHorizontal: 16,
     },
     questionContainer: {
       marginBottom: 20,
