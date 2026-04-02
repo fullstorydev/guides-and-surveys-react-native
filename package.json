@@ -1,6 +1,6 @@
 {
   "name": "@fullstory/guides-and-surveys-react-native",
-  "version": "0.1.0-beta.1",
+  "version": "0.1.0-beta.2",
   "description": "Guides and surveys react native support",
   "source": "./src/index.ts",
   "main": "./lib/commonjs/index.js",
