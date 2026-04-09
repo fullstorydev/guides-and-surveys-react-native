@@ -15,6 +15,7 @@ export const syncProgressor = (
   accountToken: string,
   sessionId: string,
   api: GuidesAndSurveysApi | null,
+  userId?: string,
   debounceMs: number = 100
 ): void => {
   if (debounceTimer) {
@@ -26,7 +27,7 @@ export const syncProgressor = (
       return;
     }
     const success = await withRetry(() =>
-      api.saveProgressor(accountToken, sessionId, progressorData)
+      api.saveProgressor(accountToken, sessionId, progressorData, userId)
     );
     if (!success) {
       // TODO: send error to analytics

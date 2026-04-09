@@ -35,31 +35,45 @@ export const GuidesAndSurveys = ({
   navigationRef,
 }: Props) => {
   const initialize = useDataStore((s) => s.initialize);
-  const refreshProgressor = useDataStore((s) => s.refreshProgressor);
-  const spaceToken = useDataStore((s) => s.spaceToken);
-
   const guidesApi = useMemo(
     () => createGuidesApi(environment, orgId),
     [environment, orgId]
   );
 
   useEffect(() => {
-    initialize(orgId, guidesApi, tags, null);
+    initialize(orgId, guidesApi, tags);
   }, [initialize, orgId, tags, tags?.userId, guidesApi]);
 
   useEffect(() => {
+    const originalIdentify = Fullstory.identify;
+    const originalAnonymize = Fullstory.anonymize;
+
+    Fullstory.identify = (uid: string, userVars?: Record<string, any>) => {
+      useDataStore.getState().setTags({ userId: uid });
+      return originalIdentify(uid, userVars);
+    };
+
+    Fullstory.anonymize = () => {
+      useDataStore.getState().setTags({ userId: '' });
+      return originalAnonymize();
+    };
+
+    return () => {
+      Fullstory.identify = originalIdentify;
+      Fullstory.anonymize = originalAnonymize;
+    };
+  }, []);
+
+  useEffect(() => {
     const subscription = Fullstory.onReady((result) => {
-      if (result.sessionId && spaceToken) {
-        console.log(
-          'GuidesAndSurveys: Fullstory is ready, refreshing progressor'
-        );
-        refreshProgressor(spaceToken, result.sessionId);
+      if (result.sessionId) {
+        useDataStore.getState().setSessionId(result.sessionId);
       }
     });
     return () => {
       subscription.remove();
     };
-  }, [refreshProgressor, spaceToken]);
+  }, []);
 
   useTargeting(navigationRef);
   const [layoutMeasure, setLayoutMeasure] = useState<Measure>();

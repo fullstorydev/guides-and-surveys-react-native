@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { shallow } from 'zustand/shallow';
 import {
   persist,
   createJSONStorage,
@@ -34,19 +35,20 @@ interface DataStoreState {
   initialize: (
     orgId: string,
     api: GuidesAndSurveysApi,
-    tags?: Tag,
-    sessionId?: string | null
+    tags?: Tag
   ) => Promise<void>;
-  refreshProgressor: (spaceToken: string, sessionId: string) => Promise<void>;
+  refreshProgressor: () => Promise<void>;
+  setSessionId: (sessionId: string) => void;
   setTours: (tours: Tour[]) => void;
   setSurveys: (surveys: Survey[]) => void;
   setProgressorData: (data: ProgressorData) => void;
   getCurrentProgressorData: () => ProgressorData;
+  setTags: (tags: Tag) => void;
 }
 
 type DataStorePersistedState = Pick<
   DataStoreState,
-  'progressorData' | 'visitorIdent'
+  'progressorData' | 'visitorIdent' | 'tags'
 >;
 
 const emptyProgressorData = (): ProgressorData => ({
@@ -158,7 +160,7 @@ export const useDataStore = create(
           return get().progressorData;
         },
 
-        initialize: async (orgId, api, tags, sessionId) => {
+        initialize: async (orgId, api, tags) => {
           try {
             set({ guidesApi: api });
 
@@ -168,22 +170,26 @@ export const useDataStore = create(
               set({ visitorIdent });
             }
 
+            const persistedUserId = get().tags?.userId;
+            const resolvedUserId = tags?.userId ?? persistedUserId;
+
             const response = await api.fetchDataJson(orgId);
             const spaceToken = response?.spaceToken || '';
 
             set({
               orgId,
               spaceToken,
-              tags: { ...tags, visitorIdent },
+              tags: {
+                ...tags,
+                visitorIdent,
+                ...(resolvedUserId && { userId: resolvedUserId }),
+              },
               tours: response?.tours || [],
               surveys: response?.surveys || [],
             });
 
             if (!spaceToken) {
               throw new Error('Space token not found');
-            }
-            if (sessionId) {
-              get().refreshProgressor(spaceToken, sessionId);
             }
             await useReportQueueStore.getState().processQueue(spaceToken, api);
           } catch (error) {
@@ -192,17 +198,21 @@ export const useDataStore = create(
           }
         },
 
-        refreshProgressor: async (spaceToken, sessionId) => {
-          if (!spaceToken || !sessionId) return;
-          const { guidesApi } = get();
-          if (!guidesApi) return;
-          set({ sessionId });
+        refreshProgressor: async () => {
+          const { spaceToken, sessionId, tags, guidesApi } = get();
+          if (!spaceToken || !sessionId || !guidesApi) return;
+
+          const userId = tags?.userId;
 
           try {
             const localProgressorData = get().progressorData;
+            console.log(
+              `GuidesAndSurveys: refreshProgressor with spaceToken: ${spaceToken} and sessionId: ${sessionId}, userId: ${userId}`
+            );
             const serverProgressorData = await guidesApi.fetchProgressor(
               spaceToken,
-              sessionId
+              sessionId,
+              userId
             );
 
             if (
@@ -225,6 +235,7 @@ export const useDataStore = create(
                   spaceToken,
                   sessionId,
                   guidesApi,
+                  userId,
                   0
                 );
               }
@@ -234,6 +245,11 @@ export const useDataStore = create(
             console.error('Error refreshing progressor:', error);
           }
         },
+
+        setTags: (tags) =>
+          set((state) => ({ tags: { ...state.tags, ...tags } })),
+
+        setSessionId: (sessionId) => set({ sessionId }),
 
         setTours: (tours) => set({ tours }),
         setSurveys: (surveys) => set({ surveys }),
@@ -258,8 +274,24 @@ export const useDataStore = create(
         partialize: (state) => ({
           progressorData: state.progressorData,
           visitorIdent: state.visitorIdent,
+          tags: state.tags,
         }),
       }
     )
   )
+);
+
+useDataStore.subscribe(
+  (state) => ({
+    spaceToken: state.spaceToken,
+    sessionId: state.sessionId,
+    userId: state.tags?.userId,
+  }),
+  () => {
+    const { spaceToken, sessionId } = useDataStore.getState();
+    if (spaceToken && sessionId) {
+      useDataStore.getState().refreshProgressor();
+    }
+  },
+  { equalityFn: shallow }
 );
