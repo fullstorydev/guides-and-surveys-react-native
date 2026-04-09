@@ -6,36 +6,37 @@ export const NPS_SCALE_LENGTH = 11;
 const TOUCH_TARGET = 44;
 const BUTTON_MARGIN = 4;
 
+// When wrapping, split into two rows: ROW1_COUNT on the first, remainder on the second.
+export const NPS_ROW1_COUNT = 6;
+
 export const createNPSStyles = (
   theme: Theme,
   containerWidth: number,
   titleAlignment: 'left' | 'right' | 'center'
 ) => {
-  const availableWidth = containerWidth;
-  const buttonsPerRow = Math.min(
-    NPS_SCALE_LENGTH,
-    Math.max(1, Math.floor(availableWidth / (TOUCH_TARGET + BUTTON_MARGIN * 2)))
-  );
-  const shouldWrap = buttonsPerRow < NPS_SCALE_LENGTH;
-  const buttonSize = TOUCH_TARGET;
+  const canFitSingleRow =
+    containerWidth >= (TOUCH_TARGET + BUTTON_MARGIN * 2) * NPS_SCALE_LENGTH;
+  const shouldWrap = !canFitSingleRow;
+
   const font = resolveFont(theme.fontFamily, theme.customFontFamily);
   const surveyScaleBorderColor =
     theme.surveyScaleColor || theme.secondaryButtonColor || '#E0E0E0';
   const surveyScaleTextColor = theme.surveyScaleTextColor || theme.fontColor;
 
-  return StyleSheet.create({
+  const styles = StyleSheet.create({
     container: {
       paddingBottom: 12,
     },
     scaleContainer: {
-      flexDirection: 'row',
-      flexWrap: shouldWrap ? 'wrap' : 'nowrap',
-      justifyContent: shouldWrap ? 'center' : 'space-between',
-      width: '100%',
+      flexDirection: 'column',
       borderRadius: 8,
       borderWidth: 1,
       borderColor: 'transparent',
       paddingVertical: 6,
+    },
+    scaleRow: {
+      flexDirection: 'row',
+      justifyContent: shouldWrap ? 'center' : 'space-between',
     },
     scaleContainerError: {
       borderColor: '#D02E0B',
@@ -52,8 +53,8 @@ export const createNPSStyles = (
       color: '#D02E0B',
     },
     ratingButton: {
-      width: buttonSize,
-      height: buttonSize,
+      width: TOUCH_TARGET,
+      height: TOUCH_TARGET,
       margin: BUTTON_MARGIN,
       borderRadius: 8,
       borderWidth: 2,
@@ -99,4 +100,6 @@ export const createNPSStyles = (
       textAlign: 'right',
     },
   });
+
+  return { styles, shouldWrap };
 };
