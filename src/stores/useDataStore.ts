@@ -254,7 +254,7 @@ export const useDataStore = create(
         setTours: (tours) => set({ tours }),
         setSurveys: (surveys) => set({ surveys }),
         setProgressorData: (data) => {
-          const { sessionId, spaceToken, guidesApi } = get();
+          const { sessionId, spaceToken, guidesApi, tags } = get();
           set({ progressorData: data });
 
           // isTemporaryProfile is required to be false to sync progressor data
@@ -264,7 +264,13 @@ export const useDataStore = create(
             spaceToken &&
             guidesApi
           ) {
-            syncProgressor(data, spaceToken, sessionId, guidesApi);
+            syncProgressor(
+              data,
+              spaceToken,
+              sessionId,
+              guidesApi,
+              tags?.userId
+            );
           }
         },
       }),
