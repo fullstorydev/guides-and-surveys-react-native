@@ -38,6 +38,7 @@ const ThankYouPage = ({ content, theme, onClose }: Props) => {
 const styles = StyleSheet.create({
   header: {
     alignItems: 'flex-end',
+    paddingHorizontal: 16,
   },
   container: {
     alignItems: 'center',

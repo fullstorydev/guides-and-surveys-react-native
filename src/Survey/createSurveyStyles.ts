@@ -5,7 +5,7 @@ const TABLET_BREAKPOINT = 600;
 
 export const createSurveyStyles = (theme: Theme, screenWidth: number) => {
   const isTablet = screenWidth >= TABLET_BREAKPOINT;
-  const modalWidth = isTablet ? '80%' : '90%';
+  const modalWidth = isTablet ? '82%' : '90%';
   const modalMaxWidth = isTablet ? 680 : 480;
 
   return StyleSheet.create({
