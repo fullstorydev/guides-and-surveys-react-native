@@ -10,12 +10,14 @@ export interface GuidesAndSurveysApi {
   fetchDataJson: (token: string) => Promise<GuidesAndSurveysResponse | null>;
   fetchProgressor: (
     accountToken: string,
-    sessionId: string
+    sessionId: string,
+    userId?: string
   ) => Promise<ProgressorData | null>;
   saveProgressor: (
     accountToken: string,
     sessionId: string,
-    progressorData: ProgressorData
+    progressorData: ProgressorData,
+    userId?: string
   ) => Promise<boolean>;
   postSurveyResponse: (
     accountToken: string,
@@ -67,14 +69,19 @@ export function createGuidesApi(
 
     async fetchProgressor(
       accountToken: string,
-      sessionId: string
+      sessionId: string,
+      userId?: string
     ): Promise<ProgressorData | null> {
       const url = `${baseUrl}${API_CONFIG.ENDPOINTS.PROGRESSOR_GET}`;
       const headers = {
         'Content-Type': 'application/json',
         'X-Requested-With': 'XMLHttpRequest',
       };
-      const body = JSON.stringify({ sessionId, accountToken });
+      const body = JSON.stringify({
+        sessionId,
+        accountToken,
+        ...(userId !== undefined && userId !== '' && { userId }),
+      });
 
       try {
         const response = await fetch(url, {
@@ -102,7 +109,8 @@ export function createGuidesApi(
     async saveProgressor(
       accountToken: string,
       sessionId: string,
-      progressorData: ProgressorData
+      progressorData: ProgressorData,
+      userId?: string
     ): Promise<boolean> {
       const url = `${baseUrl}${API_CONFIG.ENDPOINTS.PROGRESSOR_SAVE}`;
       const headers = {
@@ -112,6 +120,7 @@ export function createGuidesApi(
       const body = JSON.stringify({
         sessionId,
         accountToken,
+        ...(userId !== undefined && userId !== '' && { userId }),
         data: progressorData,
       });
 
