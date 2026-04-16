@@ -53,7 +53,8 @@ const npsCategory = (score: number): 'promoter' | 'neutral' | 'detractor' => {
 
 /**
  * Fire "Question Answered" for each submitted question.
- * For NPS questions, adds npsCategory. Open answers are masked.
+ * For NPS questions, adds npsCategory.
+ * Open answers are masked only when maskAnswer is true.
  */
 export function fsTrackQuestionAnswered(
   survey: Survey,
@@ -61,7 +62,8 @@ export function fsTrackQuestionAnswered(
   pageIndex: number,
   question: SurveyQuestion,
   questionIndex: number,
-  answer: string | number
+  answer: string | number,
+  maskAnswer: boolean = false
 ): void {
   const props: Record<string, string | number | boolean> = {
     ...baseSurveyPageProperties(survey, page, pageIndex),
@@ -75,7 +77,7 @@ export function fsTrackQuestionAnswered(
   if (question.type === 'nps' && typeof answer === 'number') {
     props.npsCategory = npsCategory(answer);
   }
-  if (question.type === 'open') {
+  if (question.type === 'open' && maskAnswer) {
     props.answer = 'answer masked';
   }
   Fullstory.event(FS_EVENT_NAMES.questionAnswered, props);
