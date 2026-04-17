@@ -21,6 +21,9 @@ jobs:
             - node_modules
             - .yarn/install-state.gz
           key: v1-dependencies-{{ checksum "yarn.lock" }}
+      - check:
+          name: Check yarn version
+          command: yarn --version
       - run:
           name: Audit
           command: yarn npm audit --severity low --environment production
