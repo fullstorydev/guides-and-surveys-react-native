@@ -18,6 +18,10 @@ export const createNPSStyles = (
     containerWidth >= (TOUCH_TARGET + BUTTON_MARGIN * 2) * NPS_SCALE_LENGTH;
   const shouldWrap = !canFitSingleRow;
 
+  const titleFont = resolveFont(
+    theme.fontTitleFamily,
+    theme.customFontTitleFamily
+  );
   const font = resolveFont(theme.fontFamily, theme.customFontFamily);
   const surveyScaleBorderColor =
     theme.surveyScaleColor || theme.secondaryButtonColor || '#E0E0E0';
@@ -43,8 +47,8 @@ export const createNPSStyles = (
     },
     questionText: {
       fontSize: theme.fontSize || 16,
-      fontFamily: font,
-      fontWeight: '600',
+      fontFamily: titleFont,
+      fontWeight: '700',
       marginBottom: 12,
       color: theme.fontContentColor,
       textAlign: titleAlignment,

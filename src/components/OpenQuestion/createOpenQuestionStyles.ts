@@ -19,6 +19,10 @@ export const createOpenQuestionStyles = (
   theme: Theme,
   titleAlignment: 'left' | 'right' | 'center'
 ) => {
+  const titleFont = resolveFont(
+    theme.fontTitleFamily,
+    theme.customFontTitleFamily
+  );
   const font = resolveFont(theme.fontFamily, theme.customFontFamily);
   const textInputBorderColor = withAlpha(theme.secondaryButtonColor, 0.3);
   const textInputFocusBorderColor = theme.secondaryButtonColor;
@@ -29,8 +33,8 @@ export const createOpenQuestionStyles = (
     },
     questionText: {
       fontSize: theme.fontSize || 16,
-      fontFamily: font,
-      fontWeight: '600',
+      fontFamily: titleFont,
+      fontWeight: '700',
       marginBottom: 12,
       color: theme.fontContentColor,
       textAlign: titleAlignment,
