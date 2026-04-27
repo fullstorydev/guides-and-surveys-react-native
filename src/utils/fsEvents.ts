@@ -63,7 +63,7 @@ export function fsTrackQuestionAnswered(
   question: SurveyQuestion,
   questionIndex: number,
   answer: string | number,
-  maskAnswer: boolean = false
+  maskAnswer: boolean = true
 ): void {
   const props: Record<string, string | number | boolean> = {
     ...baseSurveyPageProperties(survey, page, pageIndex),

@@ -157,7 +157,7 @@ export const useDataStore = create(
         spaceToken: undefined,
         sessionId: undefined,
         guidesApi: null,
-        maskOpenTextAnswers: false,
+        maskOpenTextAnswers: true,
 
         getCurrentProgressorData: () => {
           return get().progressorData;
@@ -181,7 +181,7 @@ export const useDataStore = create(
             const maskOpenTextAnswers =
               response?.settings?.find(
                 (s) => s.name === DATA_JSON_SETTINGS.maskOpenTextAnswers
-              )?.value === true;
+              )?.value !== false;
 
             set({
               orgId,
