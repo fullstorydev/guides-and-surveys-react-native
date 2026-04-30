@@ -1,0 +1,97 @@
+import { NativeModules, Platform } from 'react-native';
+
+export type SurveysEnvironment = 'playpen' | 'staging' | 'production';
+
+export interface SurveysSDKConfig {
+  /** FullStory org ID, e.g. "o-24JBZ9-na1" */
+  orgId: string;
+  /** Defaults to "playpen" */
+  environment?: SurveysEnvironment;
+  /** Defaults to "anonymous" */
+  userId?: string;
+}
+
+const LINKING_ERROR =
+  `The native SurveysSDK module could not be found. ` +
+  `Make sure you have run pod install and rebuilt the app. ` +
+  `On iOS only — this module has no Android implementation yet.`;
+
+function getModule() {
+  if (Platform.OS === 'ios') {
+    const mod = NativeModules.RNSurveysSDK;
+    if (!mod) {
+      console.warn(LINKING_ERROR);
+    }
+    return mod ?? null;
+  }
+  return null;
+}
+
+const mod = getModule();
+
+/**
+ * React Native bridge for the native iOS SurveysSDK.
+ *
+ * On Android this is a no-op until an Android SDK is available.
+ */
+export const SurveysSDK = {
+  /**
+   * Initialize the SDK. Must be called once before any other method.
+   * Automatically attaches the survey overlay to the root view controller.
+   */
+  initialize(config: SurveysSDKConfig): Promise<void> {
+    if (!mod) return Promise.resolve();
+    return mod.initialize(
+      config.orgId,
+      config.environment ?? 'playpen',
+      config.userId ?? ''
+    );
+  },
+
+  /**
+   * Associate a user identity with survey responses.
+   * Call whenever the logged-in user changes.
+   */
+  identify(userId: string): Promise<void> {
+    if (!mod) return Promise.resolve();
+    return mod.identify(userId);
+  },
+
+  /**
+   * Pass the FullStory (or any analytics) session ID for response correlation.
+   * Call from `Fullstory.onReady` when the session becomes available.
+   */
+  setSessionId(sessionId: string): Promise<void> {
+    if (!mod) return Promise.resolve();
+    return mod.setSessionId(sessionId);
+  },
+
+  /**
+   * Manually trigger a survey.
+   * If `surveyId` is omitted the SDK picks the next eligible autoplay survey.
+   */
+  showSurvey(surveyId?: string): Promise<void> {
+    if (!mod) return Promise.resolve();
+    return mod.showSurvey(surveyId ?? null);
+  },
+
+  /** Retry any survey answer syncs that failed due to network errors. */
+  retryFailedSyncs(): Promise<void> {
+    if (!mod) return Promise.resolve();
+    return mod.retryFailedSyncs();
+  },
+
+  /** Re-enable surveys after they have been disabled. */
+  reenableSurveys(): Promise<void> {
+    if (!mod) return Promise.resolve();
+    return mod.reenableSurveys();
+  },
+
+  /** Returns true if surveys are currently suppressed. */
+  areSurveysDisabled(): Promise<boolean> {
+    if (!mod) return Promise.resolve(false);
+    return mod.getAreSurveysDisabled();
+  },
+} as const;
+
+export default SurveysSDK;
