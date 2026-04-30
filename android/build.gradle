@@ -1,0 +1,57 @@
+buildscript {
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
+
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+apply plugin: 'org.jetbrains.kotlin.plugin.compose'
+
+android {
+    compileSdk 36
+    namespace "com.fullstory.guidesandsurveys"
+
+    defaultConfig {
+        minSdk 24
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
+    kotlinOptions {
+        jvmTarget = '17'
+    }
+
+    buildFeatures {
+        compose true
+    }
+}
+
+repositories {
+    google()
+    mavenCentral()
+}
+
+// Resolve the react-native version from the consuming app's node_modules
+def reactNativeDir = new File("${rootProject.projectDir}/../node_modules/react-native")
+
+dependencies {
+    // React Native — resolved from the host app's node_modules
+    if (reactNativeDir.exists()) {
+        compileOnly fileTree(dir: "${reactNativeDir}/android", include: ['*.jar', '*.aar'])
+        compileOnly fileTree(dir: "${reactNativeDir}/Libraries/blob/android/build/outputs/aar", include: ['*.aar'])
+    }
+    compileOnly "com.facebook.react:react-android"
+
+    // Compose — provided at runtime by the host app (via surveys-sdk)
+    compileOnly platform("androidx.compose:compose-bom:2024.06.00")
+    compileOnly "androidx.compose.ui:ui"
+    compileOnly "androidx.activity:activity-compose:1.9.0"
+
+    // SurveysSDK — must be included via settings.gradle in the host app
+    implementation project(':surveys-sdk')
+}

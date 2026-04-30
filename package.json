@@ -14,7 +14,10 @@
   },
   "files": [
     "lib",
-    "src"
+    "src",
+    "ios",
+    "android",
+    "GuidesAndSurveys.podspec"
   ],
   "scripts": {
     "example": "yarn workspace guides-and-surveys-react-native-example",

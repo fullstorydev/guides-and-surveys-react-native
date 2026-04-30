@@ -13,11 +13,11 @@ export interface SurveysSDKConfig {
 
 const LINKING_ERROR =
   `The native SurveysSDK module could not be found. ` +
-  `Make sure you have run pod install and rebuilt the app. ` +
-  `On iOS only — this module has no Android implementation yet.`;
+  `On iOS: make sure you have run pod install and rebuilt the app. ` +
+  `On Android: make sure the surveys-sdk module is included in settings.gradle and the app is rebuilt.`;
 
 function getModule() {
-  if (Platform.OS === 'ios') {
+  if (Platform.OS === 'ios' || Platform.OS === 'android') {
     const mod = NativeModules.RNSurveysSDK;
     if (!mod) {
       console.warn(LINKING_ERROR);
