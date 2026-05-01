@@ -57,6 +57,7 @@ const Survey = ({ survey }: { survey: SurveyType }) => {
   const surveyProgress = useDataStore((s) =>
     s.getCurrentProgressorData().uf_surveys?.find((sp) => sp.id === survey.id)
   );
+  const maskOpenTextAnswers = useDataStore((s) => s.maskOpenTextAnswers);
 
   const currentPageIndex = useMemo(
     () =>
@@ -132,12 +133,19 @@ const Survey = ({ survey }: { survey: SurveyType }) => {
             currentPageIndex,
             question,
             questionIndex >= 0 ? questionIndex : 0,
-            answer
+            answer,
+            maskOpenTextAnswers
           );
         }
       });
     },
-    [currentPage, supportedQuestions, survey, currentPageIndex]
+    [
+      currentPage,
+      supportedQuestions,
+      survey,
+      currentPageIndex,
+      maskOpenTextAnswers,
+    ]
   );
 
   const { width: screenWidth, height: screenHeight } = useWindowDimensions();

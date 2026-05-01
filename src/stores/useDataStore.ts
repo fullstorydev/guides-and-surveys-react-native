@@ -18,6 +18,7 @@ import type {
 } from '../types';
 import { syncProgressor } from '../services/syncProgressor';
 import { useReportQueueStore } from './useReportQueueStore';
+import { DATA_JSON_SETTINGS } from '../constants';
 
 interface DataStoreState {
   // Raw data
@@ -30,6 +31,7 @@ interface DataStoreState {
   spaceToken: string | undefined;
   sessionId: string | undefined;
   guidesApi: GuidesAndSurveysApi | null;
+  maskOpenTextAnswers: boolean;
 
   // Actions
   initialize: (
@@ -155,6 +157,7 @@ export const useDataStore = create(
         spaceToken: undefined,
         sessionId: undefined,
         guidesApi: null,
+        maskOpenTextAnswers: true,
 
         getCurrentProgressorData: () => {
           return get().progressorData;
@@ -175,10 +178,15 @@ export const useDataStore = create(
 
             const response = await api.fetchDataJson(orgId);
             const spaceToken = response?.spaceToken || '';
+            const maskOpenTextAnswers =
+              response?.settings?.find(
+                (s) => s.name === DATA_JSON_SETTINGS.maskOpenTextAnswers
+              )?.value !== false;
 
             set({
               orgId,
               spaceToken,
+              maskOpenTextAnswers,
               tags: {
                 ...tags,
                 visitorIdent,

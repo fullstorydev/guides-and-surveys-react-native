@@ -62,6 +62,10 @@ export const TARGET_OPERATOR_SEGMENT_EXACT = 'segment-exact';
 export const TARGET_OPERATOR_SEGMENT_IS_NOT = 'segment-is-not';
 export const TARGET_TYPE_AB_EXPERIMENT = 'ab-test';
 
+export const DATA_JSON_SETTINGS = {
+  maskOpenTextAnswers: 'fullstoryExcludeSurveyInputs',
+} as const;
+
 export const FS_EVENT_NAMES = {
   surveyStateChanged: 'Survey State Changed',
   surveyPageSeen: 'Survey Page Seen',

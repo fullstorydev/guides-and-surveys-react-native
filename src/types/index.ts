@@ -6,10 +6,16 @@ import {
   TARGET_OPERATOR_SEGMENT_IS_NOT,
   TARGET_TYPE_AB_EXPERIMENT,
 } from '../constants';
+export type DataJsonSetting = {
+  name: string;
+  value: boolean | string | number;
+};
+
 export type GuidesAndSurveysResponse = {
   tours?: Tour[];
   surveys?: Survey[];
   spaceToken: string;
+  settings?: DataJsonSetting[];
 };
 
 export type Tour = {
