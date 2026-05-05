@@ -10,7 +10,7 @@ module.exports = function (api) {
 
   return getConfig(
     {
-      presets: ['babel-preset-expo'],
+      presets: [['babel-preset-expo', { unstable_transformImportMeta: true }]],
       plugins: isWeb
         ? []
         : ['@fullstory/react-native', 'react-native-worklets/plugin'],
