@@ -79,18 +79,6 @@ class RNSurveysSDKModule(private val reactContext: ReactApplicationContext) :
     }
 
     @ReactMethod
-    fun reenableSurveys(promise: Promise) {
-        onMain {
-            try {
-                SurveysSDK.reenableSurveys()
-                promise.resolve(null)
-            } catch (e: Exception) {
-                promise.reject("REENABLE_ERROR", e.message, e)
-            }
-        }
-    }
-
-    @ReactMethod
     fun getAreSurveysDisabled(promise: Promise) {
         promise.resolve(SurveysSDK.areSurveysDisabled())
     }

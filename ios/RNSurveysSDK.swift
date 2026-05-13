@@ -56,16 +56,6 @@ class RNSurveysSDK: NSObject {
     }
   }
 
-  @objc func reenableSurveys(
-    _ resolver: @escaping RCTPromiseResolveBlock,
-    rejecter: @escaping RCTPromiseRejectBlock
-  ) {
-    DispatchQueue.main.async {
-      SurveysSDK.shared.reenableSurveys()
-      resolver(nil)
-    }
-  }
-
   @objc func getAreSurveysDisabled(
     _ resolver: @escaping RCTPromiseResolveBlock,
     rejecter: @escaping RCTPromiseRejectBlock

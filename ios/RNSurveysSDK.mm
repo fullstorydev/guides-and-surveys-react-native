@@ -16,9 +16,6 @@ RCT_EXTERN_METHOD(showSurvey:(NSString * _Nullable)surveyId
                   resolver:(RCTPromiseResolveBlock)resolver
                   rejecter:(RCTPromiseRejectBlock)rejecter)
 
-RCT_EXTERN_METHOD(reenableSurveys:(RCTPromiseResolveBlock)resolver
-                  rejecter:(RCTPromiseRejectBlock)rejecter)
-
 RCT_EXTERN_METHOD(getAreSurveysDisabled:(RCTPromiseResolveBlock)resolver
                   rejecter:(RCTPromiseRejectBlock)rejecter)
 

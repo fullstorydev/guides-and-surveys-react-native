@@ -66,12 +66,6 @@ export const SurveysSDK = {
     return mod.showSurvey(surveyId ?? null);
   },
 
-  /** Re-enable surveys after they have been disabled. */
-  reenableSurveys(): Promise<void> {
-    if (!mod) return Promise.resolve();
-    return mod.reenableSurveys();
-  },
-
   /** Returns true if surveys are currently suppressed. */
   areSurveysDisabled(): Promise<boolean> {
     if (!mod) return Promise.resolve(false);
