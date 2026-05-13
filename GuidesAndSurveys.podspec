@@ -10,7 +10,7 @@ Pod::Spec.new do |s|
   s.license      = package["license"]
   s.authors      = package["author"]
 
-  s.platforms    = { :ios => "17.0" }
+  s.platforms    = { :ios => "12.4" }
   s.source       = { :git => package["repository"]["url"], :tag => "#{s.version}" }
 
   # Bridge module only — SDK sources live in GuidesAndSurveysSDK
