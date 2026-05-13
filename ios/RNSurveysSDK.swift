@@ -22,7 +22,8 @@ class RNSurveysSDK: NSObject {
       SurveysSDK.shared.initialize(
         orgId: orgId,
         environment: environment,
-        userId: userId.isEmpty ? "anonymous" : userId
+        userId: userId.isEmpty ? "anonymous" : userId,
+        sessionId: ""
       )
       SurveyHostInstaller.install()
       resolver(nil)
@@ -42,17 +43,6 @@ class RNSurveysSDK: NSObject {
     }
   }
 
-  @objc func setSessionId(
-    _ sessionId: String,
-    resolver: @escaping RCTPromiseResolveBlock,
-    rejecter: @escaping RCTPromiseRejectBlock
-  ) {
-    DispatchQueue.main.async {
-      SurveysSDK.shared.setSessionId(sessionId)
-      resolver(nil)
-    }
-  }
-
   // MARK: - Survey Control
 
   @objc func showSurvey(
@@ -62,16 +52,6 @@ class RNSurveysSDK: NSObject {
   ) {
     DispatchQueue.main.async {
       SurveysSDK.shared.showSurvey(surveyId: surveyId)
-      resolver(nil)
-    }
-  }
-
-  @objc func retryFailedSyncs(
-    _ resolver: @escaping RCTPromiseResolveBlock,
-    rejecter: @escaping RCTPromiseRejectBlock
-  ) {
-    DispatchQueue.main.async {
-      SurveysSDK.shared.retryFailedSyncs()
       resolver(nil)
     }
   }

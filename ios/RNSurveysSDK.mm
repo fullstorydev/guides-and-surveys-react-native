@@ -12,15 +12,8 @@ RCT_EXTERN_METHOD(identify:(NSString *)userId
                   resolver:(RCTPromiseResolveBlock)resolver
                   rejecter:(RCTPromiseRejectBlock)rejecter)
 
-RCT_EXTERN_METHOD(setSessionId:(NSString *)sessionId
-                  resolver:(RCTPromiseResolveBlock)resolver
-                  rejecter:(RCTPromiseRejectBlock)rejecter)
-
 RCT_EXTERN_METHOD(showSurvey:(NSString * _Nullable)surveyId
                   resolver:(RCTPromiseResolveBlock)resolver
-                  rejecter:(RCTPromiseRejectBlock)rejecter)
-
-RCT_EXTERN_METHOD(retryFailedSyncs:(RCTPromiseResolveBlock)resolver
                   rejecter:(RCTPromiseRejectBlock)rejecter)
 
 RCT_EXTERN_METHOD(reenableSurveys:(RCTPromiseResolveBlock)resolver

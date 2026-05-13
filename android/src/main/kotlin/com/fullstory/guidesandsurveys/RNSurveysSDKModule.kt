@@ -64,18 +64,6 @@ class RNSurveysSDKModule(private val reactContext: ReactApplicationContext) :
         }
     }
 
-    @ReactMethod
-    fun setSessionId(sessionId: String, promise: Promise) {
-        onMain {
-            try {
-                SurveysSDK.setSessionId(sessionId)
-                promise.resolve(null)
-            } catch (e: Exception) {
-                promise.reject("SESSION_ERROR", e.message, e)
-            }
-        }
-    }
-
     // MARK: - Survey Control
 
     @ReactMethod
@@ -86,18 +74,6 @@ class RNSurveysSDKModule(private val reactContext: ReactApplicationContext) :
                 promise.resolve(null)
             } catch (e: Exception) {
                 promise.reject("SHOW_SURVEY_ERROR", e.message, e)
-            }
-        }
-    }
-
-    @ReactMethod
-    fun retryFailedSyncs(promise: Promise) {
-        onMain {
-            try {
-                SurveysSDK.retryFailedSyncs()
-                promise.resolve(null)
-            } catch (e: Exception) {
-                promise.reject("RETRY_ERROR", e.message, e)
             }
         }
     }

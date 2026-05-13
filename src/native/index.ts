@@ -58,27 +58,12 @@ export const SurveysSDK = {
   },
 
   /**
-   * Pass the FullStory (or any analytics) session ID for response correlation.
-   * Call from `Fullstory.onReady` when the session becomes available.
-   */
-  setSessionId(sessionId: string): Promise<void> {
-    if (!mod) return Promise.resolve();
-    return mod.setSessionId(sessionId);
-  },
-
-  /**
    * Manually trigger a survey.
    * If `surveyId` is omitted the SDK picks the next eligible autoplay survey.
    */
   showSurvey(surveyId?: string): Promise<void> {
     if (!mod) return Promise.resolve();
     return mod.showSurvey(surveyId ?? null);
-  },
-
-  /** Retry any survey answer syncs that failed due to network errors. */
-  retryFailedSyncs(): Promise<void> {
-    if (!mod) return Promise.resolve();
-    return mod.retryFailedSyncs();
   },
 
   /** Re-enable surveys after they have been disabled. */
