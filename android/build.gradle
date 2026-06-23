@@ -7,12 +7,42 @@ plugins {
     id 'org.jetbrains.kotlin.plugin.compose' version '2.1.20'
 }
 
+def isNewArchitectureEnabled() {
+    return rootProject.hasProperty("newArchEnabled") && rootProject.getProperty("newArchEnabled") == "true"
+}
+
+// Apply the React Native Gradle plugin only on new arch. This plugin triggers codegen,
+// which generates NativeGuidesAndSurveysSpec — needed by src/turbo.
+if (isNewArchitectureEnabled()) {
+    apply plugin: 'com.facebook.react'
+}
+
 android {
     compileSdk 36
     namespace "com.fullstory.guidesandsurveys"
 
     defaultConfig {
         minSdk 24
+        // Expose arch flag to Kotlin/Java so RNGuidesAndSurveysPackage can set isTurboModule correctly.
+        buildConfigField "boolean", "IS_NEW_ARCHITECTURE_ENABLED", isNewArchitectureEnabled().toString()
+    }
+
+    buildFeatures {
+        buildConfig true
+        compose true
+    }
+
+    sourceSets {
+        main {
+            // Compile the TurboModule variant on new arch, the bridge variant on old arch.
+            // Both define the same class name (RNGuidesAndSurveysModule) so the package
+            // doesn't need to know which one it's using.
+            if (isNewArchitectureEnabled()) {
+                kotlin.srcDirs += ['src/turbo/kotlin']
+            } else {
+                kotlin.srcDirs += ['src/legacy/kotlin']
+            }
+        }
     }
 
     compileOptions {
@@ -22,10 +52,6 @@ android {
 
     kotlinOptions {
         jvmTarget = '17'
-    }
-
-    buildFeatures {
-        compose true
     }
 }
 

@@ -6,23 +6,23 @@ import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.module.model.ReactModuleInfo
 import com.facebook.react.module.model.ReactModuleInfoProvider
 
-// TurboReactPackage is backward-compatible: on old arch it behaves like ReactPackage,
-// on new arch it participates in the TurboModule eager/lazy loading system.
 class RNGuidesAndSurveysPackage : TurboReactPackage() {
 
     override fun getModule(name: String, reactContext: ReactApplicationContext): NativeModule? {
-        return if (name == RNGuidesAndSurveysModule.NAME) RNGuidesAndSurveysModule(reactContext) else null
+        return if (name == RNGuidesAndSurveysModuleImpl.NAME) RNGuidesAndSurveysModule(reactContext) else null
     }
 
     override fun getReactModuleInfoProvider(): ReactModuleInfoProvider {
         return ReactModuleInfoProvider {
             mapOf(
-                RNGuidesAndSurveysModule.NAME to ReactModuleInfo(
-                    RNGuidesAndSurveysModule.NAME,
-                    RNGuidesAndSurveysModule.NAME,
+                RNGuidesAndSurveysModuleImpl.NAME to ReactModuleInfo(
+                    RNGuidesAndSurveysModuleImpl.NAME,
+                    RNGuidesAndSurveysModuleImpl.NAME,
                     false,  // canOverrideExistingModule
                     false,  // needsEagerInit
-                    true    // isTurboModule
+                    false,  // hasConstants
+                    false,  // isCxxModule
+                    BuildConfig.IS_NEW_ARCHITECTURE_ENABLED  // isTurboModule
                 )
             )
         }
