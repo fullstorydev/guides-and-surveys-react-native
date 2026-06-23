@@ -38,7 +38,6 @@ object RNGuidesAndSurveysModuleImpl {
             try {
                 SurveysSDK.initialize(
                     context      = reactContext,
-                    accountToken = orgId,
                     orgId        = orgId,
                     userId       = userId,
                     environment  = environmentFrom(environment)
