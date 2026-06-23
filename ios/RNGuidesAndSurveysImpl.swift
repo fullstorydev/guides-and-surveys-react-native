@@ -4,32 +4,43 @@ import Foundation
 /// Plain Swift helper that wraps the native SDK. Not an RN module — the ObjC
 /// class RNGuidesAndSurveys in RNGuidesAndSurveys.mm delegates to this via
 /// the generated GuidesAndSurveys-Swift.h bridging header.
-@objc class RNGuidesAndSurveysImpl: NSObject {
+@objc public class RNGuidesAndSurveysImpl: NSObject {
 
-  @objc static let shared = RNGuidesAndSurveysImpl()
+  @objc public static let shared = RNGuidesAndSurveysImpl()
   private override init() {}
 
-  @objc func initialize(orgId: String, environment: String, userId: String) {
-    let env = SurveysEnvironment.from(string: environment)
-    SurveysSDK.shared.initialize(
-      orgId: orgId,
-      environment: env,
-      userId: userId.isEmpty ? "anonymous" : userId,
-      sessionId: ""
-    )
-    SurveyHostInstaller.install()
+  // ObjC callers always dispatch to the main queue before reaching these
+  // methods, so assumeIsolated is a safe assertion here.
+
+  @objc public func initialize(orgId: String, environment: String, userId: String) {
+    MainActor.assumeIsolated {
+      let env = SurveysEnvironment.from(string: environment)
+      SurveysSDK.shared.initialize(
+        orgId: orgId,
+        environment: env,
+        userId: userId.isEmpty ? "anonymous" : userId,
+        sessionId: ""
+      )
+      SurveyHostInstaller.install()
+    }
   }
 
-  @objc func identify(userId: String) {
-    SurveysSDK.shared.identify(userId: userId)
+  @objc public func identify(userId: String) {
+    MainActor.assumeIsolated {
+      SurveysSDK.shared.identify(userId: userId)
+    }
   }
 
-  @objc func showSurvey(surveyId: String?) {
-    SurveysSDK.shared.showSurvey(surveyId: surveyId)
+  @objc public func showSurvey(surveyId: String?) {
+    MainActor.assumeIsolated {
+      SurveysSDK.shared.showSurvey(surveyId: surveyId)
+    }
   }
 
-  @objc var areSurveysDisabled: Bool {
-    return SurveysSDK.shared.areSurveysDisabled
+  @objc public var areSurveysDisabled: Bool {
+    MainActor.assumeIsolated {
+      SurveysSDK.shared.areSurveysDisabled
+    }
   }
 }
 
