@@ -51,7 +51,8 @@ private extension SurveysEnvironment {
     switch string.lowercased() {
     case "staging":    return .staging
     case "production": return .production
-    default:           return .playpen
+    case "playpen":    return .playpen
+    default:           return .production
     }
   }
 }

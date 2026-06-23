@@ -4,6 +4,7 @@ import android.view.ViewGroup
 import androidx.activity.ComponentActivity
 import androidx.compose.ui.platform.ComposeView
 import com.fullstory.surveys.sdk.SurveyHost
+import java.lang.ref.WeakReference
 
 /**
  * Attaches a transparent ComposeView containing SurveyHost() to the activity's
@@ -13,10 +14,10 @@ import com.fullstory.surveys.sdk.SurveyHost
  * place in the bridge that references Compose.
  */
 object SurveyHostInstaller {
-    private var installed = false
+    private var installedActivity: WeakReference<ComponentActivity>? = null
 
     fun install(activity: ComponentActivity) {
-        if (installed) return
+        if (installedActivity?.get() === activity) return
         val composeView = ComposeView(activity).apply {
             layoutParams = ViewGroup.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
@@ -25,6 +26,6 @@ object SurveyHostInstaller {
             setContent { SurveyHost() }
         }
         (activity.window.decorView as ViewGroup).addView(composeView)
-        installed = true
+        installedActivity = WeakReference(activity)
     }
 }

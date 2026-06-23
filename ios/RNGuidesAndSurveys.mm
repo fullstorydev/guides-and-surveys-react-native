@@ -14,10 +14,14 @@ RCT_EXPORT_MODULE()
              reject:(RCTPromiseRejectBlock)reject
 {
     dispatch_async(dispatch_get_main_queue(), ^{
-        [[RNGuidesAndSurveysImpl shared] initializeWithOrgId:orgId
-                                                 environment:environment
-                                                      userId:userId];
-        resolve(nil);
+        @try {
+            [[RNGuidesAndSurveysImpl shared] initializeWithOrgId:orgId
+                                                     environment:environment
+                                                          userId:userId];
+            resolve(nil);
+        } @catch (NSException *exception) {
+            reject(@"INIT_ERROR", exception.reason, nil);
+        }
     });
 }
 
@@ -26,8 +30,12 @@ RCT_EXPORT_MODULE()
            reject:(RCTPromiseRejectBlock)reject
 {
     dispatch_async(dispatch_get_main_queue(), ^{
-        [[RNGuidesAndSurveysImpl shared] identifyWithUserId:userId];
-        resolve(nil);
+        @try {
+            [[RNGuidesAndSurveysImpl shared] identifyWithUserId:userId];
+            resolve(nil);
+        } @catch (NSException *exception) {
+            reject(@"IDENTIFY_ERROR", exception.reason, nil);
+        }
     });
 }
 
@@ -36,8 +44,12 @@ RCT_EXPORT_MODULE()
              reject:(RCTPromiseRejectBlock)reject
 {
     dispatch_async(dispatch_get_main_queue(), ^{
-        [[RNGuidesAndSurveysImpl shared] showSurveyWithSurveyId:surveyId];
-        resolve(nil);
+        @try {
+            [[RNGuidesAndSurveysImpl shared] showSurveyWithSurveyId:surveyId];
+            resolve(nil);
+        } @catch (NSException *exception) {
+            reject(@"SHOW_SURVEY_ERROR", exception.reason, nil);
+        }
     });
 }
 
@@ -45,7 +57,11 @@ RCT_EXPORT_MODULE()
                         reject:(RCTPromiseRejectBlock)reject
 {
     dispatch_async(dispatch_get_main_queue(), ^{
-        resolve(@([RNGuidesAndSurveysImpl shared].areSurveysDisabled));
+        @try {
+            resolve(@([RNGuidesAndSurveysImpl shared].areSurveysDisabled));
+        } @catch (NSException *exception) {
+            reject(@"GET_SURVEYS_DISABLED_ERROR", exception.reason, nil);
+        }
     });
 }
 
