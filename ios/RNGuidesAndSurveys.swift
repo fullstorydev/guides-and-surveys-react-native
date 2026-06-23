@@ -1,8 +1,8 @@
 import Foundation
-import GuidesAndSurveysSDK
+@_spi(FSIntegration) import FullstoryGuidesAndSurveys
 
-@objc(RNSurveysSDK)
-class RNSurveysSDK: NSObject {
+@objc(RNGuidesAndSurveys)
+class RNGuidesAndSurveys: NSObject {
 
   @objc static func requiresMainQueueSetup() -> Bool {
     return true
@@ -71,9 +71,9 @@ class RNSurveysSDK: NSObject {
 private extension SurveysEnvironment {
   static func from(string: String) -> SurveysEnvironment {
     switch string.lowercased() {
-    case "staging":   return .staging
+    case "staging":    return .staging
     case "production": return .production
-    default:          return .playpen
+    default:           return .playpen
     }
   }
 }

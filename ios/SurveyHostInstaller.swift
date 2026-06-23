@@ -1,5 +1,5 @@
 import UIKit
-import GuidesAndSurveysSDK
+import FullstoryGuidesAndSurveys
 
 /// Attaches the SDK's survey overlay view controller to the root view controller so
 /// surveys can present as native sheets and full-screen covers on top of any RN UI.

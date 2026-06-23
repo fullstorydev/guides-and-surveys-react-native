@@ -1,4 +1,5 @@
-import { NativeModules, Platform } from 'react-native';
+import { NativeModules, Platform, TurboModuleRegistry } from 'react-native';
+import type { Spec } from '../NativeGuidesAndSurveys';
 
 export type SurveysEnvironment = 'playpen' | 'staging' | 'production';
 
@@ -12,17 +13,22 @@ export interface SurveysSDKConfig {
 }
 
 const LINKING_ERROR =
-  `The native SurveysSDK module could not be found. ` +
+  `The native RNGuidesAndSurveys module could not be found. ` +
   `On iOS: make sure you have run pod install and rebuilt the app. ` +
-  `On Android: make sure the surveys-sdk module is included in settings.gradle and the app is rebuilt.`;
+  `On Android: make sure the guides-and-surveys module is included in settings.gradle and the app is rebuilt.`;
 
-function getModule() {
+function getModule(): Spec | null {
   if (Platform.OS === 'ios' || Platform.OS === 'android') {
-    const mod = NativeModules.RNSurveysSDK;
+    // TurboModuleRegistry.get returns null on old arch (no TurboModule registered),
+    // so we fall back to the classic NativeModules bridge.
+    const mod =
+      TurboModuleRegistry.get<Spec>('RNGuidesAndSurveys') ??
+      (NativeModules.RNGuidesAndSurveys as Spec | undefined) ??
+      null;
     if (!mod) {
       console.warn(LINKING_ERROR);
     }
-    return mod ?? null;
+    return mod;
   }
   return null;
 }
@@ -30,9 +36,10 @@ function getModule() {
 const mod = getModule();
 
 /**
- * React Native bridge for the native iOS SurveysSDK.
+ * React Native bridge for the native iOS/Android GuidesAndSurveys SDK.
  *
- * On Android this is a no-op until an Android SDK is available.
+ * Uses TurboModules when available (new arch) and falls back to the
+ * classic NativeModules bridge on old arch.
  */
 export const SurveysSDK = {
   /**

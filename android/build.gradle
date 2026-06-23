@@ -51,5 +51,5 @@ dependencies {
     compileOnly "androidx.activity:activity-compose:1.9.0"
 
     // SurveysSDK — must be included via settings.gradle in the host app
-    implementation project(':surveys-sdk')
+    implementation project(':guides-and-surveys')
 }

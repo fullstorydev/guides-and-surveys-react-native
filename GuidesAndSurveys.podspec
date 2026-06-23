@@ -13,9 +13,11 @@ Pod::Spec.new do |s|
   s.platforms    = { :ios => "12.4" }
   s.source       = { :git => package["repository"]["url"], :tag => "#{s.version}" }
 
-  # Bridge module only — SDK sources live in GuidesAndSurveysSDK
+  # Bridge module only — SDK sources live in FullstoryGuidesAndSurveys
   s.source_files = "ios/**/*.{swift,h,m,mm}"
 
-  s.dependency "React-Core"
-  s.dependency "GuidesAndSurveysSDK"
+  # Adds React-Core on old arch and React-RCTFabric + codegen headers on new arch
+  install_modules_dependencies(s)
+
+  s.dependency "FullstoryGuidesAndSurveys"
 end
