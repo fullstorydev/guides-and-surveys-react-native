@@ -6,6 +6,9 @@ export interface Spec extends TurboModule {
   identify(userId: string): Promise<void>;
   showSurvey(surveyId: string | null): Promise<void>;
   getAreSurveysDisabled(): Promise<boolean>;
+  setSessionId(sessionId: string): Promise<void>;
+  setCurrentScreen(screenName: string | null): Promise<void>;
+  getSurveys(): Promise<ReadonlyArray<Object>>;
 }
 
 export default TurboModuleRegistry.getEnforcing<Spec>('RNGuidesAndSurveys');

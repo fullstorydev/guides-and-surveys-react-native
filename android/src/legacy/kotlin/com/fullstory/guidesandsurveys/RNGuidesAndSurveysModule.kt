@@ -31,4 +31,19 @@ class RNGuidesAndSurveysModule(private val reactContext: ReactApplicationContext
     fun getAreSurveysDisabled(promise: Promise) {
         RNGuidesAndSurveysModuleImpl.getAreSurveysDisabled(promise)
     }
+
+    @ReactMethod
+    fun setSessionId(sessionId: String, promise: Promise) {
+        RNGuidesAndSurveysModuleImpl.setSessionId(sessionId, promise)
+    }
+
+    @ReactMethod
+    fun setCurrentScreen(screenName: String?, promise: Promise) {
+        RNGuidesAndSurveysModuleImpl.setCurrentScreen(screenName, promise)
+    }
+
+    @ReactMethod
+    fun getSurveys(promise: Promise) {
+        RNGuidesAndSurveysModuleImpl.getSurveys(promise)
+    }
 }

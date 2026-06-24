@@ -42,6 +42,44 @@ import Foundation
       SurveysSDK.shared.areSurveysDisabled
     }
   }
+
+  @objc public func setSessionId(_ sessionId: String) {
+    MainActor.assumeIsolated {
+      SurveysSDK.shared.setSessionId(sessionId)
+    }
+  }
+
+  @objc public func setCurrentScreen(_ screenName: String?) {
+    MainActor.assumeIsolated {
+      SurveysSDK.shared.setCurrentScreen(screenName)
+    }
+  }
+
+  @objc public func getSurveys() -> NSArray {
+    MainActor.assumeIsolated {
+      guard let repo = SurveysSDK.shared.getRepository() else {
+        NSException(
+          name: NSExceptionName("NOT_INITIALIZED"),
+          reason: "SDK not initialized",
+          userInfo: nil
+        ).raise()
+        return NSArray()
+      }
+      let completedIds = Set(repo.progressorData.uf_completed.map { $0.id })
+      let surveys: [[String: Any]] = repo.surveys.map { survey in
+        [
+          "id": survey.id,
+          "name": survey.name,
+          "active": survey.active,
+          "priority": survey.objectPriority,
+          "pageType": (survey.pages.first?.type.rawValue ?? "unknown").uppercased(),
+          "questionCount": survey.pages.reduce(0) { $0 + $1.questions.count },
+          "completed": completedIds.contains(survey.id),
+        ]
+      }
+      return surveys as NSArray
+    }
+  }
 }
 
 // MARK: - SurveysEnvironment string parsing
