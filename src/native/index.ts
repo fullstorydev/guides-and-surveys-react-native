@@ -3,6 +3,16 @@ import type { Spec } from '../NativeGuidesAndSurveys';
 
 export type SurveysEnvironment = 'playpen' | 'staging' | 'production';
 
+export type SurveyInfo = {
+  id: string;
+  name: string;
+  active: boolean;
+  priority: number;
+  pageType: string;
+  questionCount: number;
+  completed: boolean;
+};
+
 export interface SurveysSDKConfig {
   /** FullStory org ID, e.g. "o-24JBZ9-na1" */
   orgId: string;
@@ -77,6 +87,32 @@ export const SurveysSDK = {
   areSurveysDisabled(): Promise<boolean> {
     if (!mod) return Promise.resolve(false);
     return mod.getAreSurveysDisabled();
+  },
+
+  /**
+   * Set the FullStory session ID. Call this once the FullStory SDK fires its
+   * ready callback and provides a session ID.
+   */
+  setSessionId(sessionId: string): Promise<void> {
+    if (!mod) return Promise.resolve();
+    return mod.setSessionId(sessionId);
+  },
+
+  /**
+   * Notify the SDK of the current screen name for survey targeting.
+   * Pass `null` to clear the current screen.
+   */
+  setCurrentScreen(screenName: string | null): Promise<void> {
+    if (!mod) return Promise.resolve();
+    return mod.setCurrentScreen(screenName);
+  },
+
+  /**
+   * Returns the list of surveys known to the SDK, with their completion status.
+   */
+  getSurveys(): Promise<ReadonlyArray<SurveyInfo>> {
+    if (!mod) return Promise.resolve([]);
+    return mod.getSurveys() as Promise<ReadonlyArray<SurveyInfo>>;
   },
 } as const;
 

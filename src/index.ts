@@ -4,4 +4,5 @@ export {
   SurveysSDK,
   type SurveysSDKConfig,
   type SurveysEnvironment,
+  type SurveyInfo,
 } from './native';
