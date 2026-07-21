@@ -12,15 +12,22 @@ import Foundation
   // ObjC callers always dispatch to the main queue before reaching these
   // methods, so assumeIsolated is a safe assertion here.
 
-  @objc public func initialize(orgId: String, environment: String, userId: String) {
+  @objc public func initialize(
+    orgId: String,
+    environment: String,
+    config: NSDictionary?
+  ) {
     MainActor.assumeIsolated {
       let env = SurveysEnvironment.from(string: environment)
+      let language = config?["language"] as? String
+      let surveysConfig = language.map { SurveysConfig(language: $0) } ?? SurveysConfig()
+
       SurveysSDK.shared.initialize(
         orgId: orgId,
         environment: env,
-        userId: userId.isEmpty ? "anonymous" : userId,
-        sessionId: ""
+        config: surveysConfig
       )
+
       SurveyHostInstaller.install()
     }
   }
@@ -28,6 +35,12 @@ import Foundation
   @objc public func identify(userId: String) {
     MainActor.assumeIsolated {
       SurveysSDK.shared.identify(userId: userId)
+    }
+  }
+
+  @objc public func anonymize() {
+    MainActor.assumeIsolated {
+      SurveysSDK.shared.anonymize()
     }
   }
 

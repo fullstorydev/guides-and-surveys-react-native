@@ -13,13 +13,17 @@ export type SurveyInfo = {
   completed: boolean;
 };
 
+export interface SurveysConfig {
+  language?: string;
+}
+
 export interface SurveysSDKConfig {
   /** FullStory org ID, e.g. "o-24JBZ9-na1" */
   orgId: string;
-  /** Defaults to "playpen" */
+  /** Defaults to "production" */
   environment?: SurveysEnvironment;
-  /** Defaults to "anonymous" */
-  userId?: string;
+  /** Optional SDK configuration (language). */
+  config?: SurveysConfig;
 }
 
 const LINKING_ERROR =
@@ -56,12 +60,12 @@ export const SurveysSDK = {
    * Initialize the SDK. Must be called once before any other method.
    * Automatically attaches the survey overlay to the root view controller.
    */
-  initialize(config: SurveysSDKConfig): Promise<void> {
+  initialize(options: SurveysSDKConfig): Promise<void> {
     if (!mod) return Promise.resolve();
     return mod.initialize(
-      config.orgId,
-      config.environment ?? 'playpen',
-      config.userId ?? ''
+      options.orgId,
+      options.environment ?? 'production',
+      options.config ?? null
     );
   },
 
@@ -72,6 +76,15 @@ export const SurveysSDK = {
   identify(userId: string): Promise<void> {
     if (!mod) return Promise.resolve();
     return mod.identify(userId);
+  },
+
+  /**
+   * Clear the application-level user identifier, returning the user to an
+   * anonymous state.
+   */
+  anonymize(): Promise<void> {
+    if (!mod) return Promise.resolve();
+    return mod.anonymize();
   },
 
   /**

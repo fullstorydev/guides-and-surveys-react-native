@@ -3,7 +3,6 @@ package com.fullstory.guidesandsurveys
 import android.view.ViewGroup
 import androidx.activity.ComponentActivity
 import androidx.compose.ui.platform.ComposeView
-import com.fullstory.surveys.sdk.SurveyHost
 import java.lang.ref.WeakReference
 
 /**

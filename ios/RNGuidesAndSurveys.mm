@@ -9,7 +9,7 @@ RCT_EXPORT_MODULE()
 
 - (void)_initialize:(NSString *)orgId
         environment:(NSString *)environment
-             userId:(NSString *)userId
+             config:(NSDictionary * _Nullable)config
             resolve:(RCTPromiseResolveBlock)resolve
              reject:(RCTPromiseRejectBlock)reject
 {
@@ -17,7 +17,7 @@ RCT_EXPORT_MODULE()
         @try {
             [[RNGuidesAndSurveysImpl shared] initializeWithOrgId:orgId
                                                      environment:environment
-                                                          userId:userId];
+                                                          config:config];
             resolve(nil);
         } @catch (NSException *exception) {
             reject(@"INIT_ERROR", exception.reason, nil);
@@ -35,6 +35,19 @@ RCT_EXPORT_MODULE()
             resolve(nil);
         } @catch (NSException *exception) {
             reject(@"IDENTIFY_ERROR", exception.reason, nil);
+        }
+    });
+}
+
+- (void)_anonymize:(RCTPromiseResolveBlock)resolve
+            reject:(RCTPromiseRejectBlock)reject
+{
+    dispatch_async(dispatch_get_main_queue(), ^{
+        @try {
+            [[RNGuidesAndSurveysImpl shared] anonymize];
+            resolve(nil);
+        } @catch (NSException *exception) {
+            reject(@"ANONYMIZE_ERROR", exception.reason, nil);
         }
     });
 }
@@ -110,11 +123,15 @@ RCT_EXPORT_MODULE()
 RCT_REMAP_METHOD(initialize,
                  initializeWithOrgId:(NSString *)orgId
                  environment:(NSString *)environment
-                 userId:(NSString *)userId
+                 config:(NSDictionary * _Nullable)config
                  resolver:(RCTPromiseResolveBlock)resolve
                  rejecter:(RCTPromiseRejectBlock)reject)
 {
-    [self _initialize:orgId environment:environment userId:userId resolve:resolve reject:reject];
+    [self _initialize:orgId
+          environment:environment
+               config:config
+              resolve:resolve
+               reject:reject];
 }
 
 RCT_REMAP_METHOD(identify,
@@ -123,6 +140,13 @@ RCT_REMAP_METHOD(identify,
                  rejecter:(RCTPromiseRejectBlock)reject)
 {
     [self _identify:userId resolve:resolve reject:reject];
+}
+
+RCT_REMAP_METHOD(anonymize,
+                 anonymizeWithResolver:(RCTPromiseResolveBlock)resolve
+                 rejecter:(RCTPromiseRejectBlock)reject)
+{
+    [self _anonymize:resolve reject:reject];
 }
 
 RCT_REMAP_METHOD(showSurvey,
@@ -169,11 +193,15 @@ RCT_REMAP_METHOD(getSurveys,
 
 - (void)initialize:(NSString *)orgId
        environment:(NSString *)environment
-            userId:(NSString *)userId
+            config:(NSDictionary * _Nullable)config
            resolve:(RCTPromiseResolveBlock)resolve
             reject:(RCTPromiseRejectBlock)reject
 {
-    [self _initialize:orgId environment:environment userId:userId resolve:resolve reject:reject];
+    [self _initialize:orgId
+          environment:environment
+               config:config
+              resolve:resolve
+               reject:reject];
 }
 
 - (void)identify:(NSString *)userId
@@ -181,6 +209,12 @@ RCT_REMAP_METHOD(getSurveys,
           reject:(RCTPromiseRejectBlock)reject
 {
     [self _identify:userId resolve:resolve reject:reject];
+}
+
+- (void)anonymize:(RCTPromiseResolveBlock)resolve
+           reject:(RCTPromiseRejectBlock)reject
+{
+    [self _anonymize:resolve reject:reject];
 }
 
 - (void)showSurvey:(NSString * _Nullable)surveyId

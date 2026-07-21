@@ -6,8 +6,7 @@ import androidx.activity.ComponentActivity
 import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.Promise
 import com.facebook.react.bridge.ReactApplicationContext
-import com.fullstory.surveys.sdk.Environment
-import com.fullstory.surveys.sdk.SurveysSDK
+import com.facebook.react.bridge.ReadableMap
 
 /**
  * Platform-independent implementation shared by both the legacy bridge module
@@ -22,26 +21,33 @@ object RNGuidesAndSurveysModuleImpl {
         Handler(Looper.getMainLooper()).post(block)
 
     private fun environmentFrom(string: String): Environment = when (string.lowercase()) {
-        "staging"     -> Environment.STAGING
-        "development" -> Environment.DEVELOPMENT
-        "playpen"     -> Environment.DEVELOPMENT
-        else          -> Environment.PRODUCTION
+        "staging" -> Environment.STAGING
+        "playpen" -> Environment.DEVELOPMENT
+        else      -> Environment.PRODUCTION
+    }
+
+    private fun surveysConfigFrom(map: ReadableMap?): SurveysConfig {
+        if (map == null || !map.hasKey("language") || map.isNull("language")) {
+            return SurveysConfig()
+        }
+        val language = map.getString("language") ?: return SurveysConfig()
+        return SurveysConfig(language = language)
     }
 
     fun initialize(
         reactContext: ReactApplicationContext,
         orgId: String,
         environment: String,
-        userId: String,
+        config: ReadableMap?,
         promise: Promise,
     ) {
         onMain {
             try {
                 SurveysSDK.initialize(
-                    context      = reactContext,
-                    orgId        = orgId,
-                    userId       = userId,
-                    environment  = environmentFrom(environment)
+                    context = reactContext,
+                    orgId = orgId,
+                    environment = environmentFrom(environment),
+                    config = surveysConfigFrom(config),
                 )
                 val activity = reactContext.currentActivity as? ComponentActivity
                 if (activity != null) {
@@ -61,6 +67,17 @@ object RNGuidesAndSurveysModuleImpl {
                 promise.resolve(null)
             } catch (e: Exception) {
                 promise.reject("IDENTIFY_ERROR", e.message, e)
+            }
+        }
+    }
+
+    fun anonymize(promise: Promise) {
+        onMain {
+            try {
+                SurveysSDK.anonymize()
+                promise.resolve(null)
+            } catch (e: Exception) {
+                promise.reject("ANONYMIZE_ERROR", e.message, e)
             }
         }
     }
