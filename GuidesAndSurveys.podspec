@@ -19,5 +19,9 @@ Pod::Spec.new do |s|
   # Adds React-Core on old arch and React-RCTFabric + codegen headers on new arch
   install_modules_dependencies(s)
 
-  s.dependency "FullstoryGuidesAndSurveys"
+  spm_dependency(s,
+    url: "https://github.com/fullstorydev/fullstory-guides-and-surveys-swift-package-ios",
+    requirement: { kind: "upToNextMajorVersion", minimumVersion: "0.1.1" },
+    products: ["FullstoryGuidesAndSurveys"]
+  )
 end
