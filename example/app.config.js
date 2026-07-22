@@ -36,6 +36,8 @@ export default {
           host: 'onfire.fyi',
         },
       ],
+      // Survives prebuild; remove when RN ships fmt >= 12.1.0
+      './plugins/withFmtFix',
     ],
   },
 };

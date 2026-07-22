@@ -21,7 +21,7 @@ Pod::Spec.new do |s|
 
   spm_dependency(s,
     url: "https://github.com/fullstorydev/fullstory-guides-and-surveys-swift-package-ios",
-    requirement: { kind: "upToNextMajorVersion", minimumVersion: "0.1.1" },
+    requirement: { kind: "upToNextMajorVersion", minimumVersion: "0.1.2" },
     products: ["FullstoryGuidesAndSurveys"]
   )
 end

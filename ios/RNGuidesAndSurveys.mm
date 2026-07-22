@@ -106,18 +106,6 @@ RCT_EXPORT_MODULE()
     });
 }
 
-- (void)_getSurveys:(RCTPromiseResolveBlock)resolve
-              reject:(RCTPromiseRejectBlock)reject
-{
-    dispatch_async(dispatch_get_main_queue(), ^{
-        @try {
-            resolve([[RNGuidesAndSurveysImpl shared] getSurveys]);
-        } @catch (NSException *exception) {
-            reject(@"GET_SURVEYS_ERROR", exception.reason, nil);
-        }
-    });
-}
-
 // MARK: - Old arch (bridge)
 
 RCT_REMAP_METHOD(initialize,
@@ -180,13 +168,6 @@ RCT_REMAP_METHOD(setCurrentScreen,
     [self _setCurrentScreen:screenName resolve:resolve reject:reject];
 }
 
-RCT_REMAP_METHOD(getSurveys,
-                 getSurveysWithResolver:(RCTPromiseResolveBlock)resolve
-                 rejecter:(RCTPromiseRejectBlock)reject)
-{
-    [self _getSurveys:resolve reject:reject];
-}
-
 #ifdef RCT_NEW_ARCH_ENABLED
 
 // MARK: - New arch (TurboModule)
@@ -242,12 +223,6 @@ RCT_REMAP_METHOD(getSurveys,
                   reject:(RCTPromiseRejectBlock)reject
 {
     [self _setCurrentScreen:screenName resolve:resolve reject:reject];
-}
-
-- (void)getSurveys:(RCTPromiseResolveBlock)resolve
-             reject:(RCTPromiseRejectBlock)reject
-{
-    [self _getSurveys:resolve reject:reject];
 }
 
 - (std::shared_ptr<facebook::react::TurboModule>)getTurboModule:

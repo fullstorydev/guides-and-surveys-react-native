@@ -3,16 +3,6 @@ import type { Spec } from '../NativeGuidesAndSurveys';
 
 export type SurveysEnvironment = 'playpen' | 'staging' | 'production';
 
-export type SurveyInfo = {
-  id: string;
-  name: string;
-  active: boolean;
-  priority: number;
-  pageType: string;
-  questionCount: number;
-  completed: boolean;
-};
-
 export interface SurveysConfig {
   language?: string;
 }
@@ -118,14 +108,6 @@ export const SurveysSDK = {
   setCurrentScreen(screenName: string | null): Promise<void> {
     if (!mod) return Promise.resolve();
     return mod.setCurrentScreen(screenName);
-  },
-
-  /**
-   * Returns the list of surveys known to the SDK, with their completion status.
-   */
-  getSurveys(): Promise<ReadonlyArray<SurveyInfo>> {
-    if (!mod) return Promise.resolve([]);
-    return mod.getSurveys() as Promise<ReadonlyArray<SurveyInfo>>;
   },
 } as const;
 

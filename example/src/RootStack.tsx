@@ -1,16 +1,12 @@
-import { View, Text, StyleSheet, Button, type ViewStyle } from 'react-native';
+import { View, StyleSheet, Button } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useNavigation, type NavigationProp } from '@react-navigation/native';
-import { setPointer } from '@fullstory/guides-and-surveys-react-native';
 import KitchenSinkScreen from './screens/KitchenSink';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Fullstory from '@fullstory/react-native';
 
 type RootStackParamList = {
-  Detail: undefined;
   Home: undefined;
-  About: undefined;
-  Help: undefined;
   KitchenSink: undefined;
 };
 
@@ -20,18 +16,6 @@ export const HomeScreen = () => {
   return (
     <View style={styles.home}>
       <View style={styles.navContainer}>
-        <View style={styles.navBtn}>
-          <Button
-            title="Detail"
-            onPress={() => navigation.navigate('Detail')}
-          />
-        </View>
-        <View style={styles.navBtn}>
-          <Button title="About" onPress={() => navigation.navigate('About')} />
-        </View>
-        <View style={styles.navBtn}>
-          <Button title="Help" onPress={() => navigation.navigate('Help')} />
-        </View>
         <View style={styles.navBtn}>
           <Button
             title="Kitchen Sink"
@@ -89,9 +73,6 @@ export const RootStack = () => {
   return (
     <Stack.Navigator initialRouteName="Home">
       <Stack.Screen name="Home" component={HomeScreen} />
-      <Stack.Screen name="Detail" component={DetailsScreen} />
-      <Stack.Screen name="About" component={AboutScreen} />
-      <Stack.Screen name="Help" component={HelpScreen} />
       <Stack.Screen name="KitchenSink" component={KitchenSinkScreen} />
     </Stack.Navigator>
   );
@@ -125,61 +106,3 @@ const styles = StyleSheet.create({
     borderColor: '#ccc',
   },
 });
-
-function DetailsScreen() {
-  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
-
-  return (
-    <View style={{ ...styles.home, backgroundColor: 'green' }}>
-      <Text>Details Screen</Text>
-      <Text>About</Text>
-      <Text>Number One</Text>
-      <Text>Number Two</Text>
-      <View onLayout={(e) => setPointer('Test1', e)}>
-        <Text>First Pointer</Text>
-      </View>
-      <Text>Number four</Text>
-      <View
-        style={{ marginTop: 100, marginLeft: 200 } as ViewStyle}
-        onLayout={(e) => setPointer('SecondView', e)}
-      >
-        <Text>Second Pointer</Text>
-      </View>
-      <View
-        style={{ marginTop: 300 }}
-        onLayout={(e) => setPointer('NextView', e)}
-      >
-        <Text>Third Pointer</Text>
-      </View>
-      <Button
-        title="Go to HomeScreen"
-        onPress={() => navigation.navigate('Home')}
-      />
-    </View>
-  );
-}
-function AboutScreen() {
-  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
-  return (
-    <View style={{ ...styles.home, backgroundColor: 'lightblue' }}>
-      <Text>About Screen</Text>
-      <Button
-        title="Go to HomeScreen"
-        onPress={() => navigation.navigate('Home')}
-      />
-    </View>
-  );
-}
-
-function HelpScreen() {
-  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
-  return (
-    <View style={{ ...styles.home, backgroundColor: 'darkblue' }}>
-      <Text>Help Screen</Text>
-      <Button
-        title="Go to HomeScreen"
-        onPress={() => navigation.navigate('Home')}
-      />
-    </View>
-  );
-}

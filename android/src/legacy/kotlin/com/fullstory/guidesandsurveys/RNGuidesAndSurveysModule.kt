@@ -54,9 +54,4 @@ class RNGuidesAndSurveysModule(private val reactContext: ReactApplicationContext
     fun setCurrentScreen(screenName: String?, promise: Promise) {
         RNGuidesAndSurveysModuleImpl.setCurrentScreen(screenName, promise)
     }
-
-    @ReactMethod
-    fun getSurveys(promise: Promise) {
-        RNGuidesAndSurveysModuleImpl.getSurveys(promise)
-    }
 }

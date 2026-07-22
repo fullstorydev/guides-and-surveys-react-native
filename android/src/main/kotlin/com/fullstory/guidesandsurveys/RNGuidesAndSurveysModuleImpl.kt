@@ -3,7 +3,6 @@ package com.fullstory.guidesandsurveys
 import android.os.Handler
 import android.os.Looper
 import androidx.activity.ComponentActivity
-import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.Promise
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReadableMap
@@ -116,28 +115,6 @@ object RNGuidesAndSurveysModuleImpl {
             } catch (e: Exception) {
                 promise.reject("SET_CURRENT_SCREEN_ERROR", e.message, e)
             }
-        }
-    }
-
-    fun getSurveys(promise: Promise) {
-        try {
-            val repo = SurveysSDK.getRepository()
-            val completedIds = repo.completions.value.map { it.id }.toSet()
-            val array = Arguments.createArray()
-            repo.surveys.value.forEach { survey ->
-                val map = Arguments.createMap()
-                map.putString("id", survey.id)
-                map.putString("name", survey.name)
-                map.putBoolean("active", survey.active)
-                map.putInt("priority", survey.objectPriority)
-                map.putString("pageType", survey.pages.firstOrNull()?.type?.name ?: "UNKNOWN")
-                map.putInt("questionCount", survey.pages.sumOf { it.questions.size })
-                map.putBoolean("completed", survey.id in completedIds)
-                array.pushMap(map)
-            }
-            promise.resolve(array)
-        } catch (e: Exception) {
-            promise.reject("GET_SURVEYS_ERROR", e.message, e)
         }
     }
 }
