@@ -5,7 +5,7 @@ import KitchenSinkScreen from './screens/KitchenSink';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Fullstory from '@fullstory/react-native';
 
-type RootStackParamList = {
+export type RootStackParamList = {
   Home: undefined;
   KitchenSink: undefined;
 };

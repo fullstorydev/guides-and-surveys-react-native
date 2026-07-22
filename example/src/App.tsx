@@ -1,4 +1,4 @@
-import { RootStack } from './RootStack';
+import { RootStack, type RootStackParamList } from './RootStack';
 import {
   NavigationContainer,
   useNavigationContainerRef,
@@ -9,7 +9,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SurveysSDK } from '@fullstory/guides-and-surveys-react-native';
 
 export default function App() {
-  const navigationRef = useNavigationContainerRef();
+  const navigationRef = useNavigationContainerRef<RootStackParamList>();
   const routeNameRef = useRef('');
 
   // Initialize the native SurveysSDK once on mount.
