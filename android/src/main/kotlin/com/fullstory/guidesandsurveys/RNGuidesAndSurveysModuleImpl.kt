@@ -21,7 +21,7 @@ object RNGuidesAndSurveysModuleImpl {
 
     private fun environmentFrom(string: String): Environment = when (string.lowercase()) {
         "staging" -> Environment.STAGING
-        "playpen" -> Environment.DEVELOPMENT
+        "playpen" -> Environment.PLAYPEN
         else      -> Environment.PRODUCTION
     }
 
