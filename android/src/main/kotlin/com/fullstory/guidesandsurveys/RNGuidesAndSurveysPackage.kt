@@ -1,4 +1,4 @@
-package com.fullstory.guidesandsurveys
+package com.fullstory.guidesandsurveys.rn
 
 import com.facebook.react.TurboReactPackage
 import com.facebook.react.bridge.NativeModule

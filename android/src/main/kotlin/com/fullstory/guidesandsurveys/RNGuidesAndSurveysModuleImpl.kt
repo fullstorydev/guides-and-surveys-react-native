@@ -1,4 +1,4 @@
-package com.fullstory.guidesandsurveys
+package com.fullstory.guidesandsurveys.rn
 
 import android.os.Handler
 import android.os.Looper
@@ -6,6 +6,9 @@ import androidx.activity.ComponentActivity
 import com.facebook.react.bridge.Promise
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReadableMap
+import com.fullstory.guidesandsurveys.Environment
+import com.fullstory.guidesandsurveys.SurveysConfig
+import com.fullstory.guidesandsurveys.SurveysSDK
 
 /**
  * Platform-independent implementation shared by both the legacy bridge module
@@ -50,7 +53,7 @@ object RNGuidesAndSurveysModuleImpl {
                 )
                 val activity = reactContext.currentActivity as? ComponentActivity
                 if (activity != null) {
-                    SurveyHostInstaller.install(activity)
+                    SurveysSDK.attach(activity)
                 }
                 promise.resolve(null)
             } catch (e: Exception) {

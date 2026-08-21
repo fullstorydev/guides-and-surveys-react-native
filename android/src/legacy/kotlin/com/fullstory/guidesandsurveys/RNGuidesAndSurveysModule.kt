@@ -1,4 +1,4 @@
-package com.fullstory.guidesandsurveys
+package com.fullstory.guidesandsurveys.rn
 
 import com.facebook.react.bridge.Promise
 import com.facebook.react.bridge.ReactApplicationContext
