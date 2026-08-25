@@ -1,1 +1,0 @@
-export { ProgressBarHorizontal } from './ProgressBarHorizontal';

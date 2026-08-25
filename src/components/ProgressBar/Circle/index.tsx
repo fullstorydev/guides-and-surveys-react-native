@@ -1,1 +1,0 @@
-export { ProgressBarCircle } from './ProgressBarCircle';

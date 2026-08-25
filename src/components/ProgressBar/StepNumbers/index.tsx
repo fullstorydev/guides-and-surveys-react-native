@@ -1,1 +1,0 @@
-export { ProgressBarStepNumbers } from './ProgressBarStepNumbers';
