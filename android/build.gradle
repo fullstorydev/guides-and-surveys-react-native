@@ -19,7 +19,7 @@ if (isNewArchitectureEnabled()) {
 }
 
 android {
-    compileSdk 36
+    compileSdk 35
     namespace "com.fullstory.guidesandsurveys.rn"
 
     defaultConfig {
