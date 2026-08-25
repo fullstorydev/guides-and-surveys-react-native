@@ -1,0 +1,81 @@
+plugins {
+    id 'com.android.library'
+    id 'kotlin-android'
+}
+
+// Local-development override: set guidesAndSurveysSdkVersion (e.g. in the app's
+// gradle.properties or -PguidesAndSurveysSdkVersion=9.9.9) to resolve a locally
+// published SDK from mavenLocal instead of the pinned release.
+def localSdkVersion = project.findProperty('guidesAndSurveysSdkVersion')
+
+def isNewArchitectureEnabled() {
+    return rootProject.hasProperty("newArchEnabled") && rootProject.getProperty("newArchEnabled") == "true"
+}
+
+// Apply the React Native Gradle plugin only on new arch. This plugin triggers codegen,
+// which generates NativeGuidesAndSurveysSpec — needed by src/turbo.
+if (isNewArchitectureEnabled()) {
+    apply plugin: 'com.facebook.react'
+}
+
+android {
+    compileSdk 35
+    namespace "com.fullstory.guidesandsurveys.rn"
+
+    defaultConfig {
+        minSdk 24
+        // Expose arch flag to Kotlin/Java so RNGuidesAndSurveysPackage can set isTurboModule correctly.
+        buildConfigField "boolean", "IS_NEW_ARCHITECTURE_ENABLED", isNewArchitectureEnabled().toString()
+    }
+
+    buildFeatures {
+        buildConfig true
+    }
+
+    sourceSets {
+        main {
+            // Compile the TurboModule variant on new arch, the bridge variant on old arch.
+            // Both define the same class name (RNGuidesAndSurveysModule) so the package
+            // doesn't need to know which one it's using.
+            if (isNewArchitectureEnabled()) {
+                kotlin.srcDirs += ['src/turbo/kotlin']
+            } else {
+                kotlin.srcDirs += ['src/legacy/kotlin']
+            }
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
+    kotlinOptions {
+        jvmTarget = '17'
+    }
+}
+
+repositories {
+    if (localSdkVersion != null) {
+        mavenLocal()
+    }
+    google()
+    mavenCentral()
+    maven { url 'https://maven.fullstory.com' }
+}
+
+// Resolve the react-native version from the consuming app's node_modules
+def reactNativeDir = new File("${rootProject.projectDir}/../node_modules/react-native")
+
+dependencies {
+    // React Native — resolved from the host app's node_modules
+    if (reactNativeDir.exists()) {
+        compileOnly fileTree(dir: "${reactNativeDir}/android", include: ['*.jar', '*.aar'])
+        compileOnly fileTree(dir: "${reactNativeDir}/Libraries/blob/android/build/outputs/aar", include: ['*.aar'])
+    }
+    compileOnly "com.facebook.react:react-android"
+
+    compileOnly "androidx.activity:activity:1.9.0"
+
+    implementation "com.fullstory:guides-and-surveys:${localSdkVersion ?: '0.1.5'}"
+}
