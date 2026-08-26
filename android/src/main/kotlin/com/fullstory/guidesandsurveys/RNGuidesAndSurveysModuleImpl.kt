@@ -25,7 +25,7 @@ object RNGuidesAndSurveysModuleImpl {
     // when the host Activity is recreated (rotation, process restart, backgrounding)
     // and re-attach to the new instance. Weak so we never keep a destroyed Activity alive.
     private var attachedActivity: WeakReference<ComponentActivity>? = null
-    private var lifecycleListenerRegistered = false
+    private var listenerContext: WeakReference<ReactApplicationContext>? = null
 
     private fun onMain(block: () -> Unit) =
         Handler(Looper.getMainLooper()).post(block)
@@ -42,8 +42,8 @@ object RNGuidesAndSurveysModuleImpl {
     }
 
     private fun ensureLifecycleListener(reactContext: ReactApplicationContext) {
-        if (lifecycleListenerRegistered) return
-        lifecycleListenerRegistered = true
+        if (listenerContext?.get() === reactContext) return
+        listenerContext = WeakReference(reactContext)
         reactContext.addLifecycleEventListener(object : LifecycleEventListener {
             override fun onHostResume() = attachToCurrentActivity(reactContext)
             override fun onHostPause() {}
