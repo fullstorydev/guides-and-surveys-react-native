@@ -1,0 +1,18 @@
+import type { TurboModule } from 'react-native';
+import { TurboModuleRegistry } from 'react-native';
+
+export interface Spec extends TurboModule {
+  initialize(
+    orgId: string,
+    environment: string,
+    config: Object | null
+  ): Promise<void>;
+  identify(userId: string): Promise<void>;
+  anonymize(): Promise<void>;
+  showSurvey(surveyId: string | null): Promise<void>;
+  getAreSurveysDisabled(): Promise<boolean>;
+  setSessionId(sessionId: string): Promise<void>;
+  setCurrentScreen(screenName: string | null): Promise<void>;
+}
+
+export default TurboModuleRegistry.getEnforcing<Spec>('RNGuidesAndSurveys');
