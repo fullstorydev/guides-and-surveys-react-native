@@ -10,6 +10,7 @@ import com.facebook.react.bridge.ReadableMap
 import com.fullstory.guidesandsurveys.Environment
 import com.fullstory.guidesandsurveys.SurveysConfig
 import com.fullstory.guidesandsurveys.SurveysSDK
+import java.lang.ref.WeakReference
 
 /**
  * Platform-independent implementation shared by both the legacy bridge module
@@ -20,26 +21,31 @@ object RNGuidesAndSurveysModuleImpl {
 
     const val NAME = "RNGuidesAndSurveys"
 
+    // Tracks the Activity we last called SurveysSDK.attach() on, so we can detect
+    // when the host Activity is recreated (rotation, process restart, backgrounding)
+    // and re-attach to the new instance. Weak so we never keep a destroyed Activity alive.
+    private var attachedActivity: WeakReference<ComponentActivity>? = null
+    private var lifecycleListenerRegistered = false
+
     private fun onMain(block: () -> Unit) =
         Handler(Looper.getMainLooper()).post(block)
 
-    // reactContext.currentActivity is only set once Activity.onResume() runs, but JS
-    // execution (and this initialize() call) can start as early as Activity.onCreate() —
-    // so the Activity may not exist here yet. If it doesn't, wait for the first host
-    // resume and attach then. The listener removes itself right after: this only closes
-    // the startup-ordering gap, it does not re-attach on any later resume.
-    private fun attachWhenActivityAvailable(reactContext: ReactApplicationContext) {
-        val activity = reactContext.currentActivity as? ComponentActivity
-        if (activity != null) {
-            SurveysSDK.attach(activity)
-            return
-        }
+    // currentActivity can be null at initialize() time (e.g. called before RN has an
+    // Activity yet) and it changes identity on every recreation. attach() must be
+    // re-issued each time the current Activity is a different instance from the one
+    // we last attached to — the SDK does not do this automatically.
+    private fun attachToCurrentActivity(reactContext: ReactApplicationContext) {
+        val activity = reactContext.currentActivity as? ComponentActivity ?: return
+        if (attachedActivity?.get() === activity) return
+        SurveysSDK.attach(activity)
+        attachedActivity = WeakReference(activity)
+    }
 
+    private fun ensureLifecycleListener(reactContext: ReactApplicationContext) {
+        if (lifecycleListenerRegistered) return
+        lifecycleListenerRegistered = true
         reactContext.addLifecycleEventListener(object : LifecycleEventListener {
-            override fun onHostResume() {
-                reactContext.removeLifecycleEventListener(this)
-                (reactContext.currentActivity as? ComponentActivity)?.let { SurveysSDK.attach(it) }
-            }
+            override fun onHostResume() = attachToCurrentActivity(reactContext)
             override fun onHostPause() {}
             override fun onHostDestroy() {}
         })
@@ -74,7 +80,8 @@ object RNGuidesAndSurveysModuleImpl {
                     environment = environmentFrom(environment),
                     config = surveysConfigFrom(config),
                 )
-                attachWhenActivityAvailable(reactContext)
+                ensureLifecycleListener(reactContext)
+                attachToCurrentActivity(reactContext)
                 promise.resolve(null)
             } catch (e: Exception) {
                 promise.reject("INIT_ERROR", e.message, e)
