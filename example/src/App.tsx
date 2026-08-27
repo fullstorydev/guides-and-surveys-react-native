@@ -22,7 +22,9 @@ export default function App() {
       <NavigationContainer
         ref={navigationRef}
         onReady={() => {
-          routeNameRef.current = navigationRef.getCurrentRoute()?.name ?? '';
+          const currentRouteName = navigationRef.getCurrentRoute()?.name ?? '';
+          routeNameRef.current = currentRouteName;
+          SurveysSDK.setCurrentScreen(currentRouteName);
         }}
         onStateChange={() => {
           const previousRouteName = routeNameRef.current;
