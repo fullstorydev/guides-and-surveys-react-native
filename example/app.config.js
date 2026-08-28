@@ -36,6 +36,16 @@ export default {
           host: 'onfire.fyi',
         },
       ],
+      [
+        'expo-build-properties',
+        {
+          ios: {
+            deploymentTarget: '17.0',
+          },
+        },
+      ],
+      // Survives prebuild; remove when RN ships fmt >= 12.1.0
+      './plugins/withFmtFix',
     ],
   },
 };
