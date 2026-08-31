@@ -2,7 +2,7 @@
 
 [![CircleCI](https://circleci.com/gh/fullstorydev/guides-and-surveys-react-native.svg?style=svg)](https://circleci.com/gh/fullstorydev/guides-and-surveys-react-native)
 
-Bring FullStory Guides and Surveys into your React Native app. This library bridges to the native FullStory Guides and Surveys SDK on iOS and Android, which fetches survey definitions from FullStory and renders in-app surveys as overlays on top of your existing app UI.
+Bring Fullstory Guides and Surveys into your React Native app. This library bridges to the native Fullstory Guides and Surveys SDK on iOS and Android, which fetches survey definitions from Fullstory and renders in-app surveys as overlays on top of your existing app UI.
 
 ## Quick Links
 
@@ -60,13 +60,13 @@ useEffect(() => {
 
 | Option        | Type                                     | Required | Description                                                                                              |
 | ------------- | ---------------------------------------- | -------- | -------------------------------------------------------------------------------------------------------- |
-| `orgId`       | `string`                                 | Yes      | Your FullStory org ID. Must match the org ID configured for the FullStory capture SDK.                   |
+| `orgId`       | `string`                                 | Yes      | Your Fullstory org ID. Must match the org ID configured for the Fullstory capture SDK.                   |
 | `environment` | `'production' \| 'staging' \| 'playpen'` | No       | API environment to connect to. Defaults to `'production'`.                                               |
 | `config`      | `{ language?: string }`                  | No       | `language` sets the language code used to fetch localized survey content. Defaults to the device locale. |
 
 ### Target surveys by screen
 
-Report the current screen name so the FullStory panel can target surveys to specific screens using targeting conditions. This example uses React Navigation, but any navigation library works as long as you call `setCurrentScreen` on every screen change.
+Report the current screen name so the Fullstory panel can target surveys to specific screens using targeting conditions. This example uses React Navigation, but any navigation library works as long as you call `setCurrentScreen` on every screen change.
 
 ```tsx
 import { useRef } from 'react';
@@ -110,9 +110,9 @@ export default function App() {
 | `showSurvey(surveyId?)`                | `Promise<void>`    | Manually shows a survey. Shows the next eligible autoplay survey if omitted.                                                                          |
 | `areSurveysDisabled()`                 | `Promise<boolean>` | Returns `true` if surveys are currently suppressed.                                                                                                   |
 | `setCurrentScreen(screenName \| null)` | `Promise<void>`    | Sets the current screen name for screen-based survey targeting.                                                                                       |
-| `identify(userId)`                     | `Promise<void>`    | Associates an application-level user ID with survey responses. Handled automatically by the native FullStory SDK when calling `Fullstory.identify()`. |
-| `anonymize()`                          | `Promise<void>`    | Clears the application-level user ID. Handled automatically by the native FullStory SDK when calling `Fullstory.anonymize()`.                         |
-| `setSessionId(sessionId)`              | `Promise<void>`    | Sets the FullStory session ID. Handled automatically by the native FullStory SDK on session start.                                                    |
+| `identify(userId)`                     | `Promise<void>`    | Associates an application-level user ID with survey responses. Handled automatically by the native Fullstory SDK when calling `Fullstory.identify()`. |
+| `anonymize()`                          | `Promise<void>`    | Clears the application-level user ID. Handled automatically by the native Fullstory SDK when calling `Fullstory.anonymize()`.                         |
+| `setSessionId(sessionId)`              | `Promise<void>`    | Sets the Fullstory session ID. Handled automatically by the native Fullstory SDK on session start.                                                    |
 
 ## License
 
